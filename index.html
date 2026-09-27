@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="no-referrer" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Islande 2027 🇮🇸 — Cockpit & Itinéraire</title>
+
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Leaflet Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- SortableJS pour le Drag & Drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <!-- Supabase JS Client (Offline-First sync) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+            },
+            surface: {
+              base: '#090d16',
+              card: '#131b2e',
+              border: 'rgba(255, 255, 255, 0.08)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .glass {
+      background: rgba(19, 27, 46, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .leaflet-popup-content-wrapper {
+      background: #0f172a !important;
+      color: #f8fafc !important;
+      border: 1px solid #38bdf8 !important;
+      border-radius: 16px !important;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6) !important;
+      padding: 0 !important;
+      overflow: hidden;
+      width: 280px;
+    }
+    .leaflet-popup-content { margin: 0 !important; }
+    .leaflet-popup-tip { background: #0f172a !important; }
+    .popup-cover-img { width: 100%; height: 120px; object-fit: cover; display: block; }
+    .popup-body { padding: 12px 14px; }
+    .popup-tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
+    .popup-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .popup-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
+    .popup-price { font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 5px; }
+    .popup-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 11px; font-weight: 600; color: #38bdf8; }
+    .popup-link:hover { text-decoration: underline; }
+
+    .pin-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+    .pin-body {
+      width: 28px; height: 28px; border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg); display: flex; align-items: center; justify-content: center;
+      border: 2px solid #ffffff; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .pin-inner { transform: rotate(45deg); font-size: 12px; line-height: 1; font-weight: bold; }
+    .gas-pin {
+      width: 20px; height: 20px; border-radius: 50%; background: #f97316;
+      border: 2px solid #fff; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+
+    .sortable-ghost {
+      opacity: 0.35;
+      background: #0284c7 !important;
+      border: 1px dashed #38bdf8 !important;
+    }
+    .sortable-chosen {
+      cursor: grabbing !important;
+    }
+    .drag-handle {
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="bg-surface-base text-slate-100 antialiased selection:bg-brand-500 selection:text-white pb-20">
+
+  <!-- NAVIGATION FIXE -->
+  <header class="fixed top-0 inset-x-0 z-50 glass border-b border-surface-border">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <span class="text-2xl">🇮🇸</span>
+        <div>
+          <span class="font-bold tracking-tight text-white block text-sm sm:text-base">Roadtrip Islande 2027</span>
+          <div class="flex items-center gap-1.5 -mt-0.5">
+            <span class="text-xs text-brand-400 font-medium">Cockpit Interactif</span>
+            <span id="syncBadge" class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono">Local</span>
+          </div>
+        </div>
+      </div>
+      <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold uppercase tracking-wider text-slate-300">
+        <a href="#countdown-section" class="hover:text-brand-400 transition-colors">Départ</a>
+        <a href="#weather-section" class="hover:text-brand-400 transition-colors">Météo 10j</a>
+        <a href="#map-section" class="hover:text-brand-400 transition-colors">Carte</a>
+        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Étapes & Trajets</a>
+        <a href="#lodging-section" class="hover:text-brand-400 transition-colors">Hébergements</a>
+        <a href="#tools-section" class="hover:text-brand-400 transition-colors">Outils</a>
+      </nav>
+      <a href="#map-section" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-white transition-all shadow-lg shadow-brand-500/20">
+        Voir Carte
+      </a>
+    </div>
+  </header>
+
+  <!-- BANDEAU COMPTE À REBOURS JOUR J -->
+  <section id="countdown-section" class="max-w-6xl mx-auto px-4 pt-24 pb-2">
+    <div class="glass p-6 sm:p-7 rounded-3xl border border-brand-400/30 shadow-2xl relative overflow-hidden">
+      <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-400/20 mb-2">
+            <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span> Décollage le 26 Janvier 2027 à 07h50
+          </span>
+          <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
+            <span>❄️</span> Cap sur l'Islande
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Du <strong class="text-slate-200">26 janvier</strong> au <strong class="text-slate-200">02 février 2027</strong> • 7 jours d'expédition le long de la Route 1.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2.5 sm:gap-3 text-center shrink-0">
+          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
+            <span id="cd-days" class="block text-2xl sm:text-3xl font-black text-white font-mono">00</span>
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Jours</span>
+          </div>
+          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
+            <span id="cd-hours" class="block text-2xl sm:text-3xl font-black text-brand-400 font-mono">00</span>
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Heures</span>
+          </div>
+          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
+            <span id="cd-minutes" class="block text-2xl sm:text-3xl font-black text-white font-mono">00</span>
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Minutes</span>
+          </div>
+          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
+            <span id="cd-seconds" class="block text-2xl sm:text-3xl font-black text-brand-400 font-mono">00</span>
+            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Sec</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1. SECTION MÉTÉO 10 JOURS AVEC SURBRILLANCE DU JOUR ACTUEL -->
+  <section id="weather-section" class="max-w-6xl mx-auto px-4 py-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+          <i data-lucide="cloud-snow" class="w-6 h-6 text-brand-400"></i> Météo Directe sur 10 Jours
+        </h2>
+        <p class="text-xs text-slate-400">Prévisions & rafales de vent en direct via Open-Meteo. La case bleue brillante indique le jour en cours.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <label class="text-xs text-slate-400">Zone :</label>
+        <select id="weatherLocationSelect" onchange="fetchWeather()" class="bg-slate-900 border border-surface-border text-white text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-brand-400">
+          <option value="64.1466,-21.9426">Reykjavík / Ouest</option>
+          <option value="63.9335,-21.0014">Selfoss / Hella</option>
+          <option value="63.4186,-19.0062">Vík í Mýrdal (Sud)</option>
+          <option value="64.0483,-16.1795">Skaftafell / Jökulsárlón (Glaciers)</option>
+          <option value="64.3138,-20.3008">Geysir / Cercle d'Or</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="glass p-5 rounded-3xl border border-surface-border overflow-hidden">
+      <div id="weatherLoader" class="text-center py-6 text-xs text-slate-400 flex items-center justify-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-brand-400 animate-ping"></span> Chargement des prévisions météo...
+      </div>
+      <div id="weatherForecastGrid" class="hidden grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 gap-2.5 text-center"></div>
+      <div class="mt-4 pt-3 border-t border-surface-border/50 flex flex-wrap items-center justify-between text-[11px] text-slate-400 gap-2">
+        <span>💨 <strong>Alerte vent</strong> : Au-delà de 50-60 km/h de rafales, redoublez de prudence en 4x4.</span>
+        <span class="text-brand-400">Source : Open-Meteo API</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. CARTE INTERACTIVE -->
+  <section id="map-section" class="max-w-6xl mx-auto px-4 py-6">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-3">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Carte Google Maps & Tracé Continu</h2>
+        <p class="text-xs text-slate-400">Le ruban routier relie toutes les étapes sans interruption de jour en jour.</p>
+      </div>
+
+      <div class="flex items-center gap-2 p-1.5 glass rounded-xl border border-surface-border self-start">
+        <button id="btn-out" onclick="setMode('out')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Aller (J1-J4)</button>
+        <button id="btn-in" onclick="setMode('in')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Retour (J5-J7)</button>
+        <button id="btn-all" onclick="setMode('all')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-white transition-all">Tout</button>
+      </div>
+    </div>
+
+    <div class="relative w-full h-[580px] rounded-3xl overflow-hidden border border-surface-border shadow-2xl">
+      <div id="map" class="w-full h-full"></div>
+      <div class="absolute top-3 right-3 z-[999] flex flex-col gap-2">
+        <button onclick="toggleGasPins()" id="gasFilterBtn" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
+          <span>⛽</span> <span id="gasFilterLabel">Stations : ON</span>
+        </button>
+        <button onclick="resetMapView()" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
+          <span>🎯</span> Recentrer
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ÉTAPES & DISTANCES -->
+  <section id="places-manager" class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme & Distances Clés</h2>
+        <p class="text-xs text-slate-400">Total journalier et distances entre chaque point d'arrêt. Glissez les étapes via <span class="text-brand-400 font-bold">⋮⋮</span>.</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="resetDefaultSteps()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser étapes</button>
+        <button onclick="toggleAddPlaceForm()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-500 hover:bg-brand-600 text-white flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter un lieu
+        </button>
+      </div>
+    </div>
+
+    <!-- Formulaire d'ajout rapide -->
+    <div id="addPlaceBox" class="hidden glass p-5 rounded-3xl border border-brand-400/40 mb-6">
+      <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
+        <i data-lucide="map-pin" class="w-4 h-4 text-brand-400"></i> Nouveau point d'étape
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Nom du lieu</label>
+          <input type="text" id="newPlaceName" placeholder="Ex: Spot Cascade Secrète" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Jour attribué</label>
+          <select id="newPlaceDay" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white">
+            <option value="1">Jour 1 (Reykjanes / Selfoss)</option>
+            <option value="2">Jour 2 (Cascades Sud / Vík)</option>
+            <option value="3">Jour 3 (Canyons / Skaftafell)</option>
+            <option value="4">Jour 4 (Jökulsárlón)</option>
+            <option value="5">Jour 5 (Grotte de Glace / Hella)</option>
+            <option value="6">Jour 6 (Cercle d'Or)</option>
+            <option value="7">Jour 7 (Reykjavík / KEF)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Prix (€)</label>
+          <input type="text" id="newPlacePrice" placeholder="Ex: Gratuit ou 6,70 €" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Latitude</label>
+          <input type="number" step="any" id="newPlaceLat" placeholder="Ex: 63.5321" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Longitude</label>
+          <input type="number" step="any" id="newPlaceLng" placeholder="Ex: -19.5114" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+      </div>
+      <div class="mt-3 flex justify-end gap-2">
+        <button onclick="toggleAddPlaceForm()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Annuler</button>
+        <button onclick="saveNewPlace()" class="px-4 py-1.5 bg-brand-500 rounded-xl text-xs font-bold text-white">Ajouter au parcours</button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="places-container"></div>
+  </section>
+
+  <!-- 4. HÉBERGEMENTS PAR NUITÉE -->
+  <section id="lodging-section" class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Hébergements par Nuitée</h2>
+        <p class="text-xs text-slate-400">Renseignez vos logements réservés, heures de check-in, téléphones et codes de boîtes à clés.</p>
+      </div>
+      <button onclick="clearAllLodgings()" class="text-xs text-slate-500 hover:text-red-400 transition-colors">Vider toutes les fiches</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="lodging-cards-container"></div>
+  </section>
+
+  <!-- 5. MODULES OUTILS TERRAIN -->
+  <section id="tools-section" class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-6">
+      <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Outils Terrain Indispensables</h2>
+      <p class="text-xs text-slate-400">Convertisseur ISK/EUR, gestion de vos valises et liens officiels de sécurité.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Convertisseur ISK / EUR -->
+      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="calculator" class="w-4 h-4 text-brand-400"></i> ISK ➔ EUR
+            </h3>
+            <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">1 € ≈ 150 ISK</span>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Montant en couronnes (ISK)</label>
+              <div class="relative">
+                <input type="number" id="iskInput" value="5000" step="500" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white font-semibold text-xs" oninput="convertCurrency('isk')" />
+                <span class="absolute right-3 top-2 text-xs text-slate-500">ISK</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] text-slate-400 mb-1">Équivalent en Euros (€)</label>
+              <div class="relative">
+                <input type="number" id="eurInput" value="33.33" step="1" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-brand-400 font-bold text-xs" oninput="convertCurrency('eur')" />
+                <span class="absolute right-3 top-2 text-xs text-brand-500">EUR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-surface-border/50 text-[11px] text-slate-400">
+          💡 <em>Repères : Skyr ≈ 400 ISK (2,7 €) • Plein carburant SUV ≈ 15 000 ISK (100 €).</em>
+        </div>
+      </div>
+
+      <!-- Valises -->
+      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i data-lucide="luggage" class="w-4 h-4 text-brand-400"></i> Valises
+            </h3>
+            <span id="packProgress" class="text-xs font-bold text-brand-400">0/0</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mb-3">Listez vos affaires à emporter et cochez-les en faisant vos sacs.</p>
+
+          <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1" id="checklist-items"></div>
+
+          <div class="flex gap-2 mt-3 pt-2 border-t border-surface-border/40">
+            <input type="text" id="newCheckItem" placeholder="Ajouter un élément (ex: Crampons, Gants...)" class="flex-1 bg-slate-900 border border-surface-border rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-400" />
+            <button onclick="addChecklistItem()" class="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 rounded-xl text-xs font-bold text-white transition-all">+</button>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-surface-border/50 flex justify-between items-center text-[11px] text-slate-400">
+          <span>Sauvegardé automatiquement</span>
+          <button onclick="clearValise()" class="hover:text-red-400 transition-colors">Tout effacer</button>
+        </div>
+      </div>
+
+      <!-- Liens Sécurité -->
+      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
+        <div>
+          <h3 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> Sécurité & Alertes Live
+          </h3>
+          <p class="text-xs text-slate-400 mb-3">À consulter tous les matins avant de démarrer :</p>
+
+          <div class="space-y-2">
+            <a href="https://www.road.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
+              <div class="flex items-center gap-2">
+                <span>🛣️</span>
+                <div>
+                  <div class="font-semibold text-white">Road.is</div>
+                  <div class="text-[10px] text-slate-400">Verglas & fermetures Route 1</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+            </a>
+
+            <a href="https://en.vedur.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
+              <div class="flex items-center gap-2">
+                <span>🌬️</span>
+                <div>
+                  <div class="font-semibold text-white">Vedur.is</div>
+                  <div class="text-[10px] text-slate-400">Rafales de vent & prévisions aurores</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+            </a>
+
+            <a href="https://safetravel.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
+              <div class="flex items-center gap-2">
+                <span>🛡️</span>
+                <div>
+                  <div class="font-semibold text-white">SafeTravel.is</div>
+                  <div class="text-[10px] text-slate-400">Enregistrer son plan de route</div>
+                </div>
+              </div>
+              <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-4 p-2.5 rounded-xl bg-red-950/40 border border-red-500/20 text-center">
+          <span class="text-xs font-bold text-red-400 block">Urgences Islande : 112</span>
+          <span class="text-[10px] text-red-300">Toujours tenir fermement la portière contre les rafales.</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MODAL D'ÉDITION D'HÉBERGEMENT -->
+  <div id="lodgingModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass w-full max-w-md p-6 rounded-3xl border border-surface-border">
+      <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
+        <span id="modalLodgingTitle">Renseigner l'Hébergement</span>
+        <button onclick="closeLodgingModal()" class="text-slate-400 hover:text-white">✕</button>
+      </h3>
+      <input type="hidden" id="editLodgingIndex" />
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Nom du logement / Hôtel</label>
+          <input type="text" id="editLodgingName" placeholder="Ex: Fosshotel Glacier Lagoon" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-slate-400 mb-1">Ville / Secteur</label>
+            <input type="text" id="editLodgingLocation" placeholder="Ex: Vík í Mýrdal" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Heure de Check-in</label>
+            <input type="text" id="editLodgingCheckin" placeholder="Ex: 15h00 - 20h00" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Adresse exacte ou Coordonnées GPS</label>
+          <input type="text" id="editLodgingAddress" placeholder="Ex: Hvoll, 881 Kirkjubæjarklaustur" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Numéro de téléphone / Contact hôte</label>
+          <input type="text" id="editLodgingPhone" placeholder="Ex: +354 487 0000" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Code Boîte à Clés / Instructions d'arrivée</label>
+          <textarea id="editLodgingNotes" rows="2" placeholder="Ex: Boîte noire sous le porche, code 5920" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white"></textarea>
+        </div>
+      </div>
+      <div class="mt-5 flex justify-end gap-2">
+        <button onclick="closeLodgingModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
+        <button onclick="saveLodgingData()" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+// =========================================================================
+    // CONFIGURATION SUPABASE
+    // =========================================================================
+    const SUPABASE_URL = "https://xyzcompanyproject.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5emNvbXBhbnlwcm9qZWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3M...VOTRE_CLE_ANON";
+
+    let supabaseClient = null;
+    if (SUPABASE_URL && !SUPABASE_URL.includes("VOTRE-PROJET")) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+
+    function setSyncStatus(isSynced, text) {
+      const badge = document.getElementById("syncBadge");
+      if (!badge) return;
+      if (isSynced) {
+        badge.className = "text-[9px] px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-mono";
+        badge.innerText = text || "Cloud OK";
+      } else {
+        badge.className = "text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono";
+        badge.innerText = text || "Local (Offline)";
+      }
+    }
+
+    // Synchronisation en tâche de fond (Cloud -> Local si première connexion)
+    async function syncFromSupabase() {
+      if (!supabaseClient || !navigator.onLine) {
+        setSyncStatus(false, "Mode Hors-ligne");
+        return;
+      }
+
+      try {
+        setSyncStatus(false, "Sync...");
+
+        // 1. Étapes
+        const { data: stepsData, error: stepsErr } = await supabaseClient
+          .from('iceland_steps')
+          .select('*')
+          .order('day', { ascending: true })
+          .order('position_order', { ascending: true });
+
+        if (!stepsErr && stepsData && stepsData.length > 0) {
+          const formatted = stepsData.map(s => ({
+            id: s.id,
+            day: s.day,
+            name: s.name,
+            lat: s.lat,
+            lng: s.lng,
+            price: s.price,
+            desc: s.description,
+            img: s.img
+          }));
+          localStorage.setItem("iceland_custom_steps_v10", JSON.stringify(formatted));
+          renderPlacesList();
+          recalculateMap();
+        }
+
+        // 2. Hébergements
+        const { data: lodgingsData, error: lErr } = await supabaseClient
+          .from('iceland_lodgings')
+          .select('*')
+          .order('night', { ascending: true });
+
+        if (!lErr && lodgingsData && lodgingsData.length > 0) {
+          const formattedL = lodgingsData.map(l => ({
+            night: l.night,
+            date: l.date_label,
+            name: l.name,
+            location: l.location,
+            checkin: l.checkin,
+            address: l.address,
+            phone: l.phone,
+            notes: l.notes
+          }));
+          localStorage.setItem("iceland_lodgings_data_v10", JSON.stringify(formattedL));
+          renderLodgings();
+        }
+
+        // 3. Valises
+        const { data: packData, error: pErr } = await supabaseClient
+          .from('iceland_packing_items')
+          .select('*');
+
+        if (!pErr && packData && packData.length > 0) {
+          const items = packData.map(p => ({ id: p.id, label: p.label }));
+          const states = {};
+          packData.forEach(p => { states[p.id] = p.is_checked; });
+          localStorage.setItem("iceland_valise_items_v10", JSON.stringify(items));
+          localStorage.setItem("iceland_valise_states_v10", JSON.stringify(states));
+          initChecklist();
+        }
+
+        setSyncStatus(true, "Synchronisé");
+      } catch (e) {
+        console.warn("Échec sync cloud, maintien des données locales :", e);
+        setSyncStatus(false, "Local (Hors-ligne)");
+      }
+    }
+
+    // Écoute des reconnexions réseau
+    window.addEventListener('online', () => syncFromSupabase());
+    window.addEventListener('offline', () => setSyncStatus(false, "Hors-ligne"));
+
+    // =========================================================================
+    // 1. COMPTE À REBOURS DU JOUR J
+    // =========================================================================
+    const TARGET_DATE = new Date("2027-01-26T07:50:00Z").getTime();
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = TARGET_DATE - now;
+
+      if (distance <= 0) {
+        document.getElementById("cd-days").innerText = "00";
+        document.getElementById("cd-hours").innerText = "00";
+        document.getElementById("cd-minutes").innerText = "00";
+        document.getElementById("cd-seconds").innerText = "00";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("cd-days").innerText = String(days).padStart(2, '0');
+      document.getElementById("cd-hours").innerText = String(hours).padStart(2, '0');
+      document.getElementById("cd-minutes").innerText = String(minutes).padStart(2, '0');
+      document.getElementById("cd-seconds").innerText = String(seconds).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // =========================================================================
+    // 2. CONVERTISSEUR MONNAIE
+    // =========================================================================
+    const RATE = 150;
+    function convertCurrency(source) {
+      if (source === 'isk') {
+        const val = parseFloat(document.getElementById('iskInput').value) || 0;
+        document.getElementById('eurInput').value = (val / RATE).toFixed(2);
+      } else {
+        const val = parseFloat(document.getElementById('eurInput').value) || 0;
+        document.getElementById('iskInput').value = Math.round(val * RATE);
+      }
+    }
+
+    // =========================================================================
+    // 3. MODULE VALISES (LOCAL-FIRST + SUPABASE PUSH)
+    // =========================================================================
+    function getStoredValise() {
+      return JSON.parse(localStorage.getItem("iceland_valise_items_v10") || "[]");
+    }
+
+    function initChecklist() {
+      const list = getStoredValise();
+      const saved = JSON.parse(localStorage.getItem("iceland_valise_states_v10") || "{}");
+      const container = document.getElementById("checklist-items");
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-3 text-center">Aucune affaire listée. Ajoutez vos premiers éléments ci-dessous.</div>`;
+        document.getElementById("packProgress").innerText = "0/0";
+        return;
+      }
+
+      container.innerHTML = list.map(item => `
+        <div class="flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-900/60 text-xs text-slate-300">
+          <label class="flex items-center gap-2 cursor-pointer truncate flex-1 mr-2">
+            <input type="checkbox" ${saved[item.id] ? 'checked' : ''} onchange="toggleCheckItem('${item.id}')" class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-surface-border focus:ring-0" />
+            <span class="${saved[item.id] ? 'line-through text-slate-500' : ''} truncate">${item.label}</span>
+          </label>
+          <button onclick="removeValiseItem('${item.id}')" title="Supprimer" class="text-slate-500 hover:text-red-400 p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
+
+      const count = Object.values(saved).filter(Boolean).length;
+      document.getElementById("packProgress").innerText = `${count}/${list.length}`;
+      lucide.createIcons();
+    }
+
+    async function toggleCheckItem(id) {
+      const saved = JSON.parse(localStorage.getItem("iceland_valise_states_v10") || "{}");
+      saved[id] = !saved[id];
+      localStorage.setItem("iceland_valise_states_v10", JSON.stringify(saved));
+      initChecklist();
+
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_packing_items').update({ is_checked: saved[id], updated_at: new Date() }).eq('id', id);
+      }
+    }
+
+    async function addChecklistItem() {
+      const input = document.getElementById("newCheckItem");
+      const text = input.value.trim();
+      if (!text) return;
+      const list = getStoredValise();
+      const newItem = { id: "v_" + Date.now(), label: text };
+      list.push(newItem);
+      localStorage.setItem("iceland_valise_items_v10", JSON.stringify(list));
+      input.value = "";
+      initChecklist();
+
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_packing_items').insert([{ id: newItem.id, label: newItem.label, is_checked: false }]);
+      }
+    }
+
+    async function removeValiseItem(id) {
+      let list = getStoredValise();
+      list = list.filter(item => item.id !== id);
+      localStorage.setItem("iceland_valise_items_v10", JSON.stringify(list));
+
+      const saved = JSON.parse(localStorage.getItem("iceland_valise_states_v10") || "{}");
+      delete saved[id];
+      localStorage.setItem("iceland_valise_states_v10", JSON.stringify(saved));
+
+      initChecklist();
+
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_packing_items').delete().eq('id', id);
+      }
+    }
+
+    async function clearValise() {
+      if (confirm("Voulez-vous vider l'ensemble des éléments de vos valises ?")) {
+        localStorage.removeItem("iceland_valise_items_v10");
+        localStorage.removeItem("iceland_valise_states_v10");
+        initChecklist();
+
+        if (supabaseClient && navigator.onLine) {
+          await supabaseClient.from('iceland_packing_items').delete().neq('id', 'placeholder');
+        }
+      }
+    }
+
+    document.getElementById("newCheckItem").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") addChecklistItem();
+    });
+    initChecklist();
+
+    // =========================================================================
+    // 4. DISTANCES & ÉTAPES (LOCAL-FIRST + SUPABASE PUSH)
+    // =========================================================================
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return Math.round(R * c * 1.25);
+    }
+
+    const COLORS = {
+      1: '#f59e0b', 2: '#06b6d4', 3: '#3b82f6',
+      4: '#8b5cf6', 5: '#ec4899', 6: '#10b981', 7: '#64748b'
+    };
+
+    const INITIAL_STEPS = [
+      { id:"j1-1", day:1, name:"Aéroport Keflavík (07h50)", lat:63.9850, lng:-22.6056, price:"Inclus vol", desc:"Prise du SUV 4x4.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Keflavik_Airport_terminal_2012.JPG?width=640" },
+      { id:"j1-2", day:1, name:"Pont entre 2 continents", lat:63.8684, lng:-22.6755, price:"Gratuit (Parking & Accès)", desc:"Faille tectonique visible.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Bridge_between_continents,_Iceland.jpg?width=640" },
+      { id:"j1-3", day:1, name:"Zone de Gunnuhver", lat:63.8193, lng:-22.6846, price:"Gratuit (Parking & Accès)", desc:"Champs géothermiques actifs.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gunnuhver_hot_springs.jpg?width=640" },
+      { id:"j1-4", day:1, name:"Tunnel Raufarhólshellir", lat:63.9404, lng:-21.3965, price:"Visite guidée : ~132 € (2 pers)", desc:"Tunnel de lave volcanique.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Raufarh%C3%B3lshellir.jpg?width=640" },
+      { id:"j1-5", day:1, name:"Nuitée 1 : Selfoss (Bónus)", lat:63.9377, lng:-20.9995, price:"Parking gratuit", desc:"Supermarché Bónus et nuitée 1.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Selfoss_church_and_bridge.jpg?width=640" },
+
+      { id:"j2-1", day:2, name:"Seljalandsfoss", lat:63.6156, lng:-19.9886, price:"Parking : 6,00 € (900 ISK)", desc:"Cascade falaise (ticket valable Gljúfrabúi).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Seljalandsfoss,_Iceland.jpg?width=640" },
+      { id:"j2-2", day:2, name:"Gljúfrabúi", lat:63.6208, lng:-19.9865, price:"Inclus ticket Seljalandsfoss", desc:"Cascade cachée dans le canyon rocheux.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Glj%C3%BAfrab%C3%BAi_waterfall.jpg?width=640" },
+      { id:"j2-3", day:2, name:"Skógafoss", lat:63.5321, lng:-19.5114, price:"Gratuit (Parking & Accès)", desc:"Chute monumentale de 60m.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Sk%C3%B3gafoss,_Iceland.jpg?width=640" },
+      { id:"j2-4", day:2, name:"Dyrhólaey", lat:63.4022, lng:-19.1303, price:"Gratuit (Parking & Accès)", desc:"Arche marine et falaises noires.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Dyrh%C3%B3laey.jpg?width=640" },
+      { id:"j2-5", day:2, name:"Plage de Reynisfjara", lat:63.4042, lng:-19.0494, price:"Parking : 6,70 € (1 000 ISK)", desc:"Sable noir & orgues (caméra Parka.is).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Reynisfjara.jpg?width=640" },
+      { id:"j2-6", day:2, name:"Nuitée 2 : Vík í Mýrdal", lat:63.4186, lng:-19.0062, price:"Selon hébergement", desc:"Village sous les falaises.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/V%C3%ADk_%C3%AD_M%C3%BDrdal.jpg?width=640" },
+
+      { id:"j3-1", day:3, name:"Grotte de Yoda (Gígjagjá)", lat:63.4143, lng:-18.8475, price:"Gratuit (Parking & Accès)", desc:"Silhouette naturelle de Yoda.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hj%C3%B6rleifsh%C3%B6f%C3%B0i.jpg?width=640" },
+      { id:"j3-2", day:3, name:"Champ d'Eldhraun", lat:63.6766, lng:-18.1408, price:"Gratuit (Arrêts Route 1)", desc:"Champs de lave couverte de mousse.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Eldhraun.jpg?width=640" },
+      { id:"j3-3", day:3, name:"Canyon Fjaðrárgljúfur", lat:63.7713, lng:-18.1718, price:"Parking : 6,70 € (1 000 ISK)", desc:"Canyon serpentant spectaculaire.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Fja%C3%B0r%C3%A1rglj%C3%BAfur.jpg?width=640" },
+      { id:"j3-4", day:3, name:"Skaftafell & Svartifoss", lat:64.0275, lng:-16.9753, price:"Parking : 6,70 € (1 000 ISK)", desc:"Parc national & orgues hexagonaux.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Svartifoss.jpg?width=640" },
+      { id:"j3-5", day:3, name:"Nuitée 3 : Skaftafell", lat:63.9878, lng:-16.8962, price:"Selon hébergement", desc:"Au pied des glaciers.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Skaftafell.jpg?width=640" },
+
+      { id:"j4-1", day:4, name:"Jökulsárlón & Icebergs", lat:64.0483, lng:-16.1795, price:"Parking : ~7,50 € (1 100 ISK)", desc:"Lagune des icebergs dérivants.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/J%C3%B6kuls%C3%A1rl%C3%B3n.jpg?width=640" },
+      { id:"j4-2", day:4, name:"Diamond Beach", lat:64.0443, lng:-16.1777, price:"Inclus ticket Jökulsárlón", desc:"Glaçons échoués sur le sable noir.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Diamond_Beach_Iceland.jpg?width=640" },
+      { id:"j4-3", day:4, name:"Nuitée 4 : Klaustur", lat:63.7915, lng:-18.0514, price:"Selon hébergement", desc:"Kirkjubæjarklaustur.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Kirkjub%C3%A6jarklaustur.jpg?width=640" },
+
+      { id:"j5-1", day:5, name:"Grotte de glace Vatnajökull 🎂", lat:64.0483, lng:-16.1795, price:"Activité guidée : ~270-330 € (2 pers)", desc:"Expédition Super Jeep & guide certifié.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Ice_Cave_in_Vatnaj%C3%B6kull.jpg?width=640" },
+      { id:"j5-2", day:5, name:"Nuitée 5 : Hella (Repli)", lat:63.8344, lng:-20.4011, price:"Selon hébergement", desc:"Repli Ouest stratégique.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Aurora_borealis_in_Iceland.jpg?width=640" },
+
+      { id:"j6-1", day:6, name:"Þingvellir", lat:64.2559, lng:-21.1298, price:"Parking : 6,70 € (1 000 ISK)", desc:"Faille continentale (P1/P2/P5).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Thingvellir.jpg?width=640" },
+      { id:"j6-2", day:6, name:"Geysir & Strokkur", lat:64.3138, lng:-20.3008, price:"Gratuit (Parking & Accès)", desc:"Geyser jaillissant à 25m.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Strokkur,_Iceland.jpg?width=640" },
+      { id:"j6-3", day:6, name:"Cascade Gullfoss", lat:64.3271, lng:-20.1199, price:"Gratuit (Parking & Accès)", desc:"Chute d'or du Golden Circle.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gullfoss.jpg?width=640" },
+      { id:"j6-4", day:6, name:"Secret Lagoon (Flúðir)", lat:64.1375, lng:-20.3094, price:"Bains 2 pers : 60 € (9 000 ISK)", desc:"Bains chauds à 40°C (parking gratuit).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gamla_laugin.jpg?width=640" },
+
+      { id:"j7-1", day:7, name:"Cratère Kerið", lat:64.0413, lng:-20.8851, price:"Entrées 2 pers : 8 € (Parking gratuit)", desc:"Lac de cratère volcanique rouge.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Kerid.jpg?width=640" },
+      { id:"j7-2", day:7, name:"Hallgrímskirkja & Reykjavík", lat:64.1417, lng:-21.9266, price:"Stationnement ville : ~4 à 8 €", desc:"Cathédrale & centre-ville.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hallgrimskirkja.jpg?width=640" },
+      { id:"j7-3", day:7, name:"Harpa Concert Hall", lat:64.1504, lng:-21.9329, price:"Accès libre", desc:"Architecture de verre sur le port.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Harpa_Reykjavik.jpg?width=640" },
+      { id:"j7-4", day:7, name:"Nuitée 7 : Keflavík (Aéroport)", lat:63.9980, lng:-22.5600, price:"Selon hébergement", desc:"Nuitée finale avant vol 08h30.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Keflavik_Airport_terminal_2012.JPG?width=640" }
+    ];
+
+    function getSteps() {
+      return JSON.parse(localStorage.getItem("iceland_custom_steps_v10") || JSON.stringify(INITIAL_STEPS));
+    }
+
+    async function saveSteps(steps) {
+      localStorage.setItem("iceland_custom_steps_v10", JSON.stringify(steps));
+      if (supabaseClient && navigator.onLine) {
+        const payload = steps.map((s, index) => ({
+          id: s.id,
+          day: s.day,
+          name: s.name,
+          lat: s.lat,
+          lng: s.lng,
+          price: s.price,
+          description: s.desc,
+          img: s.img,
+          position_order: index,
+          updated_at: new Date()
+        }));
+        await supabaseClient.from('iceland_steps').upsert(payload);
+      }
+    }
+
+    function resetDefaultSteps() {
+      if (confirm("Rétablir les étapes par défaut ?")) {
+        localStorage.removeItem("iceland_custom_steps_v10");
+        renderPlacesList();
+        recalculateMap();
+      }
+    }
+
+    // =========================================================================
+    // 5. HÉBERGEMENTS (LOCAL-FIRST + SUPABASE PUSH)
+    // =========================================================================
+    const BLANK_LODGINGS = [
+      { night: 1, date: "26 Janvier", name: "", location: "Zone Selfoss", checkin: "", address: "", phone: "", notes: "" },
+      { night: 2, date: "27 Janvier", name: "", location: "Zone Vík í Mýrdal", checkin: "", address: "", phone: "", notes: "" },
+      { night: 3, date: "28 Janvier", name: "", location: "Zone Skaftafell", checkin: "", address: "", phone: "", notes: "" },
+      { night: 4, date: "29 Janvier", name: "", location: "Zone Klaustur / Jökulsárlón", checkin: "", address: "", phone: "", notes: "" },
+      { night: 5, date: "30 Janvier", name: "", location: "Zone Hella / Repli Ouest", checkin: "", address: "", phone: "", notes: "" },
+      { night: 6, date: "31 Janvier", name: "", location: "Zone Flúðir / Cercle d'Or", checkin: "", address: "", phone: "", notes: "" },
+      { night: 7, date: "01 Février", name: "", location: "Zone Aéroport Keflavík", checkin: "", address: "", phone: "", notes: "" }
+    ];
+
+    function getLodgings() {
+      return JSON.parse(localStorage.getItem("iceland_lodgings_data_v10") || JSON.stringify(BLANK_LODGINGS));
+    }
+
+    function renderLodgings() {
+      const lodgings = getLodgings();
+      const container = document.getElementById("lodging-cards-container");
+      container.innerHTML = lodgings.map((l, index) => {
+        const isFilled = l.name && l.name.trim() !== "";
+        return `
+          <div class="glass p-5 rounded-3xl border border-surface-border flex flex-col justify-between hover:border-brand-400/40 transition-all">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold text-white uppercase" style="background:${COLORS[l.night]};">Nuit ${l.night} • ${l.date}</span>
+                <button onclick="openLodgingModal(${index})" class="text-xs text-brand-400 font-semibold hover:underline flex items-center gap-1">
+                  <i data-lucide="${isFilled ? 'edit-3' : 'plus-circle'}" class="w-3.5 h-3.5"></i> ${isFilled ? 'Modifier' : 'Renseigner'}
+                </button>
+              </div>
+
+              <h3 class="text-sm font-bold ${isFilled ? 'text-white' : 'text-slate-500 italic'} mb-1">
+                ${isFilled ? l.name : 'Aucun hébergement renseigné'}
+              </h3>
+              <p class="text-xs text-brand-400 mb-3 flex items-center gap-1">
+                <i data-lucide="map-pin" class="w-3 h-3"></i> ${l.location || 'Localisation à préciser'}
+              </p>
+              
+              <div class="space-y-1.5 text-xs text-slate-300 bg-slate-900/60 p-3 rounded-2xl border border-surface-border">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Arrivée :</span>
+                  <span class="font-medium">${l.checkin || '—'}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Contact :</span>
+                  <span class="font-medium">${l.phone ? `<a href="tel:${l.phone}" class="hover:text-brand-400 underline">${l.phone}</a>` : '—'}</span>
+                </div>
+                <div class="pt-1 border-t border-surface-border">
+                  <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Accès / Boîte à clés :</span>
+                  <span class="text-[11px] ${l.notes ? 'text-amber-200' : 'text-slate-500 italic'}">${l.notes || 'Aucune consigne saisie'}</span>
+                </div>
+              </div>
+            </div>
+
+            ${isFilled && (l.address || l.location) ? `
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(l.address || l.location)}" target="_blank" class="mt-4 w-full py-2 rounded-xl bg-slate-900/90 hover:bg-brand-500 hover:text-white border border-surface-border text-center text-xs font-semibold text-slate-300 transition-all block">
+                📍 Naviguer vers le logement ➔
+              </a>
+            ` : `
+              <button onclick="openLodgingModal(${index})" class="mt-4 w-full py-2 rounded-xl bg-slate-900/50 hover:bg-brand-500/20 hover:text-brand-400 border border-dashed border-surface-border text-center text-xs font-semibold text-slate-400 transition-all">
+                + Ajouter les coordonnées
+              </button>
+            `}
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openLodgingModal(index) {
+      const lodgings = getLodgings();
+      const l = lodgings[index];
+      document.getElementById('editLodgingIndex').value = index;
+      document.getElementById('modalLodgingTitle').innerText = `Nuit ${l.night} (${l.date}) — ${l.location}`;
+      document.getElementById('editLodgingName').value = l.name || '';
+      document.getElementById('editLodgingLocation').value = l.location || '';
+      document.getElementById('editLodgingCheckin').value = l.checkin || '';
+      document.getElementById('editLodgingAddress').value = l.address || '';
+      document.getElementById('editLodgingPhone').value = l.phone || '';
+      document.getElementById('editLodgingNotes').value = l.notes || '';
+      document.getElementById('lodgingModal').classList.remove('hidden');
+    }
+
+    function closeLodgingModal() {
+      document.getElementById('lodgingModal').classList.add('hidden');
+    }
+
+    async function saveLodgingData() {
+      const index = parseInt(document.getElementById('editLodgingIndex').value);
+      const lodgings = getLodgings();
+      const updated = {
+        ...lodgings[index],
+        name: document.getElementById('editLodgingName').value.trim(),
+        location: document.getElementById('editLodgingLocation').value.trim(),
+        checkin: document.getElementById('editLodgingCheckin').value.trim(),
+        address: document.getElementById('editLodgingAddress').value.trim(),
+        phone: document.getElementById('editLodgingPhone').value.trim(),
+        notes: document.getElementById('editLodgingNotes').value.trim()
+      };
+      lodgings[index] = updated;
+      localStorage.setItem("iceland_lodgings_data_v10", JSON.stringify(lodgings));
+      closeLodgingModal();
+      renderLodgings();
+
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_lodgings').upsert([{
+          night: updated.night,
+          date_label: updated.date,
+          name: updated.name,
+          location: updated.location,
+          checkin: updated.checkin,
+          address: updated.address,
+          phone: updated.phone,
+          notes: updated.notes,
+          updated_at: new Date()
+        }]);
+      }
+    }
+
+    async function clearAllLodgings() {
+      if (confirm("Voulez-vous réinitialiser toutes les fiches d'hébergement à blanc ?")) {
+        localStorage.setItem("iceland_lodgings_data_v10", JSON.stringify(BLANK_LODGINGS));
+        renderLodgings();
+
+        if (supabaseClient && navigator.onLine) {
+          await supabaseClient.from('iceland_lodgings').upsert(BLANK_LODGINGS.map(l => ({
+            night: l.night,
+            date_label: l.date,
+            name: '',
+            location: l.location,
+            checkin: '',
+            address: '',
+            phone: '',
+            notes: '',
+            updated_at: new Date()
+          })));
+        }
+      }
+    }
+    renderLodgings();
+
+    // =========================================================================
+    // 6. GESTION DES LISTES ET GLISSER-DÉPOSER
+    // =========================================================================
+    let sortableInstances = [];
+
+    function renderPlacesList() {
+      sortableInstances.forEach(s => s.destroy());
+      sortableInstances = [];
+
+      const steps = getSteps();
+      const container = document.getElementById("places-container");
+      const days = [1, 2, 3, 4, 5, 6, 7];
+
+      container.innerHTML = days.map(d => {
+        const daySteps = steps.filter(s => s.day === d);
+
+        let totalDayKm = 0;
+        for (let i = 0; i < daySteps.length - 1; i++) {
+          totalDayKm += calculateDistance(daySteps[i].lat, daySteps[i].lng, daySteps[i+1].lat, daySteps[i+1].lng);
+        }
+
+        return `
+          <div class="glass p-4 rounded-3xl border border-surface-border flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
+                <span class="text-xs font-bold text-white flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full" style="background:${COLORS[d]}"></span> Jour ${d}
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[10px] font-semibold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-md">
+                    ~${totalDayKm} km
+                  </span>
+                  <span class="text-[10px] text-slate-400" id="badge-day-${d}">${daySteps.length} étape(s)</span>
+                </div>
+              </div>
+
+              <div class="min-h-[50px] p-1 rounded-2xl bg-slate-900/30 border border-surface-border/30 drop-zone" data-day="${d}" id="day-list-${d}">
+                ${daySteps.map((s, idx) => {
+                  let distanceTag = '';
+                  if (idx > 0) {
+                    const prev = daySteps[idx - 1];
+                    const distKm = calculateDistance(prev.lat, prev.lng, s.lat, s.lng);
+                    distanceTag = `
+                      <div class="flex items-center justify-center my-1 select-none pointer-events-none">
+                        <span class="text-[10px] text-slate-400 font-mono flex items-center gap-1 bg-slate-800/80 px-2 py-0.5 rounded-full border border-surface-border/40">
+                          ⇣ ~${distKm} km
+                        </span>
+                      </div>
+                    `;
+                  }
+
+                  return `
+                    ${distanceTag}
+                    <div class="step-card flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-surface-border text-xs cursor-move hover:border-brand-400/50 transition-all" data-id="${s.id}">
+                      <div class="flex items-center gap-2 truncate mr-2">
+                        <span class="drag-handle text-slate-500 hover:text-slate-200 cursor-grab active:cursor-grabbing font-mono text-sm select-none">⋮⋮</span>
+                        <div class="truncate">
+                          <div class="font-medium text-white truncate">${s.name}</div>
+                          <div class="text-[10px] text-brand-400 font-semibold flex items-center gap-1">
+                            <span>💶</span> ${s.price || 'Gratuit'}
+                          </div>
+                        </div>
+                      </div>
+                      <div class="flex items-center gap-1 shrink-0">
+                        <button onclick="centerOnCoord(${s.lat},${s.lng})" title="Voir sur carte" class="p-1 text-slate-400 hover:text-brand-400">
+                          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button onclick="removeStep('${s.id}')" title="Retirer" class="p-1 text-slate-400 hover:text-red-400">
+                          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+            <div class="text-[10px] text-slate-500 text-center mt-2 italic">Glisser ici pour ajouter à ce jour</div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+      initSortable();
+    }
+
+    function initSortable() {
+      const days = [1, 2, 3, 4, 5, 6, 7];
+      days.forEach(d => {
+        const el = document.getElementById(`day-list-${d}`);
+        if (!el) return;
+
+        const sortable = new Sortable(el, {
+          group: 'itineraryDays',
+          animation: 200,
+          ghostClass: 'sortable-ghost',
+          chosenClass: 'sortable-chosen',
+          handle: '.drag-handle',
+          onEnd: function () {
+            const newStepsOrder = [];
+            days.forEach(dayNumber => {
+              const dayListEl = document.getElementById(`day-list-${dayNumber}`);
+              const items = dayListEl.querySelectorAll('.step-card');
+
+              items.forEach(card => {
+                const id = card.getAttribute('data-id');
+                const existing = getSteps().find(s => s.id === id);
+                if (existing) {
+                  newStepsOrder.push({
+                    ...existing,
+                    day: dayNumber
+                  });
+                }
+              });
+            });
+
+            saveSteps(newStepsOrder);
+            renderPlacesList();
+            recalculateMap();
+          }
+        });
+
+        sortableInstances.push(sortable);
+      });
+    }
+
+    function toggleAddPlaceForm() {
+      document.getElementById("addPlaceBox").classList.toggle("hidden");
+    }
+
+    function saveNewPlace() {
+      const name = document.getElementById("newPlaceName").value.trim();
+      const day = parseInt(document.getElementById("newPlaceDay").value);
+      const price = document.getElementById("newPlacePrice").value.trim() || "Gratuit";
+      const lat = parseFloat(document.getElementById("newPlaceLat").value);
+      const lng = parseFloat(document.getElementById("newPlaceLng").value);
+
+      if (!name || isNaN(lat) || isNaN(lng)) {
+        alert("Nom et coordonnées GPS valides requis.");
+        return;
+      }
+
+      const steps = getSteps();
+      steps.push({
+        id: "step_" + Date.now(),
+        day: day,
+        name: name,
+        price: price,
+        lat: lat,
+        lng: lng,
+        desc: "Étape ajoutée au trajet.",
+        img: "https://commons.wikimedia.org/wiki/Special:FilePath/Seljalandsfoss,_Iceland.jpg?width=640"
+      });
+
+      saveSteps(steps);
+      document.getElementById("newPlaceName").value = "";
+      document.getElementById("newPlacePrice").value = "";
+      document.getElementById("newPlaceLat").value = "";
+      document.getElementById("newPlaceLng").value = "";
+      toggleAddPlaceForm();
+      renderPlacesList();
+      recalculateMap();
+    }
+
+    async function removeStep(stepId) {
+      if (confirm("Supprimer cette étape ?")) {
+        let steps = getSteps();
+        steps = steps.filter(s => s.id !== stepId);
+        saveSteps(steps);
+        renderPlacesList();
+        recalculateMap();
+
+        if (supabaseClient && navigator.onLine) {
+          await supabaseClient.from('iceland_steps').delete().eq('id', stepId);
+        }
+      }
+    }
+
+    function centerOnCoord(lat, lng) {
+      document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+      map.setView([lat, lng], 11);
+    }
+    renderPlacesList();
+
+    // =========================================================================
+    // 7. CARTE INTERACTIVE LEAFLET
+    // =========================================================================
+    const map = L.map('map', { zoomControl: false }).setView([63.9, -19.5], 8);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    L.tileLayer('https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+      maxZoom: 19,
+      subdomains: ['0', '1', '2', '3'],
+      attribution: '&copy; Google Maps'
+    }).addTo(map);
+
+    const GAS_STATIONS = [
+      { brand: "Orkan", name: "Orkan KEF Airport", lat: 63.9890, lng: -22.5850 },
+      { brand: "N1", name: "N1 Keflavík Fitjar", lat: 63.9745, lng: -22.5185 },
+      { brand: "N1", name: "N1 Selfoss", lat: 63.9374, lng: -21.0020 },
+      { brand: "N1", name: "N1 Hella", lat: 63.8344, lng: -20.3995 },
+      { brand: "N1", name: "N1 Hvolsvöllur", lat: 63.7505, lng: -20.2227 },
+      { brand: "N1", name: "N1 Vík í Mýrdal", lat: 63.4186, lng: -19.0062 },
+      { brand: "N1", name: "N1 Kirkjubæjarklaustur", lat: 63.7915, lng: -18.0514 },
+      { brand: "Orkan", name: "Orkan Freysnes (Skaftafell)", lat: 63.9878, lng: -16.8962 },
+      { brand: "N1", name: "N1 Fagurhólsmýri", lat: 63.8780, lng: -16.6470 },
+      { brand: "N1", name: "N1 Reykholt", lat: 64.1755, lng: -20.4435 }
+    ];
+
+    const markerLayers = [];
+    const gasLayers = [];
+    let polylines = [];
+    let currentFilterMode = 'all';
+    let showGas = true;
+
+    function makeCustomPin(day) {
+      return L.divIcon({
+        className: 'custom-pin',
+        html: `<div class="pin-wrap"><div class="pin-body" style="background:${COLORS[day]};"><div class="pin-inner">✦</div></div></div>`,
+        iconSize: [28, 36], iconAnchor: [14, 34], popupAnchor: [0, -32]
+      });
+    }
+
+    function makeGasPin() {
+      return L.divIcon({
+        className: 'gas-pin-custom',
+        html: `<div class="gas-pin">⛽</div>`,
+        iconSize: [20, 20], iconAnchor: [10, 10], popupAnchor: [0, -10]
+      });
+    }
+
+    async function recalculateMap() {
+      markerLayers.forEach(m => map.removeLayer(m));
+      gasLayers.forEach(g => map.removeLayer(g));
+      polylines.forEach(p => map.removeLayer(p));
+      markerLayers.length = 0;
+      gasLayers.length = 0;
+      polylines.length = 0;
+
+      const steps = getSteps();
+
+      const activeSteps = steps.filter(s => {
+        if (currentFilterMode === 'out') return s.day <= 4;
+        if (currentFilterMode === 'in') return s.day >= 5;
+        return true;
+      });
+
+      activeSteps.forEach(s => {
+        const popupContent = `
+          <div>
+            <img src="${s.img}" class="popup-cover-img" alt="${s.name}" referrerpolicy="no-referrer" />
+            <div class="popup-body">
+              <span class="popup-tag" style="background:${COLORS[s.day]}; color:#fff;">Jour ${s.day}</span>
+              <div class="popup-title">${s.name}</div>
+              <div class="popup-desc">${s.desc}</div>
+              <div class="popup-price">💶 ${s.price || 'Gratuit'}</div>
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}" target="_blank" class="popup-link">
+                🗺️ Naviguer avec Google Maps ➔
+              </a>
+            </div>
+          </div>
+        `;
+        const m = L.marker([s.lat, s.lng], { icon: makeCustomPin(s.day) }).bindPopup(popupContent).addTo(map);
+        markerLayers.push(m);
+      });
+
+      if (showGas) {
+        GAS_STATIONS.forEach(g => {
+          const gm = L.marker([g.lat, g.lng], { icon: makeGasPin() })
+            .bindPopup(`<div class="p-2 text-xs"><strong>Station ${g.brand}</strong><br/>Automate carburant 24/7</div>`)
+            .addTo(map);
+          gasLayers.push(gm);
+        });
+      }
+
+      for (let i = 0; i < activeSteps.length - 1; i++) {
+        const p1 = activeSteps[i];
+        const p2 = activeSteps[i + 1];
+
+        let coords = [[p1.lat, p1.lng], [p2.lat, p2.lng]];
+
+        try {
+          const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${p1.lng},${p1.lat};${p2.lng},${p2.lat}?overview=full&geometries=geojson`);
+          const data = await res.json();
+          if (data.routes && data.routes[0]) {
+            coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          }
+        } catch (e) {}
+
+        const poly = L.polyline(coords, {
+          color: COLORS[p2.day],
+          weight: 4.5,
+          opacity: 0.9,
+          lineCap: 'round',
+          lineJoin: 'round'
+        }).addTo(map);
+
+        polylines.push(poly);
+      }
+    }
+
+    function setMode(mode) {
+      currentFilterMode = mode;
+      ['all', 'out', 'in'].forEach(m => {
+        const btn = document.getElementById('btn-' + m);
+        btn.className = (m === mode)
+          ? 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-white transition-all'
+          : 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all';
+      });
+      recalculateMap();
+    }
+
+    function toggleGasPins() {
+      showGas = !showGas;
+      document.getElementById('gasFilterLabel').innerText = showGas ? 'Stations : ON' : 'Stations : OFF';
+      recalculateMap();
+    }
+
+    function resetMapView() {
+      map.setView([63.9, -19.5], 8);
+    }
+
+    // =========================================================================
+    // 8. MÉTÉO 10 JOURS AVEC SURBRILLANCE DU JOUR ACTUEL
+    // =========================================================================
+    function getWeatherIcon(code) {
+      if ([0].includes(code)) return "☀️";
+      if ([1, 2].includes(code)) return "🌤️";
+      if ([3].includes(code)) return "☁️";
+      if ([45, 48].includes(code)) return "🌫️";
+      if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "🌧️";
+      if ([71, 73, 75, 77, 85, 86].includes(code)) return "🌨️";
+      if ([95, 96, 99].includes(code)) return "⛈️";
+      return "⛅";
+    }
+
+    async function fetchWeather() {
+      const select = document.getElementById("weatherLocationSelect");
+      const [lat, lon] = select.value.split(",");
+      const loader = document.getElementById("weatherLoader");
+      const grid = document.getElementById("weatherForecastGrid");
+
+      loader.classList.remove("hidden");
+      grid.classList.add("hidden");
+
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,windspeed_10m_max,windgusts_10m_max&timezone=Atlantic%2FReykjavik&forecast_days=10`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.daily) {
+          const days = data.daily.time;
+          
+          // Détection du jour J (format YYYY-MM-DD en heure locale Islande)
+          const todayIso = new Date().toLocaleDateString('en-CA', { timeZone: 'Atlantic/Reykjavik' });
+
+          grid.innerHTML = days.map((dateStr, i) => {
+            const date = new Date(dateStr);
+            const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
+            const dayNum = date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'numeric' });
+            const tMin = Math.round(data.daily.temperature_2m_min[i]);
+            const tMax = Math.round(data.daily.temperature_2m_max[i]);
+            const gusts = Math.round(data.daily.windgusts_10m_max[i]);
+            const icon = getWeatherIcon(data.daily.weathercode[i]);
+            const windAlert = gusts >= 50;
+
+            const isToday = (dateStr === todayIso);
+
+            // Classes spécifiques pour la surbrillance du jour J
+            const highlightClasses = isToday
+              ? 'border-brand-400 bg-brand-500/15 shadow-[0_0_20px_rgba(56,189,248,0.25)] ring-2 ring-brand-400/40 relative'
+              : (windAlert ? 'border-amber-500/40 bg-slate-900/60' : 'border-surface-border bg-slate-900/60');
+
+            return `
+              <div class="p-2.5 rounded-2xl border ${highlightClasses} flex flex-col justify-between text-xs transition-all">
+                <div>
+                  ${isToday ? `
+                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-brand-500 text-white font-extrabold text-[8px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow-md">
+                      Aujourd'hui
+                    </div>
+                  ` : ''}
+                  <div class="font-bold text-white capitalize text-[11px] ${isToday ? 'text-brand-400 font-black pt-1' : ''}">${dayName}</div>
+                  <div class="text-[10px] text-slate-400 mb-1">${dayNum}</div>
+                  <div class="text-2xl my-1">${icon}</div>
+                  <div class="font-semibold text-white text-[11px]">${tMax}° / <span class="text-brand-400">${tMin}°</span></div>
+                </div>
+                <div class="mt-2 pt-1.5 border-t border-surface-border text-[10px] ${windAlert ? 'text-amber-400 font-bold' : 'text-slate-400'}">
+                  💨 ${gusts} km/h
+                </div>
+              </div>
+            `;
+          }).join('');
+
+          loader.classList.add("hidden");
+          grid.classList.remove("hidden");
+        }
+      } catch (e) {
+        loader.innerHTML = `<span class="text-red-400">Erreur de chargement météo.</span>`;
+      }
+    }
+
+    // Chargement initial & tentative de sync
+    recalculateMap();
+    fetchWeather();
+    syncFromSupabase();
+  </script>
+</body>
+</html>
