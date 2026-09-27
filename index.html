@@ -348,7 +348,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="lodging-cards-container"></div>
   </section>
 
-  <!-- 5. SECTION VOLS OFFICIELS EASYJET (DÉPLACÉE APRÈS LES HÉBERGEMENTS) -->
+  <!-- 5. SECTION VOLS OFFICIELS EASYJET -->
   <section id="flights-section" class="max-w-6xl mx-auto px-4 py-6">
     <div class="mb-4">
       <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
@@ -442,99 +442,75 @@
     </div>
   </section>
 
-  <!-- 6. MODULES OUTILS TERRAIN (AVEC NOUVEAU PESE-BAGAGE 23KG) -->
+  <!-- 6. MODULES OUTILS TERRAIN -->
   <section id="tools-section" class="max-w-6xl mx-auto px-4 py-6">
     <div class="mb-6">
       <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Outils Terrain Indispensables</h2>
-      <p class="text-xs text-slate-400">Contrôle du poids des bagages en soute, checklist valises et sécurité routière live.</p>
+      <p class="text-xs text-slate-400">Gestion des valises avec calcul automatique du poids et sécurité routière live.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- 1. NOUVEAU MODULE : PÈSE-BAGAGES EN SOUTE (23 KG MAX PAR BAGAGE) -->
-      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
+      <!-- MODULE VALISE AVEC CALCUL AUTOMATIQUE DU POIDS TOTAL (SUR 2 COLONNES) -->
+      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between lg:col-span-2">
         <div>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-              <i data-lucide="scale" class="w-4 h-4 text-brand-400"></i> Poids Valises (23 kg)
-            </h3>
-            <span class="text-[10px] font-mono bg-slate-800 text-brand-400 px-2 py-0.5 rounded">EasyJet Hold</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mb-3">Saisis le poids approximatif pour vérifier que tu ne dépasses pas les 23,0 kg autorisés.</p>
+          <!-- En-tête avec onglets Valise 1 / Valise 2 -->
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-surface-border">
+            <div class="flex items-center gap-2">
+              <i data-lucide="luggage" class="w-5 h-5 text-brand-400"></i>
+              <div>
+                <h3 class="text-sm font-bold text-white">Valise & Pesée Automatique</h3>
+                <span class="text-[10px] text-slate-400">Limite EasyJet en soute : <strong>23,0 kg</strong> par bagage</span>
+              </div>
+            </div>
 
-          <!-- Valise 1 -->
-          <div class="p-3 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2 mb-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-white">Valise 1 (Principale)</span>
-              <span id="bag1Status" class="text-[10px] font-mono font-bold text-emerald-400">0.0 / 23 kg</span>
-            </div>
-            <div class="relative">
-              <input type="number" step="0.1" min="0" max="32" id="bag1Weight" value="18.5" oninput="updateBagWeight()" class="w-full bg-slate-900 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-xs text-white font-bold pr-10 outline-none" />
-              <span class="absolute right-3 top-1.5 text-xs text-slate-400 font-mono">kg</span>
-            </div>
-            <!-- Jauge visuelle -->
-            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-              <div id="bag1Bar" class="bg-brand-500 h-full transition-all duration-300" style="width: 80%;"></div>
-            </div>
-            <div class="text-[10px] text-slate-400 flex justify-between" id="bag1Remaining">
-              <span>Reste dispo : 4.5 kg</span>
+            <!-- Sélecteur d'onglet Valise 1 / Valise 2 -->
+            <div class="flex items-center gap-1.5 p-1 glass rounded-xl border border-surface-border">
+              <button id="btnTabBag1" onclick="switchBagTab('bag1')" class="px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all">Valise 1</button>
+              <button id="btnTabBag2" onclick="switchBagTab('bag2')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">Valise 2</button>
             </div>
           </div>
 
-          <!-- Valise 2 (Optionnelle) -->
-          <div id="bag2Container" class="p-3 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2 mb-2 hidden">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-white">Valise 2 (Secondaire)</span>
-              <span id="bag2Status" class="text-[10px] font-mono font-bold text-emerald-400">0.0 / 23 kg</span>
+          <!-- Jauge et statut de poids de la valise active -->
+          <div class="bg-slate-900/80 p-4 rounded-2xl border border-surface-border mb-4">
+            <div class="flex items-center justify-between mb-1.5">
+              <span id="currentBagLabel" class="text-xs font-bold text-white">Valise 1</span>
+              <span id="currentBagWeightDisplay" class="text-sm font-mono font-black text-brand-400">0.0 / 23.0 kg</span>
             </div>
-            <div class="relative">
-              <input type="number" step="0.1" min="0" max="32" id="bag2Weight" value="15.0" oninput="updateBagWeight()" class="w-full bg-slate-900 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-xs text-white font-bold pr-10 outline-none" />
-              <span class="absolute right-3 top-1.5 text-xs text-slate-400 font-mono">kg</span>
+            
+            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden mb-2">
+              <div id="currentBagProgressBar" class="bg-brand-500 h-full transition-all duration-300" style="width: 0%;"></div>
             </div>
-            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-              <div id="bag2Bar" class="bg-brand-500 h-full transition-all duration-300" style="width: 65%;"></div>
-            </div>
-            <div class="text-[10px] text-slate-400 flex justify-between" id="bag2Remaining">
-              <span>Reste dispo : 8.0 kg</span>
+
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <span id="currentBagRemaining">Reste disponible : 23.0 kg</span>
+              <span id="currentBagCheckRatio" class="font-mono">0/0 coché</span>
             </div>
           </div>
 
-          <button onclick="toggleBag2()" id="btnToggleBag2" class="w-full py-1.5 text-[11px] rounded-xl border border-dashed border-surface-border text-slate-400 hover:text-brand-400 hover:border-brand-400 transition-all text-center">
-            + Ajouter une 2ème valise
-          </button>
-        </div>
+          <!-- Liste des items avec poids -->
+          <div class="space-y-1.5 max-h-60 overflow-y-auto pr-1" id="bag-items-list"></div>
 
-        <div class="mt-4 pt-3 border-t border-surface-border/50 text-[11px] text-slate-400">
-          ⚖️ <em>Pèse toujours avec chaussures de rando ou manteaux les plus lourds sur toi à l'embarquement.</em>
-        </div>
-      </div>
-
-      <!-- 2. Valises (Checklist) -->
-      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
-        <div>
-          <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-bold text-white flex items-center gap-2">
-              <i data-lucide="luggage" class="w-4 h-4 text-brand-400"></i> Valises
-            </h3>
-            <span id="packProgress" class="text-xs font-bold text-brand-400">0/0</span>
-          </div>
-          <p class="text-[11px] text-slate-400 mb-3">Listez vos affaires à emporter et cochez-les en faisant vos sacs.</p>
-
-          <div class="space-y-1.5 max-h-48 overflow-y-auto pr-1" id="checklist-items"></div>
-
-          <div class="flex gap-2 mt-3 pt-2 border-t border-surface-border/40">
-            <input type="text" id="newCheckItem" placeholder="Ajouter un élément (ex: Crampons, Gants...)" class="flex-1 bg-slate-900 border border-surface-border rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-400" />
-            <button onclick="addChecklistItem()" class="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 rounded-xl text-xs font-bold text-white transition-all">+</button>
+          <!-- Formulaire d'ajout : Item + Poids (kg) -->
+          <div class="flex gap-2 mt-4 pt-3 border-t border-surface-border">
+            <input type="text" id="newItemName" placeholder="Affaire (ex: Doudoune, Crampons...)" class="flex-1 bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-400" />
+            <div class="relative w-24">
+              <input type="number" step="0.1" min="0" id="newItemWeight" placeholder="Poids" class="w-full bg-slate-900 border border-surface-border rounded-xl pl-3 pr-7 py-2 text-xs text-white font-mono focus:outline-none focus:border-brand-400" />
+              <span class="absolute right-2 top-2 text-[10px] text-slate-400 font-mono">kg</span>
+            </div>
+            <button onclick="addBagItem()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-1">
+              <span>+</span> Ajouter
+            </button>
           </div>
         </div>
 
         <div class="mt-4 pt-3 border-t border-surface-border/50 flex justify-between items-center text-[11px] text-slate-400">
-          <span>Sauvegardé automatiquement</span>
-          <button onclick="clearValise()" class="hover:text-red-400 transition-colors">Tout effacer</button>
+          <span>Sauvegarde automatique Cloud & Offline</span>
+          <button onclick="clearCurrentBag()" class="hover:text-red-400 transition-colors">Vider cette valise</button>
         </div>
       </div>
 
-      <!-- 3. Liens Sécurité -->
+      <!-- Liens Sécurité -->
       <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
         <div>
           <h3 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
@@ -745,19 +721,6 @@
           renderLodgings();
         }
 
-        const { data: packData, error: pErr } = await supabaseClient
-          .from('iceland_packing_items')
-          .select('*');
-
-        if (!pErr && packData && packData.length > 0) {
-          const items = packData.map(p => ({ id: p.id, label: p.label }));
-          const states = {};
-          packData.forEach(p => { states[p.id] = p.is_checked; });
-          localStorage.setItem("iceland_valise_items_v10", JSON.stringify(items));
-          localStorage.setItem("iceland_valise_states_v10", JSON.stringify(states));
-          initChecklist();
-        }
-
         setSyncStatus(true, "Synchronisé");
       } catch (e) {
         console.warn("Échec sync cloud, maintien local :", e);
@@ -814,200 +777,151 @@
     }
 
     // =========================================================================
-    // 3. PÈSE-BAGAGES EN SOUTE (23 KG MAX)
+    // 3. MODULE VALISES AVEC PESÉE AUTOMATIQUE ET CALCUL DU POIDS TOTAL
     // =========================================================================
-    function getStoredBags() {
-      return JSON.parse(localStorage.getItem("iceland_bag_weights_v1") || '{"bag1": 18.5, "bag2": 15.0, "hasBag2": false}');
+    let activeBag = 'bag1'; // 'bag1' ou 'bag2'
+
+    function getStoredLuggage() {
+      return JSON.parse(localStorage.getItem("iceland_luggage_v2") || JSON.stringify({
+        bag1: [
+          { id: "item_1", name: "Doudoune grand froid", weight: 1.5, checked: false },
+          { id: "item_2", name: "Chaussures de randonnée étanches", weight: 1.8, checked: false },
+          { id: "item_3", name: "Crampons d'alpinisme", weight: 0.8, checked: false },
+          { id: "item_4", name: "Pantalons thermiques & sous-vêtements mérinos", weight: 2.2, checked: false }
+        ],
+        bag2: []
+      }));
     }
 
-    function initBags() {
-      const data = getStoredBags();
-      document.getElementById("bag1Weight").value = data.bag1;
-      document.getElementById("bag2Weight").value = data.bag2;
-      const b2 = document.getElementById("bag2Container");
-      const btn = document.getElementById("btnToggleBag2");
+    function saveLuggage(data) {
+      localStorage.setItem("iceland_luggage_v2", JSON.stringify(data));
+      renderLuggage();
+    }
 
-      if (data.hasBag2) {
-        b2.classList.remove("hidden");
-        btn.innerText = "✕ Retirer la 2ème valise";
-        btn.classList.add("text-red-400", "border-red-500/30");
+    function switchBagTab(bagKey) {
+      activeBag = bagKey;
+      document.getElementById("btnTabBag1").className = (bagKey === 'bag1')
+        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all'
+        : 'px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+
+      document.getElementById("btnTabBag2").className = (bagKey === 'bag2')
+        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all'
+        : 'px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+
+      renderLuggage();
+    }
+
+    function renderLuggage() {
+      const data = getStoredLuggage();
+      const items = data[activeBag] || [];
+      const container = document.getElementById("bag-items-list");
+
+      // Calcul total
+      const totalWeight = items.reduce((sum, item) => sum + (parseFloat(item.weight) || 0), 0);
+      const checkedCount = items.filter(i => i.checked).length;
+
+      // Mise à jour de l'en-tête de la jauge
+      document.getElementById("currentBagLabel").innerText = (activeBag === 'bag1') ? "Valise 1 (Principale)" : "Valise 2 (Secondaire)";
+      const weightDisplay = document.getElementById("currentBagWeightDisplay");
+      weightDisplay.innerText = `${totalWeight.toFixed(1)} / 23.0 kg`;
+
+      const progressBar = document.getElementById("currentBagProgressBar");
+      const remainingDisplay = document.getElementById("currentBagRemaining");
+      const pct = Math.min(100, Math.round((totalWeight / 23) * 100));
+
+      progressBar.style.width = pct + "%";
+
+      if (totalWeight > 23) {
+        progressBar.className = "bg-red-500 h-full transition-all duration-300";
+        weightDisplay.className = "text-sm font-mono font-black text-red-400";
+        remainingDisplay.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge : +${(totalWeight - 23).toFixed(1)} kg au-delà des 23 kg !</span>`;
       } else {
-        b2.classList.add("hidden");
-        btn.innerText = "+ Ajouter une 2ème valise";
-        btn.classList.remove("text-red-400", "border-red-500/30");
-      }
-      updateBagWeight(false);
-    }
-
-    function updateBagWeight(shouldSave = true) {
-      const b1 = parseFloat(document.getElementById("bag1Weight").value) || 0;
-      const b2 = parseFloat(document.getElementById("bag2Weight").value) || 0;
-      const hasBag2 = !document.getElementById("bag2Container").classList.contains("hidden");
-
-      // Calcul Valise 1
-      const pct1 = Math.min(100, Math.round((b1 / 23) * 100));
-      const bar1 = document.getElementById("bag1Bar");
-      const stat1 = document.getElementById("bag1Status");
-      const rem1 = document.getElementById("bag1Remaining");
-
-      bar1.style.width = pct1 + "%";
-      stat1.innerText = b1.toFixed(1) + " / 23 kg";
-
-      if (b1 > 23) {
-        bar1.className = "bg-red-500 h-full transition-all duration-300";
-        stat1.className = "text-[10px] font-mono font-bold text-red-400";
-        rem1.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge de ${(b1 - 23).toFixed(1)} kg !</span>`;
-      } else {
-        bar1.className = (b1 >= 21 ? "bg-amber-400" : "bg-brand-500") + " h-full transition-all duration-300";
-        stat1.className = "text-[10px] font-mono font-bold text-emerald-400";
-        rem1.innerHTML = `<span>Reste dispo : ${(23 - b1).toFixed(1)} kg</span>`;
+        progressBar.className = (totalWeight >= 21 ? "bg-amber-400" : "bg-brand-500") + " h-full transition-all duration-300";
+        weightDisplay.className = "text-sm font-mono font-black text-brand-400";
+        remainingDisplay.innerHTML = `<span>Reste disponible : <strong>${(23 - totalWeight).toFixed(1)} kg</strong></span>`;
       }
 
-      // Calcul Valise 2
-      if (hasBag2) {
-        const pct2 = Math.min(100, Math.round((b2 / 23) * 100));
-        const bar2 = document.getElementById("bag2Bar");
-        const stat2 = document.getElementById("bag2Status");
-        const rem2 = document.getElementById("bag2Remaining");
+      document.getElementById("currentBagCheckRatio").innerText = `${checkedCount}/${items.length} coché(s)`;
 
-        bar2.style.width = pct2 + "%";
-        stat2.innerText = b2.toFixed(1) + " / 23 kg";
-
-        if (b2 > 23) {
-          bar2.className = "bg-red-500 h-full transition-all duration-300";
-          stat2.className = "text-[10px] font-mono font-bold text-red-400";
-          rem2.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge de ${(b2 - 23).toFixed(1)} kg !</span>`;
-        } else {
-          bar2.className = (b2 >= 21 ? "bg-amber-400" : "bg-brand-500") + " h-full transition-all duration-300";
-          stat2.className = "text-[10px] font-mono font-bold text-emerald-400";
-          rem2.innerHTML = `<span>Reste dispo : ${(23 - b2).toFixed(1)} kg</span>`;
-        }
-      }
-
-      if (shouldSave) {
-        localStorage.setItem("iceland_bag_weights_v1", JSON.stringify({
-          bag1: b1,
-          bag2: b2,
-          hasBag2: hasBag2
-        }));
-      }
-    }
-
-    function toggleBag2() {
-      const b2 = document.getElementById("bag2Container");
-      const btn = document.getElementById("btnToggleBag2");
-      const isVisible = !b2.classList.contains("hidden");
-
-      if (isVisible) {
-        b2.classList.add("hidden");
-        btn.innerText = "+ Ajouter une 2ème valise";
-        btn.classList.remove("text-red-400", "border-red-500/30");
-      } else {
-        b2.classList.remove("hidden");
-        btn.innerText = "✕ Retirer la 2ème valise";
-        btn.classList.add("text-red-400", "border-red-500/30");
-      }
-      updateBagWeight(true);
-    }
-    initBags();
-
-    // =========================================================================
-    // 4. MODULE CHECKLIST VALISES
-    // =========================================================================
-    function getStoredValise() {
-      return JSON.parse(localStorage.getItem("iceland_valise_items_v10") || "[]");
-    }
-
-    function initChecklist() {
-      const list = getStoredValise();
-      const saved = JSON.parse(localStorage.getItem("iceland_valise_states_v10") || "{}");
-      const container = document.getElementById("checklist-items");
-
-      if (list.length === 0) {
-        container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-3 text-center">Aucune affaire listée. Ajoutez vos premiers éléments ci-dessous.</div>`;
-        document.getElementById("packProgress").innerText = "0/0";
+      // Rendu des lignes
+      if (items.length === 0) {
+        container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-3 text-center">Cette valise est vide. Ajoute des affaires ci-dessous avec leur poids.</div>`;
         return;
       }
 
-      container.innerHTML = list.map(item => `
-        <div class="flex items-center justify-between p-1.5 rounded-lg hover:bg-slate-900/60 text-xs text-slate-300">
+      container.innerHTML = items.map(item => `
+        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-surface-border hover:border-brand-400/40 text-xs transition-all">
           <label class="flex items-center gap-2 cursor-pointer truncate flex-1 mr-2">
-            <input type="checkbox" ${saved[item.id] ? 'checked' : ''} onchange="toggleCheckItem('${item.id}')" class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-surface-border focus:ring-0" />
-            <span class="${saved[item.id] ? 'line-through text-slate-500' : ''} truncate">${item.label}</span>
+            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBagItemCheck('${item.id}')" class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-surface-border focus:ring-0" />
+            <span class="${item.checked ? 'line-through text-slate-500' : 'text-slate-200'} truncate">${item.name}</span>
           </label>
-          <button onclick="removeValiseItem('${item.id}')" title="Supprimer" class="text-slate-500 hover:text-red-400 p-1">
-            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-          </button>
+          <div class="flex items-center gap-2 shrink-0">
+            <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-brand-400 border border-surface-border">${parseFloat(item.weight).toFixed(1)} kg</span>
+            <button onclick="removeBagItem('${item.id}')" title="Supprimer" class="text-slate-500 hover:text-red-400 p-1">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
         </div>
       `).join('');
 
-      const count = Object.values(saved).filter(Boolean).length;
-      document.getElementById("packProgress").innerText = `${count}/${list.length}`;
       lucide.createIcons();
     }
 
-    async function toggleCheckItem(id) {
-      const saved = JSON.parse(localStorage.getItem("iceland_valise_states_v10") || "{}");
-      saved[id] = !saved[id];
-      localStorage.setItem("iceland_valise_states_v10", JSON.stringify(saved));
-      initChecklist();
+    function addBagItem() {
+      const nameInput = document.getElementById("newItemName");
+      const weightInput = document.getElementById("newItemWeight");
+      const name = nameInput.value.trim();
+      const weight = parseFloat(weightInput.value) || 0;
 
-      if (supabaseClient && navigator.onLine) {
-        await supabaseClient.from('iceland_packing_items').update({ is_checked: saved[id], updated_at: new Date() }).eq('id', id);
+      if (!name) return;
+
+      const data = getStoredLuggage();
+      data[activeBag].push({
+        id: "item_" + Date.now(),
+        name: name,
+        weight: weight,
+        checked: false
+      });
+
+      saveLuggage(data);
+      nameInput.value = "";
+      weightInput.value = "";
+    }
+
+    function toggleBagItemCheck(itemId) {
+      const data = getStoredLuggage();
+      const item = data[activeBag].find(i => i.id === itemId);
+      if (item) {
+        item.checked = !item.checked;
+        saveLuggage(data);
       }
     }
 
-    async function addChecklistItem() {
-      const input = document.getElementById("newCheckItem");
-      const text = input.value.trim();
-      if (!text) return;
-      const list = getStoredValise();
-      const newItem = { id: "v_" + Date.now(), label: text };
-      list.push(newItem);
-      localStorage.setItem("iceland_valise_items_v10", JSON.stringify(list));
-      input.value = "";
-      initChecklist();
+    function removeBagItem(itemId) {
+      const data = getStoredLuggage();
+      data[activeBag] = data[activeBag].filter(i => i.id !== itemId);
+      saveLuggage(data);
+    }
 
-      if (supabaseClient && navigator.onLine) {
-        await supabaseClient.from('iceland_packing_items').insert([{ id: newItem.id, label: newItem.label, is_checked: false }]);
+    function clearCurrentBag() {
+      if (confirm(`Voulez-vous vider tous les éléments de la ${activeBag === 'bag1' ? 'Valise 1' : 'Valise 2'} ?`)) {
+        const data = getStoredLuggage();
+        data[activeBag] = [];
+        saveLuggage(data);
       }
     }
 
-    async function removeValiseItem(id) {
-      let list = getStoredValise();
-      list = list.filter(item => item.id !== id);
-      localStorage.setItem("iceland_valise_items_v10", JSON.stringify(list));
-
-      const saved = JSON.parse(localStorage.getItem("iceland_valise_states_v10") || "{}");
-      delete saved[id];
-      localStorage.setItem("iceland_valise_states_v10", JSON.stringify(saved));
-
-      initChecklist();
-
-      if (supabaseClient && navigator.onLine) {
-        await supabaseClient.from('iceland_packing_items').delete().eq('id', id);
-      }
-    }
-
-    async function clearValise() {
-      if (confirm("Voulez-vous vider l'ensemble des éléments de vos valises ?")) {
-        localStorage.removeItem("iceland_valise_items_v10");
-        localStorage.removeItem("iceland_valise_states_v10");
-        initChecklist();
-
-        if (supabaseClient && navigator.onLine) {
-          await supabaseClient.from('iceland_packing_items').delete().neq('id', 'placeholder');
-        }
-      }
-    }
-
-    document.getElementById("newCheckItem").addEventListener("keyup", function(event) {
-      if (event.key === "Enter") addChecklistItem();
+    document.getElementById("newItemName").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") addBagItem();
     });
-    initChecklist();
+    document.getElementById("newItemWeight").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") addBagItem();
+    });
+
+    renderLuggage();
 
     // =========================================================================
-    // 5. CALENDRIER RÉEL : 26 JANVIER AU 01 FÉVRIER (02 FÉVRIER = DÉPART)
+    // 4. CALENDRIER RÉEL : 26 JANVIER AU 01 FÉVRIER (02 FÉVRIER = DÉPART)
     // =========================================================================
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -1114,7 +1028,7 @@
     }
 
     // =========================================================================
-    // 6. HÉBERGEMENTS PAR NUITÉE (DATES RÉELLES & RESTITUTION DU 4x4 LE 01)
+    // 5. HÉBERGEMENTS PAR NUITÉE (DATES RÉELLES & RESTITUTION DU 4x4 LE 01)
     // =========================================================================
     const BLANK_LODGINGS = [
       { night: 1, date: "Mardi 26 Janvier", name: "", location: "Zone Selfoss", checkin: "Dès 15h00", address: "", phone: "", notes: "Arrivée après Raufarhólshellir et courses Bónus" },
