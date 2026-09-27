@@ -6,6 +6,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Islande 2027 🇮🇸 — Cockpit & Itinéraire</title>
 
+  <!-- PWA & Mobile App Meta Tags -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#090d16" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Islande 2027" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -118,9 +128,14 @@
         <a href="#lodging-section" class="hover:text-brand-400 transition-colors">Hébergements</a>
         <a href="#tools-section" class="hover:text-brand-400 transition-colors">Outils</a>
       </nav>
-      <a href="#map-section" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-white transition-all shadow-lg shadow-brand-500/20">
-        Voir Carte
-      </a>
+      <div class="flex items-center gap-2">
+        <button id="pwaInstallBtn" onclick="installPWA()" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Installer
+        </button>
+        <a href="#map-section" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-white transition-all shadow-lg shadow-brand-500/20">
+          Voir Carte
+        </a>
+      </div>
     </div>
   </header>
 
@@ -464,14 +479,50 @@
   <script>
     lucide.createIcons();
 
-// =========================================================================
-    // CONFIGURATION SUPABASE
+    // =========================================================================
+    // ENREGISTREMENT DU SERVICE WORKER & GESTION PWA
+    // =========================================================================
+    let deferredPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Service Worker enregistré :', reg.scope))
+          .catch(err => console.warn('Erreur Service Worker :', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const btn = document.getElementById('pwaInstallBtn');
+      if (btn) btn.classList.remove('hidden');
+    });
+
+    async function installPWA() {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        const btn = document.getElementById('pwaInstallBtn');
+        if (btn) btn.classList.add('hidden');
+      }
+      deferredPrompt = null;
+    }
+
+    window.addEventListener('appinstalled', () => {
+      const btn = document.getElementById('pwaInstallBtn');
+      if (btn) btn.classList.add('hidden');
+    });
+
+    // =========================================================================
+    // CONFIGURATION SUPABASE & OFFLINE-FIRST
     // =========================================================================
     const SUPABASE_URL = "https://xyzcompanyproject.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5emNvbXBhbnlwcm9qZWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3M...VOTRE_CLE_ANON";
 
     let supabaseClient = null;
-    if (SUPABASE_URL && !SUPABASE_URL.includes("VOTRE-PROJET")) {
+    if (SUPABASE_URL && !SUPABASE_URL.includes("xyzcompanyproject")) {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
@@ -487,7 +538,6 @@
       }
     }
 
-    // Synchronisation en tâche de fond (Cloud -> Local si première connexion)
     async function syncFromSupabase() {
       if (!supabaseClient || !navigator.onLine) {
         setSyncStatus(false, "Mode Hors-ligne");
@@ -562,7 +612,6 @@
       }
     }
 
-    // Écoute des reconnexions réseau
     window.addEventListener('online', () => syncFromSupabase());
     window.addEventListener('offline', () => setSyncStatus(false, "Hors-ligne"));
 
@@ -1288,8 +1337,6 @@
 
         if (data.daily) {
           const days = data.daily.time;
-          
-          // Détection du jour J (format YYYY-MM-DD en heure locale Islande)
           const todayIso = new Date().toLocaleDateString('en-CA', { timeZone: 'Atlantic/Reykjavik' });
 
           grid.innerHTML = days.map((dateStr, i) => {
@@ -1304,7 +1351,6 @@
 
             const isToday = (dateStr === todayIso);
 
-            // Classes spécifiques pour la surbrillance du jour J
             const highlightClasses = isToday
               ? 'border-brand-400 bg-brand-500/15 shadow-[0_0_20px_rgba(56,189,248,0.25)] ring-2 ring-brand-400/40 relative'
               : (windAlert ? 'border-amber-500/40 bg-slate-900/60' : 'border-surface-border bg-slate-900/60');
@@ -1337,7 +1383,6 @@
       }
     }
 
-    // Chargement initial & tentative de sync
     recalculateMap();
     fetchWeather();
     syncFromSupabase();
