@@ -121,11 +121,11 @@
         </div>
       </div>
       <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold uppercase tracking-wider text-slate-300">
-        <a href="#flights-section" class="hover:text-brand-400 transition-colors">Vols</a>
         <a href="#weather-section" class="hover:text-brand-400 transition-colors">Météo 10j</a>
         <a href="#map-section" class="hover:text-brand-400 transition-colors">Carte</a>
-        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Planning par Date</a>
+        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Planning</a>
         <a href="#lodging-section" class="hover:text-brand-400 transition-colors">Hébergements</a>
+        <a href="#flights-section" class="hover:text-brand-400 transition-colors">Vols</a>
         <a href="#tools-section" class="hover:text-brand-400 transition-colors">Outils</a>
       </nav>
       <div class="flex items-center gap-2">
@@ -140,11 +140,11 @@
   </header>
 
   <!-- BANDEAU COMPTE À REBOURS JOUR J -->
-  <section id="countdown-section" class="max-w-6xl mx-auto px-4 pt-24 pb-2">
-    <div class="glass p-6 sm:p-7 rounded-3xl border border-brand-400/30 shadow-2xl relative overflow-hidden">
+  <section id="countdown-section" class="max-w-6xl mx-auto px-4 pt-20 pb-2">
+    <div class="glass p-5 sm:p-6 rounded-3xl border border-brand-400/30 shadow-2xl relative overflow-hidden">
       <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
         <div>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-400/20 mb-2">
             <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span> Décollage le 26 Janvier 2027 à 05h00
@@ -179,95 +179,40 @@
     </div>
   </section>
 
-  <!-- SECTION VOLS OFFICIELS EASYJET -->
-  <section id="flights-section" class="max-w-6xl mx-auto px-4 py-3">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      
-      <!-- Vol Aller -->
-      <div class="glass p-4 rounded-3xl border border-surface-border relative overflow-hidden">
-        <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
-          <div class="flex items-center gap-2">
-            <span class="p-1.5 rounded-xl bg-brand-500/20 text-brand-400">🛫</span>
-            <div>
-              <span class="text-xs font-bold text-white block">Vol Aller • EJU4583</span>
-              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
-            </div>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-400 border border-brand-400/20">Mardi 26 Janvier 2027</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Départ Paris</span>
-            <span class="font-bold text-white text-sm">05h00</span>
-            <span class="text-[11px] text-slate-300 block">CDG (Terminal 2D)</span>
-          </div>
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Arrivée Islande</span>
-            <span class="font-bold text-brand-400 text-sm">07h50</span>
-            <span class="text-[11px] text-slate-300 block">Keflavík (KEF)</span>
-          </div>
-        </div>
-        <div class="space-y-1 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
-          <div class="flex justify-between">
-            <span>Dépose-bagages ouvre :</span>
-            <strong class="text-slate-200">02h00</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Dépose-bagages ferme :</span>
-            <strong class="text-amber-400">04h00</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Fin enregistrement :</span>
-            <span class="text-slate-300">04h00 (H-60 min)</span>
-          </div>
+  <!-- BARRE RAPIDE : CONVERTISSEUR EXPRESS ISK / EUR EN HAUT -->
+  <section class="max-w-6xl mx-auto px-4 py-2">
+    <div class="glass px-4 py-3 rounded-2xl border border-brand-400/30 flex flex-wrap items-center justify-between gap-3 shadow-lg">
+      <div class="flex items-center gap-2">
+        <span class="p-1 rounded-lg bg-brand-500/20 text-brand-400 text-sm">💱</span>
+        <div class="leading-tight">
+          <span class="text-xs font-bold text-white block">Change Express</span>
+          <span class="text-[10px] text-slate-400 font-mono">1 € ≈ 150 ISK</span>
         </div>
       </div>
 
-      <!-- Vol Retour -->
-      <div class="glass p-4 rounded-3xl border border-surface-border relative overflow-hidden">
-        <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
-          <div class="flex items-center gap-2">
-            <span class="p-1.5 rounded-xl bg-purple-500/20 text-purple-400">🛬</span>
-            <div>
-              <span class="text-xs font-bold text-white block">Vol Retour • EJU4584</span>
-              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
-            </div>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 border border-purple-400/20">Mardi 02 Février 2027</span>
+      <div class="flex items-center gap-2 flex-1 max-w-md">
+        <div class="relative flex-1">
+          <input type="number" id="iskInput" value="5000" step="500" class="w-full bg-slate-900/90 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-white font-bold text-xs pr-11 outline-none" oninput="convertCurrency('isk')" />
+          <span class="absolute right-2.5 top-1.5 text-[10px] text-slate-400 font-mono">ISK</span>
         </div>
-        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Départ Islande</span>
-            <span class="font-bold text-white text-sm">08h30</span>
-            <span class="text-[11px] text-slate-300 block">Keflavík (KEF)</span>
-          </div>
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Arrivée Paris</span>
-            <span class="font-bold text-brand-400 text-sm">12h55</span>
-            <span class="text-[11px] text-slate-300 block">CDG (Terminal 2D)</span>
-          </div>
-        </div>
-        <div class="space-y-1 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
-          <div class="flex justify-between">
-            <span>Dépose-bagages ouvre :</span>
-            <strong class="text-slate-200">06h30</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Dépose-bagages ferme :</span>
-            <strong class="text-amber-400">07h50</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Restitution 4x4 :</span>
-            <strong class="text-emerald-400">Lundi 01 Février au soir</strong>
-          </div>
+
+        <span class="text-xs text-brand-400 font-bold">➔</span>
+
+        <div class="relative flex-1">
+          <input type="number" id="eurInput" value="33.33" step="1" class="w-full bg-slate-900/90 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-brand-400 font-extrabold text-xs pr-8 outline-none" oninput="convertCurrency('eur')" />
+          <span class="absolute right-2.5 top-1.5 text-[10px] text-brand-500 font-mono">€</span>
         </div>
       </div>
 
+      <div class="hidden sm:flex items-center gap-3 text-[10px] text-slate-400 border-l border-surface-border pl-3">
+        <span>Skyr : <strong>~400 ISK</strong> (2,7 €)</span>
+        <span>Plein SUV : <strong>~15 000 ISK</strong> (100 €)</span>
+      </div>
     </div>
   </section>
 
   <!-- 1. SECTION MÉTÉO 10 JOURS AVEC SURBRILLANCE DU JOUR ACTUEL -->
-  <section id="weather-section" class="max-w-6xl mx-auto px-4 py-4">
+  <section id="weather-section" class="max-w-6xl mx-auto px-4 py-3">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
       <div>
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
@@ -300,7 +245,7 @@
   </section>
 
   <!-- 2. CARTE INTERACTIVE -->
-  <section id="map-section" class="max-w-6xl mx-auto px-4 py-6">
+  <section id="map-section" class="max-w-6xl mx-auto px-4 py-5">
     <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-3">
       <div>
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Carte Google Maps & Tracé Continu</h2>
@@ -328,7 +273,7 @@
   </section>
 
   <!-- 3. ÉTAPES, HORAIRES & DISTANCES PAR DATES RÉELLES -->
-  <section id="places-manager" class="max-w-6xl mx-auto px-4 py-8">
+  <section id="places-manager" class="max-w-6xl mx-auto px-4 py-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
       <div>
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme & Horaires Cibles par Date</h2>
@@ -390,8 +335,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="places-container"></div>
   </section>
 
-  <!-- 4. HÉBERGEMENTS PAR NUITÉE (AVEC RESTITUTION DU 4x4 LE 01 AU SOIR) -->
-  <section id="lodging-section" class="max-w-6xl mx-auto px-4 py-8">
+  <!-- 4. HÉBERGEMENTS PAR NUITÉE -->
+  <section id="lodging-section" class="max-w-6xl mx-auto px-4 py-6">
     <div class="flex items-center justify-between mb-6">
       <div>
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Hébergements par Nuitée</h2>
@@ -403,50 +348,168 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="lodging-cards-container"></div>
   </section>
 
-  <!-- 5. MODULES OUTILS TERRAIN -->
-  <section id="tools-section" class="max-w-6xl mx-auto px-4 py-8">
+  <!-- 5. SECTION VOLS OFFICIELS EASYJET (DÉPLACÉE APRÈS LES HÉBERGEMENTS) -->
+  <section id="flights-section" class="max-w-6xl mx-auto px-4 py-6">
+    <div class="mb-4">
+      <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+        <i data-lucide="plane" class="w-6 h-6 text-brand-400"></i> Vols Officiels EasyJet
+      </h2>
+      <p class="text-xs text-slate-400">Horaires stricts, dépose-bagages et restitution du véhicule avant départ.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <!-- Vol Aller -->
+      <div class="glass p-5 rounded-3xl border border-surface-border relative overflow-hidden">
+        <div class="flex items-center justify-between pb-2 mb-3 border-b border-surface-border">
+          <div class="flex items-center gap-2">
+            <span class="p-1.5 rounded-xl bg-brand-500/20 text-brand-400">🛫</span>
+            <div>
+              <span class="text-xs font-bold text-white block">Vol Aller • EJU4583</span>
+              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-400 border border-brand-400/20">Mardi 26 Janvier 2027</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Départ Paris</span>
+            <span class="font-bold text-white text-sm">05h00</span>
+            <span class="text-[11px] text-slate-300 block">CDG (Terminal 2D)</span>
+          </div>
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Arrivée Islande</span>
+            <span class="font-bold text-brand-400 text-sm">07h50</span>
+            <span class="text-[11px] text-slate-300 block">Keflavík (KEF)</span>
+          </div>
+        </div>
+        <div class="space-y-1.5 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
+          <div class="flex justify-between">
+            <span>Dépose-bagages ouvre :</span>
+            <strong class="text-slate-200">02h00</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Dépose-bagages ferme :</span>
+            <strong class="text-amber-400">04h00</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Fin enregistrement :</span>
+            <span class="text-slate-300">04h00 (H-60 min)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vol Retour -->
+      <div class="glass p-5 rounded-3xl border border-surface-border relative overflow-hidden">
+        <div class="flex items-center justify-between pb-2 mb-3 border-b border-surface-border">
+          <div class="flex items-center gap-2">
+            <span class="p-1.5 rounded-xl bg-purple-500/20 text-purple-400">🛬</span>
+            <div>
+              <span class="text-xs font-bold text-white block">Vol Retour • EJU4584</span>
+              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 border border-purple-400/20">Mardi 02 Février 2027</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Départ Islande</span>
+            <span class="font-bold text-white text-sm">08h30</span>
+            <span class="text-[11px] text-slate-300 block">Keflavík (KEF)</span>
+          </div>
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Arrivée Paris</span>
+            <span class="font-bold text-brand-400 text-sm">12h55</span>
+            <span class="text-[11px] text-slate-300 block">CDG (Terminal 2D)</span>
+          </div>
+        </div>
+        <div class="space-y-1.5 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
+          <div class="flex justify-between">
+            <span>Dépose-bagages ouvre :</span>
+            <strong class="text-slate-200">06h30</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Dépose-bagages ferme :</span>
+            <strong class="text-amber-400">07h50</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Restitution 4x4 :</span>
+            <strong class="text-emerald-400">Lundi 01 Février au soir</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. MODULES OUTILS TERRAIN (AVEC NOUVEAU PESE-BAGAGE 23KG) -->
+  <section id="tools-section" class="max-w-6xl mx-auto px-4 py-6">
     <div class="mb-6">
       <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Outils Terrain Indispensables</h2>
-      <p class="text-xs text-slate-400">Convertisseur ISK/EUR, valises et sécurité routière live.</p>
+      <p class="text-xs text-slate-400">Contrôle du poids des bagages en soute, checklist valises et sécurité routière live.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-      <!-- Convertisseur ISK / EUR -->
+      <!-- 1. NOUVEAU MODULE : PÈSE-BAGAGES EN SOUTE (23 KG MAX PAR BAGAGE) -->
       <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
         <div>
-          <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center justify-between mb-2">
             <h3 class="text-sm font-bold text-white flex items-center gap-2">
-              <i data-lucide="calculator" class="w-4 h-4 text-brand-400"></i> ISK ➔ EUR
+              <i data-lucide="scale" class="w-4 h-4 text-brand-400"></i> Poids Valises (23 kg)
             </h3>
-            <span class="text-[10px] font-mono text-slate-400 bg-slate-800 px-2 py-0.5 rounded">1 € ≈ 150 ISK</span>
+            <span class="text-[10px] font-mono bg-slate-800 text-brand-400 px-2 py-0.5 rounded">EasyJet Hold</span>
+          </div>
+          <p class="text-[11px] text-slate-400 mb-3">Saisis le poids approximatif pour vérifier que tu ne dépasses pas les 23,0 kg autorisés.</p>
+
+          <!-- Valise 1 -->
+          <div class="p-3 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2 mb-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-white">Valise 1 (Principale)</span>
+              <span id="bag1Status" class="text-[10px] font-mono font-bold text-emerald-400">0.0 / 23 kg</span>
+            </div>
+            <div class="relative">
+              <input type="number" step="0.1" min="0" max="32" id="bag1Weight" value="18.5" oninput="updateBagWeight()" class="w-full bg-slate-900 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-xs text-white font-bold pr-10 outline-none" />
+              <span class="absolute right-3 top-1.5 text-xs text-slate-400 font-mono">kg</span>
+            </div>
+            <!-- Jauge visuelle -->
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div id="bag1Bar" class="bg-brand-500 h-full transition-all duration-300" style="width: 80%;"></div>
+            </div>
+            <div class="text-[10px] text-slate-400 flex justify-between" id="bag1Remaining">
+              <span>Reste dispo : 4.5 kg</span>
+            </div>
           </div>
 
-          <div class="space-y-3">
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Montant en couronnes (ISK)</label>
-              <div class="relative">
-                <input type="number" id="iskInput" value="5000" step="500" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white font-semibold text-xs" oninput="convertCurrency('isk')" />
-                <span class="absolute right-3 top-2 text-xs text-slate-500">ISK</span>
-              </div>
+          <!-- Valise 2 (Optionnelle) -->
+          <div id="bag2Container" class="p-3 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2 mb-2 hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-semibold text-white">Valise 2 (Secondaire)</span>
+              <span id="bag2Status" class="text-[10px] font-mono font-bold text-emerald-400">0.0 / 23 kg</span>
             </div>
-
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">Équivalent en Euros (€)</label>
-              <div class="relative">
-                <input type="number" id="eurInput" value="33.33" step="1" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-brand-400 font-bold text-xs" oninput="convertCurrency('eur')" />
-                <span class="absolute right-3 top-2 text-xs text-brand-500">EUR</span>
-              </div>
+            <div class="relative">
+              <input type="number" step="0.1" min="0" max="32" id="bag2Weight" value="15.0" oninput="updateBagWeight()" class="w-full bg-slate-900 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-xs text-white font-bold pr-10 outline-none" />
+              <span class="absolute right-3 top-1.5 text-xs text-slate-400 font-mono">kg</span>
+            </div>
+            <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+              <div id="bag2Bar" class="bg-brand-500 h-full transition-all duration-300" style="width: 65%;"></div>
+            </div>
+            <div class="text-[10px] text-slate-400 flex justify-between" id="bag2Remaining">
+              <span>Reste dispo : 8.0 kg</span>
             </div>
           </div>
+
+          <button onclick="toggleBag2()" id="btnToggleBag2" class="w-full py-1.5 text-[11px] rounded-xl border border-dashed border-surface-border text-slate-400 hover:text-brand-400 hover:border-brand-400 transition-all text-center">
+            + Ajouter une 2ème valise
+          </button>
         </div>
 
         <div class="mt-4 pt-3 border-t border-surface-border/50 text-[11px] text-slate-400">
-          💡 <em>Repères : Skyr ≈ 400 ISK (2,7 €) • Plein carburant SUV ≈ 15 000 ISK (100 €).</em>
+          ⚖️ <em>Pèse toujours avec chaussures de rando ou manteaux les plus lourds sur toi à l'embarquement.</em>
         </div>
       </div>
 
-      <!-- Valises -->
+      <!-- 2. Valises (Checklist) -->
       <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between mb-2">
@@ -471,7 +534,7 @@
         </div>
       </div>
 
-      <!-- Liens Sécurité -->
+      <!-- 3. Liens Sécurité -->
       <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
         <div>
           <h3 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
@@ -737,7 +800,7 @@
     updateCountdown();
 
     // =========================================================================
-    // 2. CONVERTISSEUR MONNAIE
+    // 2. CONVERTISSEUR MONNAIE EXPRESS
     // =========================================================================
     const RATE = 150;
     function convertCurrency(source) {
@@ -751,7 +814,105 @@
     }
 
     // =========================================================================
-    // 3. MODULE VALISES
+    // 3. PÈSE-BAGAGES EN SOUTE (23 KG MAX)
+    // =========================================================================
+    function getStoredBags() {
+      return JSON.parse(localStorage.getItem("iceland_bag_weights_v1") || '{"bag1": 18.5, "bag2": 15.0, "hasBag2": false}');
+    }
+
+    function initBags() {
+      const data = getStoredBags();
+      document.getElementById("bag1Weight").value = data.bag1;
+      document.getElementById("bag2Weight").value = data.bag2;
+      const b2 = document.getElementById("bag2Container");
+      const btn = document.getElementById("btnToggleBag2");
+
+      if (data.hasBag2) {
+        b2.classList.remove("hidden");
+        btn.innerText = "✕ Retirer la 2ème valise";
+        btn.classList.add("text-red-400", "border-red-500/30");
+      } else {
+        b2.classList.add("hidden");
+        btn.innerText = "+ Ajouter une 2ème valise";
+        btn.classList.remove("text-red-400", "border-red-500/30");
+      }
+      updateBagWeight(false);
+    }
+
+    function updateBagWeight(shouldSave = true) {
+      const b1 = parseFloat(document.getElementById("bag1Weight").value) || 0;
+      const b2 = parseFloat(document.getElementById("bag2Weight").value) || 0;
+      const hasBag2 = !document.getElementById("bag2Container").classList.contains("hidden");
+
+      // Calcul Valise 1
+      const pct1 = Math.min(100, Math.round((b1 / 23) * 100));
+      const bar1 = document.getElementById("bag1Bar");
+      const stat1 = document.getElementById("bag1Status");
+      const rem1 = document.getElementById("bag1Remaining");
+
+      bar1.style.width = pct1 + "%";
+      stat1.innerText = b1.toFixed(1) + " / 23 kg";
+
+      if (b1 > 23) {
+        bar1.className = "bg-red-500 h-full transition-all duration-300";
+        stat1.className = "text-[10px] font-mono font-bold text-red-400";
+        rem1.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge de ${(b1 - 23).toFixed(1)} kg !</span>`;
+      } else {
+        bar1.className = (b1 >= 21 ? "bg-amber-400" : "bg-brand-500") + " h-full transition-all duration-300";
+        stat1.className = "text-[10px] font-mono font-bold text-emerald-400";
+        rem1.innerHTML = `<span>Reste dispo : ${(23 - b1).toFixed(1)} kg</span>`;
+      }
+
+      // Calcul Valise 2
+      if (hasBag2) {
+        const pct2 = Math.min(100, Math.round((b2 / 23) * 100));
+        const bar2 = document.getElementById("bag2Bar");
+        const stat2 = document.getElementById("bag2Status");
+        const rem2 = document.getElementById("bag2Remaining");
+
+        bar2.style.width = pct2 + "%";
+        stat2.innerText = b2.toFixed(1) + " / 23 kg";
+
+        if (b2 > 23) {
+          bar2.className = "bg-red-500 h-full transition-all duration-300";
+          stat2.className = "text-[10px] font-mono font-bold text-red-400";
+          rem2.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge de ${(b2 - 23).toFixed(1)} kg !</span>`;
+        } else {
+          bar2.className = (b2 >= 21 ? "bg-amber-400" : "bg-brand-500") + " h-full transition-all duration-300";
+          stat2.className = "text-[10px] font-mono font-bold text-emerald-400";
+          rem2.innerHTML = `<span>Reste dispo : ${(23 - b2).toFixed(1)} kg</span>`;
+        }
+      }
+
+      if (shouldSave) {
+        localStorage.setItem("iceland_bag_weights_v1", JSON.stringify({
+          bag1: b1,
+          bag2: b2,
+          hasBag2: hasBag2
+        }));
+      }
+    }
+
+    function toggleBag2() {
+      const b2 = document.getElementById("bag2Container");
+      const btn = document.getElementById("btnToggleBag2");
+      const isVisible = !b2.classList.contains("hidden");
+
+      if (isVisible) {
+        b2.classList.add("hidden");
+        btn.innerText = "+ Ajouter une 2ème valise";
+        btn.classList.remove("text-red-400", "border-red-500/30");
+      } else {
+        b2.classList.remove("hidden");
+        btn.innerText = "✕ Retirer la 2ème valise";
+        btn.classList.add("text-red-400", "border-red-500/30");
+      }
+      updateBagWeight(true);
+    }
+    initBags();
+
+    // =========================================================================
+    // 4. MODULE CHECKLIST VALISES
     // =========================================================================
     function getStoredValise() {
       return JSON.parse(localStorage.getItem("iceland_valise_items_v10") || "[]");
@@ -846,7 +1007,7 @@
     initChecklist();
 
     // =========================================================================
-    // 4. CALENDRIER RÉEL : 26 JANVIER AU 01 FÉVRIER (02 FÉVRIER = DÉPART)
+    // 5. CALENDRIER RÉEL : 26 JANVIER AU 01 FÉVRIER (02 FÉVRIER = DÉPART)
     // =========================================================================
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -953,7 +1114,7 @@
     }
 
     // =========================================================================
-    // 5. HÉBERGEMENTS PAR NUITÉE (DATES RÉELLES & RESTITUTION DU 4x4 LE 01)
+    // 6. HÉBERGEMENTS PAR NUITÉE (DATES RÉELLES & RESTITUTION DU 4x4 LE 01)
     // =========================================================================
     const BLANK_LODGINGS = [
       { night: 1, date: "Mardi 26 Janvier", name: "", location: "Zone Selfoss", checkin: "Dès 15h00", address: "", phone: "", notes: "Arrivée après Raufarhólshellir et courses Bónus" },
@@ -1096,7 +1257,7 @@
     renderLodgings();
 
     // =========================================================================
-    // 6. GESTION DES LISTES ET GLISSER-DÉPOSER (CALENDRIER RÉEL)
+    // 7. GESTION DES LISTES ET GLISSER-DÉPOSER (CALENDRIER RÉEL)
     // =========================================================================
     let sortableInstances = [];
 
@@ -1285,7 +1446,7 @@
     renderPlacesList();
 
     // =========================================================================
-    // 7. CARTE INTERACTIVE LEAFLET AVEC VRAIES DATES
+    // 8. CARTE INTERACTIVE LEAFLET AVEC VRAIES DATES
     // =========================================================================
     const map = L.map('map', { zoomControl: false }).setView([63.9, -19.5], 8);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -1427,7 +1588,7 @@
     }
 
     // =========================================================================
-    // 8. MÉTÉO 10 JOURS AVEC SURBRILLANCE DU JOUR ACTUEL
+    // 9. MÉTÉO 10 JOURS AVEC SURBRILLANCE DU JOUR ACTUEL
     // =========================================================================
     function getWeatherIcon(code) {
       if ([0].includes(code)) return "☀️";
