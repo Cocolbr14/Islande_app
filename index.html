@@ -123,7 +123,7 @@
       <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold uppercase tracking-wider text-slate-300">
         <a href="#weather-section" class="hover:text-brand-400 transition-colors">Météo 10j</a>
         <a href="#map-section" class="hover:text-brand-400 transition-colors">Carte</a>
-        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Planning</a>
+        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Planning & Menus</a>
         <a href="#lodging-section" class="hover:text-brand-400 transition-colors">Hébergements</a>
         <a href="#flights-section" class="hover:text-brand-400 transition-colors">Vols</a>
         <a href="#tools-section" class="hover:text-brand-400 transition-colors">Outils</a>
@@ -272,15 +272,15 @@
     </div>
   </section>
 
-  <!-- 3. ÉTAPES, HORAIRES & DISTANCES PAR DATES RÉELLES -->
+  <!-- 3. ÉTAPES, HORAIRES & MENUS PAR JOUR -->
   <section id="places-manager" class="max-w-6xl mx-auto px-4 py-6">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
       <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme & Horaires Cibles par Date</h2>
-        <p class="text-xs text-slate-400">Calibré sur la lumière d'hiver (10h00 - 16h30). Réorganisez en glissant via <span class="text-brand-400 font-bold">⋮⋮</span>.</p>
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme, Horaires & Menus du Jour</h2>
+        <p class="text-xs text-slate-400">Étapes de route, horaires cibles et prévision des repas midi / soir. Glissez via <span class="text-brand-400 font-bold">⋮⋮</span>.</p>
       </div>
       <div class="flex gap-2">
-        <button onclick="resetDefaultSteps()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser dates & étapes</button>
+        <button onclick="resetDefaultSteps()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser dates</button>
         <button onclick="toggleAddPlaceForm()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-500 hover:bg-brand-600 text-white flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
           <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter un lieu
         </button>
@@ -606,6 +606,54 @@
     </div>
   </div>
 
+  <!-- NOUVELLE MODALE D'ÉDITION DES REPAS (MIDI & SOIR) -->
+  <div id="mealModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass w-full max-w-lg p-6 rounded-3xl border border-surface-border">
+      <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
+        <span id="modalMealTitle">Repas du Jour</span>
+        <button onclick="closeMealModal()" class="text-slate-400 hover:text-white">✕</button>
+      </h3>
+      <input type="hidden" id="editMealDateKey" />
+
+      <div class="space-y-4 text-xs">
+        <!-- Midi -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2">
+          <div class="flex items-center gap-2 font-bold text-brand-400">
+            <span>🥪</span> Repas du Midi (Déjeuner / Pique-nique)
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Nom du plat / Repas</label>
+            <input type="text" id="editLunchTitle" placeholder="Ex: Wraps thon maïs ou Soupe de homard Jökulsárlón" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Ingrédients / Courses à prévoir / Adresse</label>
+            <input type="text" id="editLunchNotes" placeholder="Ex: Galettes, boîte de thon, maïs, thermos eau chaude" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
+          </div>
+        </div>
+
+        <!-- Soir -->
+        <div class="p-3.5 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2">
+          <div class="flex items-center gap-2 font-bold text-amber-300">
+            <span>🍲</span> Repas du Soir (Dîner)
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Nom du plat / Restaurant</label>
+            <input type="text" id="editDinnerTitle" placeholder="Ex: Pavé de saumon & riz ou Smidjan Brugghus à Vík" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
+          </div>
+          <div>
+            <label class="block text-slate-400 mb-1">Ingrédients / Courses / Réservation</label>
+            <input type="text" id="editDinnerNotes" placeholder="Ex: Saumon Bónus, sachet de riz, sauce soja, Skyr myrtille" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-5 flex justify-end gap-2">
+        <button onclick="closeMealModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
+        <button onclick="saveMealData()" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer le menu</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     lucide.createIcons();
 
@@ -677,6 +725,7 @@
       try {
         setSyncStatus(false, "Sync...");
 
+        // 1. Étapes
         const { data: stepsData, error: stepsErr } = await supabaseClient
           .from('iceland_steps')
           .select('*')
@@ -701,6 +750,7 @@
           recalculateMap();
         }
 
+        // 2. Hébergements
         const { data: lodgingsData, error: lErr } = await supabaseClient
           .from('iceland_lodgings')
           .select('*')
@@ -721,6 +771,23 @@
           renderLodgings();
         }
 
+        // 3. Menus des repas
+        const { data: mealsData, error: mErr } = await supabaseClient
+          .from('iceland_meals')
+          .select('*');
+
+        if (!mErr && mealsData && mealsData.length > 0) {
+          const mealsMap = {};
+          mealsData.forEach(m => {
+            mealsMap[m.date_key] = {
+              lunch: { title: m.lunch_title || '', notes: m.lunch_notes || '' },
+              dinner: { title: m.dinner_title || '', notes: m.dinner_notes || '' }
+            };
+          });
+          localStorage.setItem("iceland_meals_data_v1", JSON.stringify(mealsMap));
+          renderPlacesList();
+        }
+
         setSyncStatus(true, "Synchronisé");
       } catch (e) {
         console.warn("Échec sync cloud, maintien local :", e);
@@ -732,7 +799,7 @@
     window.addEventListener('offline', () => setSyncStatus(false, "Hors-ligne"));
 
     // =========================================================================
-    // 1. COMPTE À REBOURS DU VOL ALLER (26 Janvier 2027 à 05h00 UTC+1 Paris)
+    // 1. COMPTE À REBOURS DU VOL ALLER
     // =========================================================================
     const TARGET_DATE = new Date("2027-01-26T04:00:00Z").getTime();
 
@@ -777,9 +844,9 @@
     }
 
     // =========================================================================
-    // 3. MODULE VALISES AVEC PESÉE AUTOMATIQUE ET CALCUL DU POIDS TOTAL
+    // 3. MODULE VALISES AVEC PESÉE AUTOMATIQUE
     // =========================================================================
-    let activeBag = 'bag1'; // 'bag1' ou 'bag2'
+    let activeBag = 'bag1';
 
     function getStoredLuggage() {
       return JSON.parse(localStorage.getItem("iceland_luggage_v2") || JSON.stringify({
@@ -816,11 +883,9 @@
       const items = data[activeBag] || [];
       const container = document.getElementById("bag-items-list");
 
-      // Calcul total
       const totalWeight = items.reduce((sum, item) => sum + (parseFloat(item.weight) || 0), 0);
       const checkedCount = items.filter(i => i.checked).length;
 
-      // Mise à jour de l'en-tête de la jauge
       document.getElementById("currentBagLabel").innerText = (activeBag === 'bag1') ? "Valise 1 (Principale)" : "Valise 2 (Secondaire)";
       const weightDisplay = document.getElementById("currentBagWeightDisplay");
       weightDisplay.innerText = `${totalWeight.toFixed(1)} / 23.0 kg`;
@@ -843,7 +908,6 @@
 
       document.getElementById("currentBagCheckRatio").innerText = `${checkedCount}/${items.length} coché(s)`;
 
-      // Rendu des lignes
       if (items.length === 0) {
         container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-3 text-center">Cette valise est vide. Ajoute des affaires ci-dessous avec leur poids.</div>`;
         return;
@@ -921,7 +985,96 @@
     renderLuggage();
 
     // =========================================================================
-    // 4. CALENDRIER RÉEL : 26 JANVIER AU 01 FÉVRIER (02 FÉVRIER = DÉPART)
+    // 4. MODULE DES MENUS DU MIDI ET DU SOIR (PAR DATE)
+    // =========================================================================
+    const DEFAULT_MEALS = {
+      "2027-01-26": {
+        lunch: { title: "Sandwichs sur le pouce", notes: "Achetés après le vol KEF / courses Selfoss" },
+        dinner: { title: "Pâtes réconfortantes au logement", notes: "Pâtes, sauce tomate, fromage râpé, Skyr" }
+      },
+      "2027-01-27": {
+        lunch: { title: "Pique-nique Skógafoss", notes: "Wraps thon/maïs ou sandwichs préparés le matin" },
+        dinner: { title: "Restaurant / Burgers à Vík", notes: "Smidjan Brugghus ou Black Crust Pizza" }
+      },
+      "2027-01-28": {
+        lunch: { title: "Encas chaud thermos / Fjaðrárgljúfur", notes: "Nouilles chaudes en thermos + barres d'énergie" },
+        dinner: { title: "Poêlée au logement (Skaftafell)", notes: "Riz, saumon poêlé, légumes croquants" }
+      },
+      "2027-01-29": {
+        lunch: { title: "Soupe chaude au Café Jökulsárlón", notes: "Soupe de homard / sandwich agneau face aux icebergs" },
+        dinner: { title: "Dîner au chaud face aux glaciers", notes: "Plat mijoté chaud / pâtes carbonara maison" }
+      },
+      "2027-01-30": {
+        lunch: { title: "Hot-dogs islandais (Pylsur)", notes: "Pris en station N1 après la grotte de glace" },
+        dinner: { title: "Dîner d'anniversaire festif à Hella 🎂", notes: "Restaurant local ou bon repas spécial cottage" }
+      },
+      "2027-01-31": {
+        lunch: { title: "Déjeuner Geysir Center", notes: "Buffet chaud ou soupe traditionnelle islandaise" },
+        dinner: { title: "Dîner après les bains chauds Secret Lagoon", notes: "Friðheimar (soupe de tomates) ou cuisine logement" }
+      },
+      "2027-02-01": {
+        lunch: { title: "Déjeuner street-food à Reykjavík", notes: "Célèbres hot-dogs Bæjarins Beztu ou resto du port" },
+        dinner: { title: "Dernier dîner à l'aéroport Keflavík", notes: "Resto à Keflavík après avoir rendu le SUV 4x4" }
+      }
+    };
+
+    function getMeals() {
+      return JSON.parse(localStorage.getItem("iceland_meals_data_v1") || JSON.stringify(DEFAULT_MEALS));
+    }
+
+    function openMealModal(dateKey) {
+      const meals = getMeals();
+      const m = meals[dateKey] || { lunch: { title: "", notes: "" }, dinner: { title: "", notes: "" } };
+      const cfg = DAYS_CONFIG.find(d => d.key === dateKey);
+
+      document.getElementById("editMealDateKey").value = dateKey;
+      document.getElementById("modalMealTitle").innerText = `Menus : ${cfg ? cfg.fullLabel : dateKey}`;
+      document.getElementById("editLunchTitle").value = m.lunch ? m.lunch.title : "";
+      document.getElementById("editLunchNotes").value = m.lunch ? m.lunch.notes : "";
+      document.getElementById("editDinnerTitle").value = m.dinner ? m.dinner.title : "";
+      document.getElementById("editDinnerNotes").value = m.dinner ? m.dinner.notes : "";
+
+      document.getElementById("mealModal").classList.remove("hidden");
+    }
+
+    function closeMealModal() {
+      document.getElementById("mealModal").classList.add("hidden");
+    }
+
+    async function saveMealData() {
+      const dateKey = document.getElementById("editMealDateKey").value;
+      const meals = getMeals();
+      const cfg = DAYS_CONFIG.find(d => d.key === dateKey);
+
+      const lunchTitle = document.getElementById("editLunchTitle").value.trim();
+      const lunchNotes = document.getElementById("editLunchNotes").value.trim();
+      const dinnerTitle = document.getElementById("editDinnerTitle").value.trim();
+      const dinnerNotes = document.getElementById("editDinnerNotes").value.trim();
+
+      meals[dateKey] = {
+        lunch: { title: lunchTitle, notes: lunchNotes },
+        dinner: { title: dinnerTitle, notes: dinnerNotes }
+      };
+
+      localStorage.setItem("iceland_meals_data_v1", JSON.stringify(meals));
+      closeMealModal();
+      renderPlacesList();
+
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_meals').upsert([{
+          date_key: dateKey,
+          date_label: cfg ? cfg.fullLabel : dateKey,
+          lunch_title: lunchTitle,
+          lunch_notes: lunchNotes,
+          dinner_title: dinnerTitle,
+          dinner_notes: dinnerNotes,
+          updated_at: new Date()
+        }]);
+      }
+    }
+
+    // =========================================================================
+    // 5. CALENDRIER RÉEL : 26 JANVIER AU 01 FÉVRIER
     // =========================================================================
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -1028,7 +1181,7 @@
     }
 
     // =========================================================================
-    // 5. HÉBERGEMENTS PAR NUITÉE (DATES RÉELLES & RESTITUTION DU 4x4 LE 01)
+    // 6. HÉBERGEMENTS PAR NUITÉE
     // =========================================================================
     const BLANK_LODGINGS = [
       { night: 1, date: "Mardi 26 Janvier", name: "", location: "Zone Selfoss", checkin: "Dès 15h00", address: "", phone: "", notes: "Arrivée après Raufarhólshellir et courses Bónus" },
@@ -1171,7 +1324,7 @@
     renderLodgings();
 
     // =========================================================================
-    // 7. GESTION DES LISTES ET GLISSER-DÉPOSER (CALENDRIER RÉEL)
+    // 7. GESTION DES LISTES, ÉTAPES ET MENUS PAR JOUR
     // =========================================================================
     let sortableInstances = [];
 
@@ -1180,15 +1333,20 @@
       sortableInstances = [];
 
       const steps = getSteps();
+      const meals = getMeals();
       const container = document.getElementById("places-container");
 
       container.innerHTML = DAYS_CONFIG.map(dayCfg => {
         const daySteps = steps.filter(s => s.dateKey === dayCfg.key);
+        const dayMeal = meals[dayCfg.key] || { lunch: { title: "", notes: "" }, dinner: { title: "", notes: "" } };
 
         let totalDayKm = 0;
         for (let i = 0; i < daySteps.length - 1; i++) {
           totalDayKm += calculateDistance(daySteps[i].lat, daySteps[i].lng, daySteps[i+1].lat, daySteps[i+1].lng);
         }
+
+        const hasLunch = dayMeal.lunch && dayMeal.lunch.title;
+        const hasDinner = dayMeal.dinner && dayMeal.dinner.title;
 
         return `
           <div class="glass p-4 rounded-3xl border border-surface-border flex flex-col justify-between">
@@ -1205,7 +1363,8 @@
                 </div>
               </div>
 
-              <div class="min-h-[50px] p-1 rounded-2xl bg-slate-900/30 border border-surface-border/30 drop-zone" data-date="${dayCfg.key}" id="day-list-${dayCfg.key}">
+              <!-- Zone des étapes de route -->
+              <div class="min-h-[40px] p-1 rounded-2xl bg-slate-900/30 border border-surface-border/30 drop-zone mb-3" data-date="${dayCfg.key}" id="day-list-${dayCfg.key}">
                 ${daySteps.map((s, idx) => {
                   let distanceTag = '';
                   if (idx > 0) {
@@ -1245,6 +1404,40 @@
                     </div>
                   `;
                 }).join('')}
+              </div>
+
+              <!-- Bloc Menus du Midi & du Soir -->
+              <div class="p-2.5 rounded-2xl bg-slate-900/70 border border-surface-border/60 text-xs">
+                <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-surface-border/40">
+                  <span class="text-[11px] font-bold text-white flex items-center gap-1">
+                    <span>🍽️</span> Menus du Jour
+                  </span>
+                  <button onclick="openMealModal('${dayCfg.key}')" class="text-[10px] font-semibold text-brand-400 hover:underline flex items-center gap-0.5">
+                    <i data-lucide="edit-3" class="w-3 h-3"></i> Modifier
+                  </button>
+                </div>
+
+                <div class="space-y-1.5 text-[11px]">
+                  <!-- Midi -->
+                  <div class="flex items-start gap-1.5">
+                    <span class="shrink-0 mt-0.5">🥪</span>
+                    <div class="leading-snug truncate">
+                      <span class="font-bold text-brand-400">Midi :</span>
+                      <span class="${hasLunch ? 'text-slate-200' : 'text-slate-500 italic'}">${dayMeal.lunch.title || 'À définir'}</span>
+                      ${dayMeal.lunch.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${dayMeal.lunch.notes}</div>` : ''}
+                    </div>
+                  </div>
+
+                  <!-- Soir -->
+                  <div class="flex items-start gap-1.5 pt-1 border-t border-surface-border/30">
+                    <span class="shrink-0 mt-0.5">🍲</span>
+                    <div class="leading-snug truncate">
+                      <span class="font-bold text-amber-300">Soir :</span>
+                      <span class="${hasDinner ? 'text-slate-200' : 'text-slate-500 italic'}">${dayMeal.dinner.title || 'À définir'}</span>
+                      ${dayMeal.dinner.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${dayMeal.dinner.notes}</div>` : ''}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="text-[10px] text-slate-500 text-center mt-2 italic">Glisser ici pour réorganiser</div>
