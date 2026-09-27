@@ -121,10 +121,10 @@
         </div>
       </div>
       <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold uppercase tracking-wider text-slate-300">
-        <a href="#countdown-section" class="hover:text-brand-400 transition-colors">Départ</a>
+        <a href="#flights-section" class="hover:text-brand-400 transition-colors">Vols</a>
         <a href="#weather-section" class="hover:text-brand-400 transition-colors">Météo 10j</a>
         <a href="#map-section" class="hover:text-brand-400 transition-colors">Carte</a>
-        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Étapes & Trajets</a>
+        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Étapes & Horaires</a>
         <a href="#lodging-section" class="hover:text-brand-400 transition-colors">Hébergements</a>
         <a href="#tools-section" class="hover:text-brand-400 transition-colors">Outils</a>
       </nav>
@@ -147,13 +147,13 @@
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
         <div>
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-400/20 mb-2">
-            <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span> Décollage le 26 Janvier 2027 à 07h50
+            <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span> Décollage le 26 Janvier 2027 à 05h00
           </span>
           <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
             <span>❄️</span> Cap sur l'Islande
           </h2>
           <p class="text-xs text-slate-400 mt-1">
-            Du <strong class="text-slate-200">26 janvier</strong> au <strong class="text-slate-200">02 février 2027</strong> • 7 jours d'expédition le long de la Route 1.
+            Du <strong class="text-slate-200">26 janvier</strong> au <strong class="text-slate-200">02 février 2027</strong> • 7 jours d'expédition le long du Sud islandais.
           </p>
         </div>
 
@@ -176,6 +176,93 @@
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- NOUVELLE SECTION VOLS OFFICIELS EASYJET -->
+  <section id="flights-section" class="max-w-6xl mx-auto px-4 py-3">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <!-- Vol Aller -->
+      <div class="glass p-4 rounded-3xl border border-surface-border relative overflow-hidden">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
+          <div class="flex items-center gap-2">
+            <span class="p-1.5 rounded-xl bg-brand-500/20 text-brand-400">🛫</span>
+            <div>
+              <span class="text-xs font-bold text-white block">Vol Aller • EJU4583</span>
+              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-400 border border-brand-400/20">Mardi 26 Janvier 2027</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Départ</span>
+            <span class="font-bold text-white text-sm">05h00</span>
+            <span class="text-[11px] text-slate-300 block">Paris CDG (Terminal 2D)</span>
+          </div>
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Arrivée</span>
+            <span class="font-bold text-brand-400 text-sm">07h50</span>
+            <span class="text-[11px] text-slate-300 block">Reykjavík (KEF)</span>
+          </div>
+        </div>
+        <div class="space-y-1 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
+          <div class="flex justify-between">
+            <span>Dépose-bagages ouvre :</span>
+            <strong class="text-slate-200">02h00</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Dépose-bagages ferme :</span>
+            <strong class="text-amber-400">04h00</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Fin enregistrement :</span>
+            <span class="text-slate-300">04h00 (H-60 min)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vol Retour -->
+      <div class="glass p-4 rounded-3xl border border-surface-border relative overflow-hidden">
+        <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
+          <div class="flex items-center gap-2">
+            <span class="p-1.5 rounded-xl bg-purple-500/20 text-purple-400">🛬</span>
+            <div>
+              <span class="text-xs font-bold text-white block">Vol Retour • EJU4584</span>
+              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
+            </div>
+          </div>
+          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 border border-purple-400/20">Mardi 02 Février 2027</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Départ</span>
+            <span class="font-bold text-white text-sm">08h30</span>
+            <span class="text-[11px] text-slate-300 block">Reykjavík (KEF)</span>
+          </div>
+          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
+            <span class="text-[10px] text-slate-400 block">Arrivée</span>
+            <span class="font-bold text-brand-400 text-sm">12h55</span>
+            <span class="text-[11px] text-slate-300 block">Paris CDG (Terminal 2D)</span>
+          </div>
+        </div>
+        <div class="space-y-1 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
+          <div class="flex justify-between">
+            <span>Dépose-bagages ouvre :</span>
+            <strong class="text-slate-200">06h30</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Dépose-bagages ferme :</span>
+            <strong class="text-amber-400">07h50</strong>
+          </div>
+          <div class="flex justify-between">
+            <span>Fin enregistrement :</span>
+            <span class="text-slate-300">07h50 (H-40 min)</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -240,12 +327,12 @@
     </div>
   </section>
 
-  <!-- 3. ÉTAPES & DISTANCES -->
+  <!-- 3. ÉTAPES, HORAIRES & DISTANCES -->
   <section id="places-manager" class="max-w-6xl mx-auto px-4 py-8">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
       <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme & Distances Clés</h2>
-        <p class="text-xs text-slate-400">Total journalier et distances entre chaque point d'arrêt. Glissez les étapes via <span class="text-brand-400 font-bold">⋮⋮</span>.</p>
+        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme, Horaires Cibles & Distances</h2>
+        <p class="text-xs text-slate-400">Créneaux horaires optimisés pour la lumière du jour (~10h à 16h30 en janvier). Glissez via <span class="text-brand-400 font-bold">⋮⋮</span>.</p>
       </div>
       <div class="flex gap-2">
         <button onclick="resetDefaultSteps()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser étapes</button>
@@ -260,21 +347,25 @@
       <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
         <i data-lucide="map-pin" class="w-4 h-4 text-brand-400"></i> Nouveau point d'étape
       </h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 text-xs">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 text-xs">
         <div>
           <label class="block text-slate-400 mb-1">Nom du lieu</label>
           <input type="text" id="newPlaceName" placeholder="Ex: Spot Cascade Secrète" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
         </div>
         <div>
+          <label class="block text-slate-400 mb-1">Créneau horaire</label>
+          <input type="text" id="newPlaceTime" placeholder="Ex: 11h30 - 13h00" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        </div>
+        <div>
           <label class="block text-slate-400 mb-1">Jour attribué</label>
           <select id="newPlaceDay" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white">
-            <option value="1">Jour 1 (Reykjanes / Selfoss)</option>
-            <option value="2">Jour 2 (Cascades Sud / Vík)</option>
-            <option value="3">Jour 3 (Canyons / Skaftafell)</option>
-            <option value="4">Jour 4 (Jökulsárlón)</option>
-            <option value="5">Jour 5 (Grotte de Glace / Hella)</option>
-            <option value="6">Jour 6 (Cercle d'Or)</option>
-            <option value="7">Jour 7 (Reykjavík / KEF)</option>
+            <option value="1">Jour 1 (Arrivée KEF / Reykjanes / Selfoss)</option>
+            <option value="2">Jour 2 (Cascades Sud / Reynisfjara / Vík)</option>
+            <option value="3">Jour 3 (Canyons / Eldhraun / Skaftafell)</option>
+            <option value="4">Jour 4 (Lagune Jökulsárlón / Glaciers)</option>
+            <option value="5">Jour 5 (Grotte de Glace / Repli Ouest Hella)</option>
+            <option value="6">Jour 6 (Cercle d'Or / Secret Lagoon)</option>
+            <option value="7">Jour 7 (Kerið / Reykjavík / KEF)</option>
           </select>
         </div>
         <div>
@@ -299,7 +390,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="places-container"></div>
   </section>
 
-  <!-- 4. HÉBERGEMENTS PAR NUITÉE -->
+  <!-- 4. HÉBERGEMENTS PAR NUITÉE (NUIT 4 CORRIGÉE À SKAFTAFELL / JÖKULSÁRLÓN) -->
   <section id="lodging-section" class="max-w-6xl mx-auto px-4 py-8">
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -449,7 +540,7 @@
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-slate-400 mb-1">Ville / Secteur</label>
-            <input type="text" id="editLodgingLocation" placeholder="Ex: Vík í Mýrdal" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+            <input type="text" id="editLodgingLocation" placeholder="Ex: Skaftafell / Jökulsárlón" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
           </div>
           <div>
             <label class="block text-slate-400 mb-1">Heure de Check-in</label>
@@ -458,7 +549,7 @@
         </div>
         <div>
           <label class="block text-slate-400 mb-1">Adresse exacte ou Coordonnées GPS</label>
-          <input type="text" id="editLodgingAddress" placeholder="Ex: Hvoll, 881 Kirkjubæjarklaustur" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+          <input type="text" id="editLodgingAddress" placeholder="Ex: Hnappavellir, 785 Öræfi" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
         </div>
         <div>
           <label class="block text-slate-400 mb-1">Numéro de téléphone / Contact hôte</label>
@@ -487,7 +578,7 @@
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker enregistré :', reg.scope))
+          .then(reg => console.log('Service Worker actif :', reg.scope))
           .catch(err => console.warn('Erreur Service Worker :', err));
       });
     }
@@ -559,6 +650,7 @@
             id: s.id,
             day: s.day,
             name: s.name,
+            time: s.time_slot || "",
             lat: s.lat,
             lng: s.lng,
             price: s.price,
@@ -607,7 +699,7 @@
 
         setSyncStatus(true, "Synchronisé");
       } catch (e) {
-        console.warn("Échec sync cloud, maintien des données locales :", e);
+        console.warn("Échec sync cloud, maintien local :", e);
         setSyncStatus(false, "Local (Hors-ligne)");
       }
     }
@@ -616,9 +708,9 @@
     window.addEventListener('offline', () => setSyncStatus(false, "Hors-ligne"));
 
     // =========================================================================
-    // 1. COMPTE À REBOURS DU JOUR J
+    // 1. COMPTE À REBOURS DU VOL ALLER (26 Janvier 2027 à 05h00 UTC+1 Paris)
     // =========================================================================
-    const TARGET_DATE = new Date("2027-01-26T07:50:00Z").getTime();
+    const TARGET_DATE = new Date("2027-01-26T04:00:00Z").getTime();
 
     function updateCountdown() {
       const now = new Date().getTime();
@@ -661,7 +753,7 @@
     }
 
     // =========================================================================
-    // 3. MODULE VALISES (LOCAL-FIRST + SUPABASE PUSH)
+    // 3. MODULE VALISES
     // =========================================================================
     function getStoredValise() {
       return JSON.parse(localStorage.getItem("iceland_valise_items_v10") || "[]");
@@ -756,7 +848,7 @@
     initChecklist();
 
     // =========================================================================
-    // 4. DISTANCES & ÉTAPES (LOCAL-FIRST + SUPABASE PUSH)
+    // 4. DISTANCES & ÉTAPES RÉALISTES AVEC HORAIRES CIBLES
     // =========================================================================
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -775,42 +867,52 @@
       4: '#8b5cf6', 5: '#ec4899', 6: '#10b981', 7: '#64748b'
     };
 
+    // Programme avec horaires calibrés sur le lever/coucher de soleil (~10h00 - 16h30)
     const INITIAL_STEPS = [
-      { id:"j1-1", day:1, name:"Aéroport Keflavík (07h50)", lat:63.9850, lng:-22.6056, price:"Inclus vol", desc:"Prise du SUV 4x4.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Keflavik_Airport_terminal_2012.JPG?width=640" },
-      { id:"j1-2", day:1, name:"Pont entre 2 continents", lat:63.8684, lng:-22.6755, price:"Gratuit (Parking & Accès)", desc:"Faille tectonique visible.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Bridge_between_continents,_Iceland.jpg?width=640" },
-      { id:"j1-3", day:1, name:"Zone de Gunnuhver", lat:63.8193, lng:-22.6846, price:"Gratuit (Parking & Accès)", desc:"Champs géothermiques actifs.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gunnuhver_hot_springs.jpg?width=640" },
-      { id:"j1-4", day:1, name:"Tunnel Raufarhólshellir", lat:63.9404, lng:-21.3965, price:"Visite guidée : ~132 € (2 pers)", desc:"Tunnel de lave volcanique.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Raufarh%C3%B3lshellir.jpg?width=640" },
-      { id:"j1-5", day:1, name:"Nuitée 1 : Selfoss (Bónus)", lat:63.9377, lng:-20.9995, price:"Parking gratuit", desc:"Supermarché Bónus et nuitée 1.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Selfoss_church_and_bridge.jpg?width=640" },
+      // JOUR 1 — Mardi 26 Janvier (Arrivée KEF & Péninsule)
+      { id:"j1-1", day:1, name:"Aéroport Keflavík (KEF)", time:"07h50 - 09h30", lat:63.9850, lng:-22.6056, price:"Inclus vol", desc:"Atterrissage vol EJU4583, formalités & récupération SUV 4x4.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Keflavik_Airport_terminal_2012.JPG?width=640" },
+      { id:"j1-2", day:1, name:"Pont entre 2 continents", time:"10h15 - 10h50", lat:63.8684, lng:-22.6755, price:"Gratuit (Parking & Accès)", desc:"Passerelle au-dessus de la faille Amérique/Eurasie au lever du jour.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Bridge_between_continents,_Iceland.jpg?width=640" },
+      { id:"j1-3", day:1, name:"Zone de Gunnuhver", time:"11h10 - 11h50", lat:63.8193, lng:-22.6846, price:"Gratuit (Parking & Accès)", desc:"Fumerolles bouillonnantes & cratères de boue géothermiques.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gunnuhver_hot_springs.jpg?width=640" },
+      { id:"j1-4", day:1, name:"Tunnel Raufarhólshellir", time:"13h30 - 15h00", lat:63.9404, lng:-21.3965, price:"Visite guidée : ~132 € (2 pers)", desc:"Visite du tunnel de lave volcanique avec stalactites de glace.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Raufarh%C3%B3lshellir.jpg?width=640" },
+      { id:"j1-5", day:1, name:"Nuitée 1 : Selfoss (Bónus)", time:"16h00 - Nuit", lat:63.9377, lng:-20.9995, price:"Parking gratuit", desc:"Courses au supermarché Bónus (provisions 3 jours) & repos Nuit 1.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Selfoss_church_and_bridge.jpg?width=640" },
 
-      { id:"j2-1", day:2, name:"Seljalandsfoss", lat:63.6156, lng:-19.9886, price:"Parking : 6,00 € (900 ISK)", desc:"Cascade falaise (ticket valable Gljúfrabúi).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Seljalandsfoss,_Iceland.jpg?width=640" },
-      { id:"j2-2", day:2, name:"Gljúfrabúi", lat:63.6208, lng:-19.9865, price:"Inclus ticket Seljalandsfoss", desc:"Cascade cachée dans le canyon rocheux.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Glj%C3%BAfrab%C3%BAi_waterfall.jpg?width=640" },
-      { id:"j2-3", day:2, name:"Skógafoss", lat:63.5321, lng:-19.5114, price:"Gratuit (Parking & Accès)", desc:"Chute monumentale de 60m.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Sk%C3%B3gafoss,_Iceland.jpg?width=640" },
-      { id:"j2-4", day:2, name:"Dyrhólaey", lat:63.4022, lng:-19.1303, price:"Gratuit (Parking & Accès)", desc:"Arche marine et falaises noires.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Dyrh%C3%B3laey.jpg?width=640" },
-      { id:"j2-5", day:2, name:"Plage de Reynisfjara", lat:63.4042, lng:-19.0494, price:"Parking : 6,70 € (1 000 ISK)", desc:"Sable noir & orgues (caméra Parka.is).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Reynisfjara.jpg?width=640" },
-      { id:"j2-6", day:2, name:"Nuitée 2 : Vík í Mýrdal", lat:63.4186, lng:-19.0062, price:"Selon hébergement", desc:"Village sous les falaises.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/V%C3%ADk_%C3%AD_M%C3%BDrdal.jpg?width=640" },
+      // JOUR 2 — Mercredi 27 Janvier (Cascades Monumentales & Plage Noire)
+      { id:"j2-1", day:2, name:"Seljalandsfoss", time:"10h00 - 11h15", lat:63.6156, lng:-19.9886, price:"Parking : 6,00 € (900 ISK)", desc:"Chute de 60m (attention au verglas sur le sentier).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Seljalandsfoss,_Iceland.jpg?width=640" },
+      { id:"j2-2", day:2, name:"Gljúfrabúi", time:"11h15 - 12h00", lat:63.6208, lng:-19.9865, price:"Inclus ticket Seljalandsfoss", desc:"Cascade secrète cachée dans le canyon rocheux à 500m à pied.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Glj%C3%BAfrab%C3%BAi_waterfall.jpg?width=640" },
+      { id:"j2-3", day:2, name:"Skógafoss", time:"12h45 - 14h00", lat:63.5321, lng:-19.5114, price:"Gratuit (Parking & Accès)", desc:"Puissance brute de 60m et escalier panoramique.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Sk%C3%B3gafoss,_Iceland.jpg?width=640" },
+      { id:"j2-4", day:2, name:"Dyrhólaey", time:"14h30 - 15h15", lat:63.4022, lng:-19.1303, price:"Gratuit (Parking & Accès)", desc:"Arche marine et vue spectaculaire sur les vagues de l'Atlantique.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Dyrh%C3%B3laey.jpg?width=640" },
+      { id:"j2-5", day:2, name:"Plage de Reynisfjara", time:"15h30 - 16h30", lat:63.4042, lng:-19.0494, price:"Parking : 6,70 € (1 000 ISK)", desc:"Orgues basaltiques au coucher du soleil (danger sneaker waves).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Reynisfjara.jpg?width=640" },
+      { id:"j2-6", day:2, name:"Nuitée 2 : Vík í Mýrdal", time:"17h00 - Nuit", lat:63.4186, lng:-19.0062, price:"Selon hébergement", desc:"Check-in hôtel, station N1 & restaurant à Vík.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/V%C3%ADk_%C3%AD_M%C3%BDrdal.jpg?width=640" },
 
-      { id:"j3-1", day:3, name:"Grotte de Yoda (Gígjagjá)", lat:63.4143, lng:-18.8475, price:"Gratuit (Parking & Accès)", desc:"Silhouette naturelle de Yoda.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hj%C3%B6rleifsh%C3%B6f%C3%B0i.jpg?width=640" },
-      { id:"j3-2", day:3, name:"Champ d'Eldhraun", lat:63.6766, lng:-18.1408, price:"Gratuit (Arrêts Route 1)", desc:"Champs de lave couverte de mousse.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Eldhraun.jpg?width=640" },
-      { id:"j3-3", day:3, name:"Canyon Fjaðrárgljúfur", lat:63.7713, lng:-18.1718, price:"Parking : 6,70 € (1 000 ISK)", desc:"Canyon serpentant spectaculaire.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Fja%C3%B0r%C3%A1rglj%C3%BAfur.jpg?width=640" },
-      { id:"j3-4", day:3, name:"Skaftafell & Svartifoss", lat:64.0275, lng:-16.9753, price:"Parking : 6,70 € (1 000 ISK)", desc:"Parc national & orgues hexagonaux.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Svartifoss.jpg?width=640" },
-      { id:"j3-5", day:3, name:"Nuitée 3 : Skaftafell", lat:63.9878, lng:-16.8962, price:"Selon hébergement", desc:"Au pied des glaciers.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Skaftafell.jpg?width=640" },
+      // JOUR 3 — Jeudi 28 Janvier (Canyons & Skaftafell)
+      { id:"j3-1", day:3, name:"Grotte de Yoda (Gígjagjá)", time:"10h00 - 10h45", lat:63.4143, lng:-18.8475, price:"Gratuit (Parking & Accès)", desc:"Cavité naturelle sous le mont Hjörleifshöfði.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hj%C3%B6rleifsh%C3%B6f%C3%B0i.jpg?width=640" },
+      { id:"j3-2", day:3, name:"Champ de lave d'Eldhraun", time:"11h30 - 12h00", lat:63.6766, lng:-18.1408, price:"Gratuit (Arrêts Route 1)", desc:"Étendue infinie de lave recouverte de mousse et neige.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Eldhraun.jpg?width=640" },
+      { id:"j3-3", day:3, name:"Canyon Fjaðrárgljúfur", time:"12h30 - 14h00", lat:63.7713, lng:-18.1718, price:"Parking : 6,70 € (1 000 ISK)", desc:"Canyon sinueux de 100m de profondeur.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Fja%C3%B0r%C3%A1rglj%C3%BAfur.jpg?width=640" },
+      { id:"j3-4", day:3, name:"Skaftafell & Svartifoss", time:"15h00 - 16h45", lat:64.0275, lng:-16.9753, price:"Parking : 6,70 € (1 000 ISK)", desc:"Randonnée vers la cascade d'orgues noirs au pied du glacier.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Svartifoss.jpg?width=640" },
+      { id:"j3-5", day:3, name:"Nuitée 3 : Skaftafell / Hof", time:"17h15 - Nuit", lat:63.9878, lng:-16.8962, price:"Selon hébergement", desc:"Nuitée au pied du parc national.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Skaftafell.jpg?width=640" },
 
-      { id:"j4-1", day:4, name:"Jökulsárlón & Icebergs", lat:64.0483, lng:-16.1795, price:"Parking : ~7,50 € (1 100 ISK)", desc:"Lagune des icebergs dérivants.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/J%C3%B6kuls%C3%A1rl%C3%B3n.jpg?width=640" },
-      { id:"j4-2", day:4, name:"Diamond Beach", lat:64.0443, lng:-16.1777, price:"Inclus ticket Jökulsárlón", desc:"Glaçons échoués sur le sable noir.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Diamond_Beach_Iceland.jpg?width=640" },
-      { id:"j4-3", day:4, name:"Nuitée 4 : Klaustur", lat:63.7915, lng:-18.0514, price:"Selon hébergement", desc:"Kirkjubæjarklaustur.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Kirkjub%C3%A6jarklaustur.jpg?width=640" },
+      // JOUR 4 — Vendredi 29 Janvier (Jökulsárlón & Diamond Beach — NUIT 4 SUR PLACE)
+      { id:"j4-1", day:4, name:"Diamond Beach", time:"10h00 - 11h30", lat:64.0443, lng:-16.1777, price:"Inclus ticket Jökulsárlón", desc:"Blocs de glace translucides échoués sur le sable noir à marée basse.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Diamond_Beach_Iceland.jpg?width=640" },
+      { id:"j4-2", day:4, name:"Lagune de Jökulsárlón", time:"11h45 - 14h30", lat:64.0483, lng:-16.1795, price:"Parking : ~7,50 € (1 100 ISK)", desc:"Icebergs dérivants bleutés et observation des phoques.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/J%C3%B6kuls%C3%A1rl%C3%B3n.jpg?width=640" },
+      { id:"j4-3", day:4, name:"Fjallsárlón (Lagune secrète)", time:"15h00 - 16h15", lat:64.0150, lng:-16.3680, price:"Gratuit (Parking & Accès)", desc:"Lagune glaciaire intime avec front de glace spectaculaire.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Fjalls%C3%A1rl%C3%B3n_Glacial_Lagoon.jpg?width=640" },
+      { id:"j4-4", day:4, name:"Nuitée 4 : Jökulsárlón / Skaftafell", time:"17h00 - Nuit", lat:64.0483, lng:-16.1795, price:"Selon hébergement", desc:"Évite 250 km AR inutiles. Prêt pour l'expédition glace demain.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Kirkjub%C3%A6jarklaustur.jpg?width=640" },
 
-      { id:"j5-1", day:5, name:"Grotte de glace Vatnajökull 🎂", lat:64.0483, lng:-16.1795, price:"Activité guidée : ~270-330 € (2 pers)", desc:"Expédition Super Jeep & guide certifié.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Ice_Cave_in_Vatnaj%C3%B6kull.jpg?width=640" },
-      { id:"j5-2", day:5, name:"Nuitée 5 : Hella (Repli)", lat:63.8344, lng:-20.4011, price:"Selon hébergement", desc:"Repli Ouest stratégique.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Aurora_borealis_in_Iceland.jpg?width=640" },
+      // JOUR 5 — Samedi 30 Janvier (Grotte de Glace 🎂 & Repli Ouest)
+      { id:"j5-1", day:5, name:"Grotte de glace Vatnajökull 🎂", time:"09h30 - 13h30", lat:64.0483, lng:-16.1795, price:"Activité : ~270-330 € (2 pers)", desc:"Super Jeep 4x4 & exploration guidée au cœur du glacier bleu.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Ice_Cave_in_Vatnaj%C3%B6kull.jpg?width=640" },
+      { id:"j5-2", day:5, name:"Trajet Route 1 Ouest (240 km)", time:"14h00 - 17h30", lat:63.7915, lng:-18.0514, price:"Carburant N1", desc:"Repli stratégique vers l'ouest pour anticiper la météo.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Eldhraun.jpg?width=640" },
+      { id:"j5-3", day:5, name:"Nuitée 5 : Hella", time:"18h00 - Nuit", lat:63.8344, lng:-20.4011, price:"Selon hébergement", desc:"Camp de base idéal à l'entrée du Cercle d'Or. Chasse aux aurores.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Aurora_borealis_in_Iceland.jpg?width=640" },
 
-      { id:"j6-1", day:6, name:"Þingvellir", lat:64.2559, lng:-21.1298, price:"Parking : 6,70 € (1 000 ISK)", desc:"Faille continentale (P1/P2/P5).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Thingvellir.jpg?width=640" },
-      { id:"j6-2", day:6, name:"Geysir & Strokkur", lat:64.3138, lng:-20.3008, price:"Gratuit (Parking & Accès)", desc:"Geyser jaillissant à 25m.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Strokkur,_Iceland.jpg?width=640" },
-      { id:"j6-3", day:6, name:"Cascade Gullfoss", lat:64.3271, lng:-20.1199, price:"Gratuit (Parking & Accès)", desc:"Chute d'or du Golden Circle.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gullfoss.jpg?width=640" },
-      { id:"j6-4", day:6, name:"Secret Lagoon (Flúðir)", lat:64.1375, lng:-20.3094, price:"Bains 2 pers : 60 € (9 000 ISK)", desc:"Bains chauds à 40°C (parking gratuit).", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gamla_laugin.jpg?width=640" },
+      // JOUR 6 — Dimanche 31 Janvier (Cercle d'Or & Secret Lagoon)
+      { id:"j6-1", day:6, name:"Þingvellir (Thingvellir)", time:"10h00 - 12h00", lat:64.2559, lng:-21.1298, price:"Parking : 6,70 € (1 000 ISK)", desc:"Faille tectonique Almannagjá et parlement historique.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Thingvellir.jpg?width=640" },
+      { id:"j6-2", day:6, name:"Geysir & Strokkur", time:"12h45 - 14h00", lat:64.3138, lng:-20.3008, price:"Gratuit (Parking & Accès)", desc:"Éruptions de Strokkur toutes les 6-8 minutes à 20-30m.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Strokkur,_Iceland.jpg?width=640" },
+      { id:"j6-3", day:6, name:"Cascade Gullfoss", time:"14h15 - 15h30", lat:64.3271, lng:-20.1199, price:"Gratuit (Parking & Accès)", desc:"Immense cascade à deux paliers gelée sur les bords.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gullfoss.jpg?width=640" },
+      { id:"j6-4", day:6, name:"Secret Lagoon (Flúðir)", time:"16h15 - 18h30", lat:64.1375, lng:-20.3094, price:"Bains 2 pers : 60 € (9 000 ISK)", desc:"Détente dans les eaux thermales naturelles à 38-40°C à la nuit tombée.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Gamla_laugin.jpg?width=640" },
 
-      { id:"j7-1", day:7, name:"Cratère Kerið", lat:64.0413, lng:-20.8851, price:"Entrées 2 pers : 8 € (Parking gratuit)", desc:"Lac de cratère volcanique rouge.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Kerid.jpg?width=640" },
-      { id:"j7-2", day:7, name:"Hallgrímskirkja & Reykjavík", lat:64.1417, lng:-21.9266, price:"Stationnement ville : ~4 à 8 €", desc:"Cathédrale & centre-ville.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hallgrimskirkja.jpg?width=640" },
-      { id:"j7-3", day:7, name:"Harpa Concert Hall", lat:64.1504, lng:-21.9329, price:"Accès libre", desc:"Architecture de verre sur le port.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Harpa_Reykjavik.jpg?width=640" },
-      { id:"j7-4", day:7, name:"Nuitée 7 : Keflavík (Aéroport)", lat:63.9980, lng:-22.5600, price:"Selon hébergement", desc:"Nuitée finale avant vol 08h30.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Keflavik_Airport_terminal_2012.JPG?width=640" }
+      // JOUR 7 — Lundi 01 Février (Kerið, Capitale & Nuit Aéroport)
+      { id:"j7-1", day:7, name:"Cratère volcanique Kerið", time:"10h00 - 11h00", lat:64.0413, lng:-20.8851, price:"Entrées 2 pers : 8 € (Parking gratuit)", desc:"Lac de cratère rouge et eau turquoise souvent gelée.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Kerid.jpg?width=640" },
+      { id:"j7-2", day:7, name:"Hallgrímskirkja & Reykjavík", time:"12h00 - 14h30", lat:64.1417, lng:-21.9266, price:"Stationnement : ~4 à 8 €", desc:"Cathédrale, vue panoramique et déjeuner en ville.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Hallgrimskirkja.jpg?width=640" },
+      { id:"j7-3", day:7, name:"Harpa Concert Hall & Vieux Port", time:"14h45 - 16h15", lat:64.1504, lng:-21.9329, price:"Accès libre", desc:"Architecture de verre facettée le long de la baie.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Harpa_Reykjavik.jpg?width=640" },
+      { id:"j7-4", day:7, name:"Nuitée 7 : Keflavík Aéroport", time:"17h30 - Nuit", lat:63.9980, lng:-22.5600, price:"Selon hébergement", desc:"Plein du 4x4, restitution véhicule et nuitée avant vol de 08h30.", img:"https://commons.wikimedia.org/wiki/Special:FilePath/Keflavik_Airport_terminal_2012.JPG?width=640" }
     ];
 
     function getSteps() {
@@ -824,6 +926,7 @@
           id: s.id,
           day: s.day,
           name: s.name,
+          time_slot: s.time || "",
           lat: s.lat,
           lng: s.lng,
           price: s.price,
@@ -837,7 +940,7 @@
     }
 
     function resetDefaultSteps() {
-      if (confirm("Rétablir les étapes par défaut ?")) {
+      if (confirm("Rétablir les étapes et horaires par défaut ?")) {
         localStorage.removeItem("iceland_custom_steps_v10");
         renderPlacesList();
         recalculateMap();
@@ -845,16 +948,16 @@
     }
 
     // =========================================================================
-    // 5. HÉBERGEMENTS (LOCAL-FIRST + SUPABASE PUSH)
+    // 5. HÉBERGEMENTS PAR NUITÉE (CORRECTION NUIT 4 À SKAFTAFELL / JÖKULSÁRLÓN)
     // =========================================================================
     const BLANK_LODGINGS = [
-      { night: 1, date: "26 Janvier", name: "", location: "Zone Selfoss", checkin: "", address: "", phone: "", notes: "" },
-      { night: 2, date: "27 Janvier", name: "", location: "Zone Vík í Mýrdal", checkin: "", address: "", phone: "", notes: "" },
-      { night: 3, date: "28 Janvier", name: "", location: "Zone Skaftafell", checkin: "", address: "", phone: "", notes: "" },
-      { night: 4, date: "29 Janvier", name: "", location: "Zone Klaustur / Jökulsárlón", checkin: "", address: "", phone: "", notes: "" },
-      { night: 5, date: "30 Janvier", name: "", location: "Zone Hella / Repli Ouest", checkin: "", address: "", phone: "", notes: "" },
-      { night: 6, date: "31 Janvier", name: "", location: "Zone Flúðir / Cercle d'Or", checkin: "", address: "", phone: "", notes: "" },
-      { night: 7, date: "01 Février", name: "", location: "Zone Aéroport Keflavík", checkin: "", address: "", phone: "", notes: "" }
+      { night: 1, date: "Mardi 26 Janvier", name: "", location: "Zone Selfoss", checkin: "Dès 15h00", address: "", phone: "", notes: "Après la visite de Raufarhólshellir" },
+      { night: 2, date: "Mercredi 27 Janvier", name: "", location: "Zone Vík í Mýrdal", checkin: "Dès 16h00", address: "", phone: "", notes: "Proche de la plage noire de Reynisfjara" },
+      { night: 3, date: "Jeudi 28 Janvier", name: "", location: "Zone Skaftafell / Hof", checkin: "Dès 16h00", address: "", phone: "", notes: "Au pied du parc national Vatnajökull" },
+      { night: 4, date: "Vendredi 29 Janvier", name: "", location: "Zone Jökulsárlón / Skaftafell", checkin: "Dès 16h00", address: "", phone: "", notes: "Dormir sur place pour être à 10 min de la grotte de glace samedi matin" },
+      { night: 5, date: "Samedi 30 Janvier", name: "", location: "Zone Hella / Repli Ouest", checkin: "Dès 17h00", address: "", phone: "", notes: "Repli Ouest après la grotte de glace" },
+      { night: 6, date: "Dimanche 31 Janvier", name: "", location: "Zone Flúðir / Cercle d'Or", checkin: "Dès 16h00", address: "", phone: "", notes: "Proche Secret Lagoon & Geysir" },
+      { night: 7, date: "Lundi 01 Février", name: "", location: "Zone Aéroport Keflavík", checkin: "Dès 15h00", address: "", phone: "", notes: "Indispensable : dépose-bagages à 06h30 le lendemain matin" }
     ];
 
     function getLodgings() {
@@ -987,7 +1090,7 @@
     renderLodgings();
 
     // =========================================================================
-    // 6. GESTION DES LISTES ET GLISSER-DÉPOSER
+    // 6. GESTION DES LISTES ET GLISSER-DÉPOSER (AVEC HEURE AFFICHÉE)
     // =========================================================================
     let sortableInstances = [];
 
@@ -1043,7 +1146,9 @@
                       <div class="flex items-center gap-2 truncate mr-2">
                         <span class="drag-handle text-slate-500 hover:text-slate-200 cursor-grab active:cursor-grabbing font-mono text-sm select-none">⋮⋮</span>
                         <div class="truncate">
-                          <div class="font-medium text-white truncate">${s.name}</div>
+                          <div class="flex items-center gap-1.5">
+                            <span class="font-medium text-white truncate">${s.name}</span>${s.time ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-400 font-mono font-bold shrink-0">${s.time}</span>` : ''}
+                          </div>
                           <div class="text-[10px] text-brand-400 font-semibold flex items-center gap-1">
                             <span>💶</span> ${s.price || 'Gratuit'}
                           </div>
@@ -1062,7 +1167,7 @@
                 }).join('')}
               </div>
             </div>
-            <div class="text-[10px] text-slate-500 text-center mt-2 italic">Glisser ici pour ajouter à ce jour</div>
+            <div class="text-[10px] text-slate-500 text-center mt-2 italic">Glisser ici pour réorganiser</div>
           </div>
         `;
       }).join('');
@@ -1117,6 +1222,7 @@
 
     function saveNewPlace() {
       const name = document.getElementById("newPlaceName").value.trim();
+      const time = document.getElementById("newPlaceTime").value.trim();
       const day = parseInt(document.getElementById("newPlaceDay").value);
       const price = document.getElementById("newPlacePrice").value.trim() || "Gratuit";
       const lat = parseFloat(document.getElementById("newPlaceLat").value);
@@ -1132,6 +1238,7 @@
         id: "step_" + Date.now(),
         day: day,
         name: name,
+        time: time,
         price: price,
         lat: lat,
         lng: lng,
@@ -1141,6 +1248,7 @@
 
       saveSteps(steps);
       document.getElementById("newPlaceName").value = "";
+      document.getElementById("newPlaceTime").value = "";
       document.getElementById("newPlacePrice").value = "";
       document.getElementById("newPlaceLat").value = "";
       document.getElementById("newPlaceLng").value = "";
@@ -1239,6 +1347,7 @@
             <div class="popup-body">
               <span class="popup-tag" style="background:${COLORS[s.day]}; color:#fff;">Jour ${s.day}</span>
               <div class="popup-title">${s.name}</div>
+              ${s.time ? `<div class="text-[10px] text-brand-400 font-mono font-bold mb-1">⏰ ${s.time}</div>` : ''}
               <div class="popup-desc">${s.desc}</div>
               <div class="popup-price">💶 ${s.price || 'Gratuit'}</div>
               <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}" target="_blank" class="popup-link">
