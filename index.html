@@ -439,22 +439,23 @@
     </div>
   </section>
 
-  <!-- 6. MODULES OUTILS TERRAIN -->
+  <!-- 6. MODULES OUTILS TERRAIN : 2 VALISES TOTALEMENT PERSONNALISABLES -->
   <section id="tools-section" class="max-w-6xl mx-auto px-4 py-6">
     <div class="mb-6">
       <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Outils Terrain Indispensables</h2>
-      <p class="text-xs text-slate-400">Gestion des valises avec calcul automatique du poids et sécurité routière live.</p>
+      <p class="text-xs text-slate-400">Gestion personnalisée des 2 valises avec synchronisation Supabase en direct.</p>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between lg:col-span-2">
         <div>
+          <!-- Onglets Valise 1 / Valise 2 -->
           <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-surface-border">
             <div class="flex items-center gap-2">
               <i data-lucide="luggage" class="w-5 h-5 text-brand-400"></i>
               <div>
                 <h3 class="text-sm font-bold text-white">Valise & Pesée Automatique</h3>
-                <span class="text-[10px] text-slate-400">Limite EasyJet en soute : <strong>23,0 kg</strong> par bagage</span>
+                <span class="text-[10px] text-slate-400">EasyJet soute : <strong>23,0 kg</strong> par bagage</span>
               </div>
             </div>
 
@@ -464,6 +465,7 @@
             </div>
           </div>
 
+          <!-- Jauge -->
           <div class="bg-slate-900/80 p-4 rounded-2xl border border-surface-border mb-4">
             <div class="flex items-center justify-between mb-1.5">
               <span id="currentBagLabel" class="text-xs font-bold text-white">Valise 1</span>
@@ -480,10 +482,12 @@
             </div>
           </div>
 
+          <!-- Liste des articles ajoutés -->
           <div class="space-y-1.5 max-h-60 overflow-y-auto pr-1" id="bag-items-list"></div>
 
+          <!-- Formulaire d'ajout d'affaires -->
           <div class="flex gap-2 mt-4 pt-3 border-t border-surface-border">
-            <input type="text" id="newItemName" placeholder="Affaire (ex: Doudoune, Crampons...)" class="flex-1 bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-400" />
+            <input type="text" id="newItemName" placeholder="Nouvelle affaire (ex: Doudoune, Gants...)" class="flex-1 bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-400" />
             <div class="relative w-24">
               <input type="number" step="0.1" min="0" id="newItemWeight" placeholder="Poids" class="w-full bg-slate-900 border border-surface-border rounded-xl pl-3 pr-7 py-2 text-xs text-white font-mono focus:outline-none focus:border-brand-400" />
               <span class="absolute right-2 top-2 text-[10px] text-slate-400 font-mono">kg</span>
@@ -495,7 +499,7 @@
         </div>
 
         <div class="mt-4 pt-3 border-t border-surface-border/50 flex justify-between items-center text-[11px] text-slate-400">
-          <span>Sauvegarde automatique Cloud & Offline</span>
+          <span>Synchro temps réel Supabase Cloud & Hors-ligne</span>
           <button onclick="clearCurrentBag()" class="hover:text-red-400 transition-colors">Vider cette valise</button>
         </div>
       </div>
@@ -533,7 +537,7 @@
 
             <a href="https://safetravel.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
               <div class="flex items-center gap-2">
-                <span>🛡️</span>
+                <span>🛡️️</span>
                 <div>
                   <div class="font-semibold text-white">SafeTravel.is</div>
                   <div class="text-[10px] text-slate-400">Enregistrer son plan de route</div>
@@ -704,7 +708,7 @@
     });
 
     // =========================================================================
-    // CONFIGURATION SUPABASE & OFFLINE-FIRST
+    // CONFIGURATION SUPABASE, SYNC GLOBALE & REALTIME MULTI-ÉCRANS
     // =========================================================================
     const SUPABASE_URL = "https://xyzcompanyproject.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5emNvbXBhbnlwcm9qZWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3M...VOTRE_CLE_ANON";
@@ -726,6 +730,7 @@
       }
     }
 
+    // 1. Synchronisation initiale complète
     async function syncFromSupabase() {
       if (!supabaseClient || !navigator.onLine) {
         setSyncStatus(false, "Mode Hors-ligne");
@@ -735,6 +740,7 @@
       try {
         setSyncStatus(false, "Sync...");
 
+        // A. Étapes
         const { data: stepsData, error: stepsErr } = await supabaseClient
           .from('iceland_steps')
           .select('*')
@@ -759,6 +765,7 @@
           recalculateMap();
         }
 
+        // B. Hébergements
         const { data: lodgingsData, error: lErr } = await supabaseClient
           .from('iceland_lodgings')
           .select('*')
@@ -779,6 +786,7 @@
           renderLodgings();
         }
 
+        // C. Menus
         const { data: mealsData, error: mErr } = await supabaseClient
           .from('iceland_meals')
           .select('*');
@@ -795,11 +803,76 @@
           renderPlacesList();
         }
 
+        // D. Valises (100% Supabase + Local)
+        await syncLuggageFromSupabase();
+
         setSyncStatus(true, "Synchronisé");
       } catch (e) {
         console.warn("Échec sync cloud, maintien local :", e);
         setSyncStatus(false, "Local (Hors-ligne)");
       }
+    }
+
+    // 2. Écoute temps réel (Realtime) sur toutes les tables
+    function initSupabaseRealtime() {
+      if (!supabaseClient) return;
+
+      supabaseClient.channel('iceland-realtime-channel')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_steps' }, async () => {
+          const { data } = await supabaseClient.from('iceland_steps').select('*').order('date_key', { ascending: true }).order('position_order', { ascending: true });
+          if (data) {
+            const formatted = data.map(s => ({
+              id: s.id,
+              dateKey: s.date_key,
+              dateLabel: s.date_label,
+              name: s.name,
+              time: s.time_slot || "",
+              lat: s.lat,
+              lng: s.lng,
+              price: s.price,
+              desc: s.description,
+              img: s.img
+            }));
+            localStorage.setItem("iceland_custom_steps_v11", JSON.stringify(formatted));
+            renderPlacesList();
+            recalculateMap();
+          }
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_packing_items' }, async () => {
+          await syncLuggageFromSupabase();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_meals' }, async () => {
+          const { data } = await supabaseClient.from('iceland_meals').select('*');
+          if (data) {
+            const mealsMap = {};
+            data.forEach(m => {
+              mealsMap[m.date_key] = {
+                lunch: { title: m.lunch_title || '', notes: m.lunch_notes || '' },
+                dinner: { title: m.dinner_title || '', notes: m.dinner_notes || '' }
+              };
+            });
+            localStorage.setItem("iceland_meals_data_v1", JSON.stringify(mealsMap));
+            renderPlacesList();
+          }
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_lodgings' }, async () => {
+          const { data } = await supabaseClient.from('iceland_lodgings').select('*').order('night', { ascending: true });
+          if (data) {
+            const formattedL = data.map(l => ({
+              night: l.night,
+              date: l.date_label,
+              name: l.name,
+              location: l.location,
+              checkin: l.checkin,
+              address: l.address,
+              phone: l.phone,
+              notes: l.notes
+            }));
+            localStorage.setItem("iceland_lodgings_data_v11", JSON.stringify(formattedL));
+            renderLodgings();
+          }
+        })
+        .subscribe();
     }
 
     window.addEventListener('online', () => syncFromSupabase());
@@ -851,24 +924,42 @@
     }
 
     // =========================================================================
-    // 3. MODULE VALISES AVEC PESÉE AUTOMATIQUE
+    // 3. MODULE VALISES : VIDES PAR DÉFAUT + SYNCHRO SUPABASE
     // =========================================================================
     let activeBag = 'bag1';
 
     function getStoredLuggage() {
-      return JSON.parse(localStorage.getItem("iceland_luggage_v2") || JSON.stringify({
-        bag1: [
-          { id: "item_1", name: "Doudoune grand froid", weight: 1.5, checked: false },
-          { id: "item_2", name: "Chaussures de randonnée étanches", weight: 1.8, checked: false },
-          { id: "item_3", name: "Crampons d'alpinisme", weight: 0.8, checked: false },
-          { id: "item_4", name: "Pantalons thermiques & sous-vêtements mérinos", weight: 2.2, checked: false }
-        ],
+      return JSON.parse(localStorage.getItem("iceland_luggage_v3") || JSON.stringify({
+        bag1: [],
         bag2: []
       }));
     }
 
-    function saveLuggage(data) {
-      localStorage.setItem("iceland_luggage_v2", JSON.stringify(data));
+    async function syncLuggageFromSupabase() {
+      if (!supabaseClient || !navigator.onLine) return;
+      try {
+        const { data, error } = await supabaseClient.from('iceland_packing_items').select('*');
+        if (!error && data) {
+          const grouped = { bag1: [], bag2: [] };
+          data.forEach(item => {
+            const bId = item.bag_id === 'bag2' ? 'bag2' : 'bag1';
+            grouped[bId].push({
+              id: item.id,
+              name: item.name,
+              weight: parseFloat(item.weight) || 0,
+              checked: !!item.is_checked
+            });
+          });
+          localStorage.setItem("iceland_luggage_v3", JSON.stringify(grouped));
+          renderLuggage();
+        }
+      } catch (err) {
+        console.warn("Échec récupération valise :", err);
+      }
+    }
+
+    function saveLuggageLocal(data) {
+      localStorage.setItem("iceland_luggage_v3", JSON.stringify(data));
       renderLuggage();
     }
 
@@ -916,7 +1007,7 @@
       document.getElementById("currentBagCheckRatio").innerText = `${checkedCount}/${items.length} coché(s)`;
 
       if (items.length === 0) {
-        container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-3 text-center">Cette valise est vide. Ajoute des affaires ci-dessous avec leur poids.</div>`;
+        container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-3 text-center">Cette valise est vide. Ajoute tes affaires librement ci-dessous.</div>`;
         return;
       }
 
@@ -938,7 +1029,7 @@
       lucide.createIcons();
     }
 
-    function addBagItem() {
+    async function addBagItem() {
       const nameInput = document.getElementById("newItemName");
       const weightInput = document.getElementById("newItemWeight");
       const name = nameInput.value.trim();
@@ -946,39 +1037,69 @@
 
       if (!name) return;
 
-      const data = getStoredLuggage();
-      data[activeBag].push({
+      const newItem = {
         id: "item_" + Date.now(),
+        bag_id: activeBag,
         name: name,
         weight: weight,
         checked: false
-      });
+      };
 
-      saveLuggage(data);
+      const data = getStoredLuggage();
+      data[activeBag].push(newItem);
+      saveLuggageLocal(data);
+
       nameInput.value = "";
       weightInput.value = "";
+
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_packing_items').upsert([{
+          id: newItem.id,
+          bag_id: activeBag,
+          name: newItem.name,
+          weight: newItem.weight,
+          is_checked: false,
+          updated_at: new Date()
+        }]);
+      }
     }
 
-    function toggleBagItemCheck(itemId) {
+    async function toggleBagItemCheck(itemId) {
       const data = getStoredLuggage();
       const item = data[activeBag].find(i => i.id === itemId);
       if (item) {
         item.checked = !item.checked;
-        saveLuggage(data);
+        saveLuggageLocal(data);
+
+        if (supabaseClient && navigator.onLine) {
+          await supabaseClient.from('iceland_packing_items').update({
+            is_checked: item.checked,
+            updated_at: new Date()
+          }).eq('id', itemId);
+        }
       }
     }
 
-    function removeBagItem(itemId) {
+    async function removeBagItem(itemId) {
       const data = getStoredLuggage();
       data[activeBag] = data[activeBag].filter(i => i.id !== itemId);
-      saveLuggage(data);
+      saveLuggageLocal(data);
+
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_packing_items').delete().eq('id', itemId);
+      }
     }
 
-    function clearCurrentBag() {
+    async function clearCurrentBag() {
       if (confirm(`Voulez-vous vider tous les éléments de la ${activeBag === 'bag1' ? 'Valise 1' : 'Valise 2'} ?`)) {
         const data = getStoredLuggage();
+        const deletedIds = (data[activeBag] || []).map(i => i.id);
         data[activeBag] = [];
-        saveLuggage(data);
+        saveLuggageLocal(data);
+
+        if (supabaseClient && navigator.onLine && deletedIds.length > 0) {
+          await supabaseClient.from('iceland_packing_items').delete().in('id', deletedIds);
+        }
       }
     }
 
@@ -1106,14 +1227,12 @@
     ];
 
     const INITIAL_STEPS = [
-      // MARDI 26 JANVIER
       { id:"j1-1", dateKey:"2027-01-26", dateLabel:"Mardi 26 Janvier", name:"Aéroport Keflavík (KEF)", time:"07h50 - 09h30", lat:63.9850, lng:-22.6056, price:"Inclus vol", desc:"Atterrissage vol EJU4583, bagages & prise en charge du SUV 4x4.", img:"./keflavik-airport" },
       { id:"j1-2", dateKey:"2027-01-26", dateLabel:"Mardi 26 Janvier", name:"Pont entre 2 continents", time:"10h15 - 10h50", lat:63.8684, lng:-22.6755, price:"Gratuit (Parking & Accès)", desc:"Passerelle au-dessus du rift tectonique eurasien / nord-américain.", img:"./pont-continents" },
       { id:"j1-3", dateKey:"2027-01-26", dateLabel:"Mardi 26 Janvier", name:"Zone de Gunnuhver", time:"11h10 - 11h50", lat:63.8193, lng:-22.6846, price:"Gratuit (Parking & Accès)", desc:"Immenses fumerolles géothermiques et bassins de boue bouillonnante.", img:"./gunnuhver" },
       { id:"j1-4", dateKey:"2027-01-26", dateLabel:"Mardi 26 Janvier", name:"Tunnel Raufarhólshellir", time:"13h30 - 15h00", lat:63.9404, lng:-21.3965, price:"Visite guidée : ~132 € (2 pers)", desc:"Exploration du tunnel de lave volcanique millénaire.", img:"./raufarholshellir" },
       { id:"j1-5", dateKey:"2027-01-26", dateLabel:"Mardi 26 Janvier", name:"Nuitée : Selfoss (Bónus)", time:"16h00 - Nuit", lat:63.9377, lng:-20.9995, price:"Parking gratuit", desc:"Ravitaillement au supermarché Bónus (provisions 3 jours) & repos Nuit 1.", img:"./selfoss" },
 
-      // MERCREDI 27 JANVIER
       { id:"j2-1", dateKey:"2027-01-27", dateLabel:"Mercredi 27 Janvier", name:"Seljalandsfoss", time:"10h00 - 11h15", lat:63.6156, lng:-19.9886, price:"Parking : 6,00 € (900 ISK)", desc:"Chute de 60m (crampons fortement conseillés).", img:"./seljalandsfoss" },
       { id:"j2-2", dateKey:"2027-01-27", dateLabel:"Mercredi 27 Janvier", name:"Gljúfrabúi", time:"11h15 - 12h00", lat:63.6208, lng:-19.9865, price:"Inclus ticket Seljalandsfoss", desc:"Cascade secrète encaissée dans sa gorge rocheuse à 500m.", img:"./gljufrabui" },
       { id:"j2-3", dateKey:"2027-01-27", dateLabel:"Mercredi 27 Janvier", name:"Skógafoss", time:"12h45 - 14h00", lat:63.5321, lng:-19.5114, price:"Gratuit (Parking & Accès)", desc:"Mur d'eau titanesque de 60m et escalier panoramique.", img:"./skogafoss" },
@@ -1121,32 +1240,27 @@
       { id:"j2-5", dateKey:"2027-01-27", dateLabel:"Mercredi 27 Janvier", name:"Plage de Reynisfjara", time:"15h30 - 16h30", lat:63.4042, lng:-19.0494, price:"Parking : 6,70 € (1 000 ISK)", desc:"Colonnes de basalte au crépuscule (attention aux vagues traîtresses).", img:"./reynisfjara" },
       { id:"j2-6", dateKey:"2027-01-27", dateLabel:"Mercredi 27 Janvier", name:"Nuitée : Vík í Mýrdal", time:"17h00 - Nuit", lat:63.4186, lng:-19.0062, price:"Selon hébergement", desc:"Check-in hôtel, station N1 & restaurant au village de Vík.", img:"./vik" },
 
-      // JEUDI 28 JANVIER
       { id:"j3-1", dateKey:"2027-01-28", dateLabel:"Jeudi 28 Janvier", name:"Grotte de Yoda (Gígjagjá)", time:"10h00 - 10h45", lat:63.4143, lng:-18.8475, price:"Gratuit (Parking & Accès)", desc:"Ouverture naturelle dans la roche volcanique de Hjörleifshöfði.", img:"./yoda-cave" },
       { id:"j3-2", dateKey:"2027-01-28", dateLabel:"Jeudi 28 Janvier", name:"Champ de lave d'Eldhraun", time:"11h30 - 12h00", lat:63.6766, lng:-18.1408, price:"Gratuit (Arrêts Route 1)", desc:"Océan de lave pétrifiée tapissé de mousse sous le givre.", img:"./eldhraun" },
       { id:"j3-3", dateKey:"2027-01-28", dateLabel:"Jeudi 28 Janvier", name:"Canyon Fjaðrárgljúfur", time:"12h30 - 14h00", lat:63.7713, lng:-18.1718, price:"Parking : 6,70 € (1 000 ISK)", desc:"Canyon serpentant vertigineux sur 2 km.", img:"./fjadrargljufur" },
       { id:"j3-4", dateKey:"2027-01-28", dateLabel:"Jeudi 28 Janvier", name:"Skaftafell & Svartifoss", time:"15h00 - 16h45", lat:64.0275, lng:-16.9753, price:"Parking : 6,70 € (1 000 ISK)", desc:"Cascade entourée d'orgues noirs au pied de la calotte glaciaire.", img:"./svartifoss" },
       { id:"j3-5", dateKey:"2027-01-28", dateLabel:"Jeudi 28 Janvier", name:"Nuitée : Skaftafell / Hof", time:"17h15 - Nuit", lat:63.9878, lng:-16.8962, price:"Selon hébergement", desc:"Nuitée au cœur du parc national Vatnajökull.", img:"./skaftafell" },
 
-      // VENDREDI 29 JANVIER
       { id:"j4-1", dateKey:"2027-01-29", dateLabel:"Vendredi 29 Janvier", name:"Diamond Beach", time:"10h00 - 11h30", lat:64.0443, lng:-16.1777, price:"Inclus ticket Jökulsárlón", desc:"Blocs de glace pure scintillants sur la plage de sable noir.", img:"./diamond-beach" },
       { id:"j4-2", dateKey:"2027-01-29", dateLabel:"Vendredi 29 Janvier", name:"Lagune de Jökulsárlón", time:"11h45 - 14h30", lat:64.0483, lng:-16.1795, price:"Parking : ~7,50 € (1 100 ISK)", desc:"Icebergs bleus géants dérivant vers l'océan et phoques sauvages.", img:"./jokulsarlon" },
       { id:"j4-3", dateKey:"2027-01-29", dateLabel:"Vendredi 29 Janvier", name:"Fjallsárlón (Lagune secrète)", time:"15h00 - 16h15", lat:64.0150, lng:-16.3680, price:"Gratuit (Parking & Accès)", desc:"Ambiance intimiste face à l'imposant front de glace de Fjallsjökull.", img:"./fjallsarlon" },
       { id:"j4-4", dateKey:"2027-01-29", dateLabel:"Vendredi 29 Janvier", name:"Nuitée : Jökulsárlón / Glaciers", time:"17h00 - Nuit", lat:64.0483, lng:-16.1795, price:"Selon hébergement", desc:"Nuitée sur place. Vous êtes à 10 min du point de rendez-vous de la grotte.", img:"./jokulsarlon" },
 
-      // SAMEDI 30 JANVIER
       { id:"j5-1", dateKey:"2027-01-30", dateLabel:"Samedi 30 Janvier", name:"Grotte de glace Vatnajökull 🎂", time:"09h30 - 13h30", lat:64.0483, lng:-16.1795, price:"Activité : ~270-330 € (2 pers)", desc:"Expédition Super Jeep 4x4 & marche sous la cathédrale de glace bleue.", img:"./ice-cave" },
       { id:"j5-2", dateKey:"2027-01-30", dateLabel:"Samedi 30 Janvier", name:"Route 1 : Repli Ouest", time:"14h00 - 17h30", lat:63.7915, lng:-18.0514, price:"Carburant N1", desc:"240 km de route retour sécurisée vers l'Ouest pour anticiper la météo.", img:"./eldhraun" },
       { id:"j5-3", dateKey:"2027-01-30", dateLabel:"Samedi 30 Janvier", name:"Nuitée : Hella / Hvolsvöllur", time:"18h00 - Nuit", lat:63.8344, lng:-20.4011, price:"Selon hébergement", desc:"Position centrale idéale pour attaquer le Cercle d'Or le lendemain.", img:"./aurore" },
 
-      // DIMANCHE 31 JANVIER
       { id:"j6-1", dateKey:"2027-01-31", dateLabel:"Dimanche 31 Janvier", name:"Þingvellir (Thingvellir)", time:"10h00 - 12h00", lat:64.2559, lng:-21.1298, price:"Parking : 6,70 € (1 000 ISK)", desc:"Faille d'Almannagjá, lac gelé et parlement historique des Vikings.", img:"./thingvellir" },
       { id:"j6-2", dateKey:"2027-01-31", dateLabel:"Dimanche 31 Janvier", name:"Geysir & Strokkur", time:"12h45 - 14h00", lat:64.3138, lng:-20.3008, price:"Gratuit (Parking & Accès)", desc:"Colonne d'eau bouillante jaillissant toutes les 6 minutes à 25m.", img:"./geysir" },
       { id:"j6-3", dateKey:"2027-01-31", dateLabel:"Dimanche 31 Janvier", name:"Cascade Gullfoss", time:"14h15 - 15h30", lat:64.3271, lng:-20.1199, price:"Gratuit (Parking & Accès)", desc:"La chute d'or du Golden Circle au milieu des glaces.", img:"./gullfoss" },
       { id:"j6-4", dateKey:"2027-01-31", dateLabel:"Dimanche 31 Janvier", name:"Secret Lagoon (Flúðir)", time:"16h15 - 18h30", lat:64.1375, lng:-20.3094, price:"Bains 2 pers : 60 € (9 000 ISK)", desc:"Bains chauds naturels à 38-40°C à la nuit tombée.", img:"./secret-lagoon" },
       { id:"j6-5", dateKey:"2027-01-31", dateLabel:"Dimanche 31 Janvier", name:"Nuitée : Flúðir / Selfoss", time:"19h00 - Nuit", lat:64.1375, lng:-20.3094, price:"Selon hébergement", desc:"Nuitée reposante après les bains chauds.", img:"./selfoss" },
 
-      // LUNDI 01 FÉVRIER
       { id:"j7-1", dateKey:"2027-02-01", dateLabel:"Lundi 01 Février", name:"Cratère volcanique Kerið", time:"10h00 - 11h15", lat:64.0413, lng:-20.8851, price:"Entrées 2 pers : 8 € (Parking gratuit)", desc:"Cratère volcanique rougeoyant de 3 000 ans avec son lac intérieur.", img:"./kerid" },
       { id:"j7-2", dateKey:"2027-02-01", dateLabel:"Lundi 01 Février", name:"Hallgrímskirkja & Reykjavík", time:"12h15 - 14h45", lat:64.1417, lng:-21.9266, price:"Stationnement : ~4 à 8 €", desc:"Flânerie dans le centre-ville, orgues de la cathédrale & déjeuner.", img:"./hallgrimskirkja" },
       { id:"j7-3", dateKey:"2027-02-01", dateLabel:"Lundi 01 Février", name:"Harpa Concert Hall & Port", time:"15h00 - 16h30", lat:64.1504, lng:-21.9329, price:"Accès libre", desc:"Façade en verre géométrique et coucher de soleil sur le vieux port.", img:"./harpa" },
@@ -1161,6 +1275,7 @@
     async function saveSteps(steps) {
       localStorage.setItem("iceland_custom_steps_v11", JSON.stringify(steps));
       if (supabaseClient && navigator.onLine) {
+        setSyncStatus(false, "Sync...");
         const payload = steps.map((s, index) => ({
           id: s.id,
           date_key: s.dateKey,
@@ -1175,7 +1290,8 @@
           position_order: index,
           updated_at: new Date()
         }));
-        await supabaseClient.from('iceland_steps').upsert(payload);
+        const { error } = await supabaseClient.from('iceland_steps').upsert(payload);
+        if (!error) setSyncStatus(true, "Synchronisé");
       }
     }
 
@@ -1184,6 +1300,9 @@
         localStorage.removeItem("iceland_custom_steps_v11");
         renderPlacesList();
         recalculateMap();
+        if (supabaseClient && navigator.onLine) {
+          saveSteps(INITIAL_STEPS);
+        }
       }
     }
 
@@ -1370,7 +1489,6 @@
                 </div>
               </div>
 
-              <!-- Zone des étapes de route -->
               <div class="min-h-[40px] p-1 rounded-2xl bg-slate-900/30 border border-surface-border/30 drop-zone mb-3" data-date="${dayCfg.key}" id="day-list-${dayCfg.key}">
                 ${daySteps.map((s, idx) => {
                   let distanceTag = '';
@@ -1413,7 +1531,6 @@
                 }).join('')}
               </div>
 
-              <!-- Bloc Menus du Midi & du Soir -->
               <div class="p-2.5 rounded-2xl bg-slate-900/70 border border-surface-border/60 text-xs">
                 <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-surface-border/40">
                   <span class="text-[11px] font-bold text-white flex items-center gap-1">
@@ -1465,7 +1582,7 @@
           ghostClass: 'sortable-ghost',
           chosenClass: 'sortable-chosen',
           handle: '.drag-handle',
-          onEnd: function () {
+          onEnd: async function () {
             const newStepsOrder = [];
             DAYS_CONFIG.forEach(d => {
               const dayListEl = document.getElementById(`day-list-${d.key}`);
@@ -1484,7 +1601,7 @@
               });
             });
 
-            saveSteps(newStepsOrder);
+            await saveSteps(newStepsOrder);
             renderPlacesList();
             recalculateMap();
           }
@@ -1701,10 +1818,10 @@
     }
 
     // =========================================================================
-    // 9. MÉTÉO 10 JOURS AVEC SURBRILLANCE DU JOUR ACTUEL
+    // 9. MÉTÉO 10 JOURS
     // =========================================================================
     function getWeatherIcon(code) {
-      if ([0].includes(code)) return "☀️️";
+      if ([0].includes(code)) return "☀️";
       if ([1, 2].includes(code)) return "🌤️";
       if ([3].includes(code)) return "☁️";
       if ([45, 48].includes(code)) return "🌫️";
@@ -1779,6 +1896,7 @@
     recalculateMap();
     fetchWeather();
     syncFromSupabase();
+    initSupabaseRealtime();
   </script>
 </body>
 </html>
