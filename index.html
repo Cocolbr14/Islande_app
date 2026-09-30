@@ -26,7 +26,7 @@
   <!-- SortableJS pour le Drag & Drop -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
-  <!-- Supabase JS Client (Offline-First sync) -->
+  <!-- Supabase JS Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
@@ -57,25 +57,72 @@
       -webkit-backdrop-filter: blur(16px);
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
+
+    /* POPUP LEAFLET ÉLÉGANTE ET STABLE */
     .leaflet-popup-content-wrapper {
       background: #0f172a !important;
       color: #f8fafc !important;
-      border: 1px solid #38bdf8 !important;
-      border-radius: 16px !important;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6) !important;
+      border: 1px solid rgba(56, 189, 248, 0.4) !important;
+      border-radius: 20px !important;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75) !important;
       padding: 0 !important;
       overflow: hidden;
-      width: 280px;
+      width: 290px;
     }
     .leaflet-popup-content { margin: 0 !important; }
     .leaflet-popup-tip { background: #0f172a !important; }
-    .popup-cover-img { width: 100%; height: 120px; object-fit: cover; display: block; background: #1e293b; }
-    .popup-body { padding: 12px 14px; }
-    .popup-tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
-    .popup-title { font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 3px; }
-    .popup-desc { font-size: 11px; color: #94a3b8; line-height: 1.4; }
-    .popup-price { font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 5px; }
-    .popup-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; font-size: 11px; font-weight: 600; color: #38bdf8; }
+
+    /* CADRE PHOTO EXTENSIBLE SANS CASSER LA CARTE */
+    .popup-photo-box {
+      position: relative;
+      width: 100%;
+      height: 135px;
+      background: #020617;
+      overflow: hidden;
+      cursor: zoom-in;
+      transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .popup-photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .popup-photo-hint {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 600;
+      color: #e2e8f0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    /* AU SURVOL : DÉPLIEMENT HARMONIEUX PLEINE HAUTEUR */
+    .popup-photo-box:hover {
+      height: 225px;
+    }
+    .popup-photo-box:hover .popup-photo-img {
+      object-fit: contain;
+      transform: scale(1.02);
+    }
+    .popup-photo-box:hover .popup-photo-hint {
+      opacity: 0;
+    }
+
+    .popup-body { padding: 13px 15px; }
+    .popup-tag { display: inline-block; padding: 2.5px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
+    .popup-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .popup-desc { font-size: 11px; color: #94a3b8; line-height: 1.45; }
+    .popup-price { font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 6px; }
+    .popup-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 11px; font-weight: 600; color: #38bdf8; }
     .popup-link:hover { text-decoration: underline; }
 
     .pin-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
@@ -101,6 +148,17 @@
     }
     .drag-handle {
       touch-action: none;
+    }
+
+    /* VISIONNEUSE PLEIN ÉCRAN */
+    #imageLightbox {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #lightboxImg {
+      transform-origin: center center;
+      transition: transform 0.15s ease-out;
+      will-change: transform;
     }
   </style>
 </head>
@@ -149,7 +207,7 @@
             <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span> Décollage le 26 Janvier 2027 à 05h00
           </span>
           <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <span>❄️</span> Cap sur l'Islande
+            <span>❄️️</span> Cap sur l'Islande
           </h2>
           <p class="text-xs text-slate-400 mt-1">
             Du <strong class="text-slate-200">26 janvier</strong> au <strong class="text-slate-200">01 février 2027 au soir</strong> (restitution 4x4) • Vol retour le 02 février à 08h30.
@@ -178,7 +236,7 @@
     </div>
   </section>
 
-  <!-- BARRE RAPIDE : CONVERTISSEUR EXPRESS ISK / EUR EN HAUT -->
+  <!-- BARRE RAPIDE : CONVERTISSEUR EXPRESS ISK / EUR -->
   <section class="max-w-6xl mx-auto px-4 py-2">
     <div class="glass px-4 py-3 rounded-2xl border border-brand-400/30 flex flex-wrap items-center justify-between gap-3 shadow-lg">
       <div class="flex items-center gap-2">
@@ -217,7 +275,7 @@
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
           <i data-lucide="cloud-snow" class="w-6 h-6 text-brand-400"></i> Météo Directe sur 10 Jours
         </h2>
-        <p class="text-xs text-slate-400">Prévisions & rafales de vent en direct via Open-Meteo. La case bleue brillante indique le jour en cours.</p>
+        <p class="text-xs text-slate-400">Prévisions & rafales de vent en direct via Open-Meteo.</p>
       </div>
       <div class="flex items-center gap-2">
         <label class="text-xs text-slate-400">Zone :</label>
@@ -248,7 +306,7 @@
     <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-3">
       <div>
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Carte Google Maps & Tracé Continu</h2>
-        <p class="text-xs text-slate-400">Le ruban routier relie toutes les étapes du 26 janvier au 01 février sans interruption.</p>
+        <p class="text-xs text-slate-400">Survolez la photo d'une étape pour la déplier entièrement sans rognage.</p>
       </div>
 
       <div class="flex items-center gap-2 p-1.5 glass rounded-xl border border-surface-border self-start">
@@ -276,7 +334,7 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
       <div>
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme, Horaires & Menus du Jour</h2>
-        <p class="text-xs text-slate-400">Étapes de route, horaires cibles et prévision des repas midi / soir. Glissez via <span class="text-brand-400 font-bold">⋮⋮</span>.</p>
+        <p class="text-xs text-slate-400">Cliquez sur une photo pour l'ouvrir dans la visionneuse plein écran avec zoom.</p>
       </div>
       <div class="flex gap-2">
         <button onclick="resetDefaultSteps()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser dates</button>
@@ -439,7 +497,7 @@
     </div>
   </section>
 
-  <!-- 6. MODULES OUTILS TERRAIN : 2 VALISES TOTALEMENT PERSONNALISABLES -->
+  <!-- 6. MODULES OUTILS TERRAIN -->
   <section id="tools-section" class="max-w-6xl mx-auto px-4 py-6">
     <div class="mb-6">
       <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Outils Terrain Indispensables</h2>
@@ -449,7 +507,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between lg:col-span-2">
         <div>
-          <!-- Onglets Valise 1 / Valise 2 -->
+          <!-- Onglets Valises -->
           <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-surface-border">
             <div class="flex items-center gap-2">
               <i data-lucide="luggage" class="w-5 h-5 text-brand-400"></i>
@@ -482,10 +540,8 @@
             </div>
           </div>
 
-          <!-- Liste des articles ajoutés -->
           <div class="space-y-1.5 max-h-60 overflow-y-auto pr-1" id="bag-items-list"></div>
 
-          <!-- Formulaire d'ajout d'affaires -->
           <div class="flex gap-2 mt-4 pt-3 border-t border-surface-border">
             <input type="text" id="newItemName" placeholder="Nouvelle affaire (ex: Doudoune, Gants...)" class="flex-1 bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-400" />
             <div class="relative w-24">
@@ -537,7 +593,7 @@
 
             <a href="https://safetravel.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
               <div class="flex items-center gap-2">
-                <span>🛡️️</span>
+                <span>🛡</span>
                 <div>
                   <div class="font-semibold text-white">SafeTravel.is</div>
                   <div class="text-[10px] text-slate-400">Enregistrer son plan de route</div>
@@ -645,6 +701,38 @@
     </div>
   </div>
 
+  <!-- VISIONNEUSE PLEIN ÉCRAN INTERACTIVE -->
+  <div id="imageLightbox" class="hidden fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex flex-col justify-between p-4 transition-opacity">
+    <div class="flex items-center justify-between text-white z-10">
+      <div>
+        <h3 id="lightboxTitle" class="text-sm font-bold tracking-tight">Photo du lieu</h3>
+        <p id="lightboxSubtitle" class="text-[11px] text-slate-400">Molette ou boutons pour zoomer • Glisser pour explorer</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="zoomLightbox(0.25)" title="Zoom avant (+)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
+          <i data-lucide="zoom-in" class="w-4 h-4"></i>
+        </button>
+        <button onclick="zoomLightbox(-0.25)" title="Zoom arrière (-)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
+          <i data-lucide="zoom-out" class="w-4 h-4"></i>
+        </button>
+        <button onclick="resetLightboxZoom()" title="Taille réelle (1:1)" class="glass px-2.5 py-1.5 rounded-xl text-slate-200 hover:text-brand-400 text-xs font-mono">
+          1:1
+        </button>
+        <button onclick="closeLightbox()" title="Fermer (Échap)" class="glass p-2 rounded-xl text-slate-200 hover:text-red-400 text-xs flex items-center justify-center">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <div id="lightboxViewport" class="flex-1 w-full h-full flex items-center justify-center overflow-hidden relative my-2 cursor-grab active:cursor-grabbing">
+      <img id="lightboxImg" src="" alt="Lieu" class="max-w-[90vw] max-h-[80vh] object-contain rounded-2xl shadow-2xl pointer-events-auto" />
+    </div>
+
+    <div class="text-center text-[11px] text-slate-400">
+      Niveau de zoom : <span id="zoomLevelDisplay" class="font-mono text-brand-400 font-bold">100%</span>
+    </div>
+  </div>
+
   <script>
     lucide.createIcons();
 
@@ -672,7 +760,110 @@
     }
 
     // =========================================================================
-    // ENREGISTREMENT DU SERVICE WORKER & GESTION PWA
+    // MODULE LIGHTBOX / ZOOM PLEIN ÉCRAN
+    // =========================================================================
+    let currentZoom = 1;
+    let panX = 0;
+    let panY = 0;
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+
+    function openLightbox(imgSrc, title = "Lieu clé") {
+      const modal = document.getElementById("imageLightbox");
+      const img = document.getElementById("lightboxImg");
+      const titleEl = document.getElementById("lightboxTitle");
+
+      img.src = imgSrc;
+      titleEl.innerText = title;
+      resetLightboxZoom();
+      modal.classList.remove("hidden");
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById("imageLightbox");
+      modal.classList.add("hidden");
+      resetLightboxZoom();
+    }
+
+    function updateLightboxTransform() {
+      const img = document.getElementById("lightboxImg");
+      const zoomText = document.getElementById("zoomLevelDisplay");
+      img.style.transform = `translate(${panX}px, ${panY}px) scale(${currentZoom})`;
+      zoomText.innerText = `${Math.round(currentZoom * 100)}%`;
+    }
+
+    function zoomLightbox(delta) {
+      currentZoom = Math.min(Math.max(0.5, currentZoom + delta), 4.0);
+      if (currentZoom === 1) {
+        panX = 0;
+        panY = 0;
+      }
+      updateLightboxTransform();
+    }
+
+    function resetLightboxZoom() {
+      currentZoom = 1;
+      panX = 0;
+      panY = 0;
+      updateLightboxTransform();
+    }
+
+    const viewport = document.getElementById("lightboxViewport");
+
+    viewport.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const delta = e.deltaY < 0 ? 0.2 : -0.2;
+      zoomLightbox(delta);
+    }, { passive: false });
+
+    viewport.addEventListener("mousedown", (e) => {
+      if (currentZoom <= 1 && e.target.id !== "lightboxImg") return;
+      isDragging = true;
+      startX = e.clientX - panX;
+      startY = e.clientY - panY;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      panX = e.clientX - startX;
+      panY = e.clientY - startY;
+      updateLightboxTransform();
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+
+    viewport.addEventListener("touchstart", (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        startX = e.touches[0].clientX - panX;
+        startY = e.touches[0].clientY - panY;
+      }
+    });
+
+    viewport.addEventListener("touchmove", (e) => {
+      if (isDragging && e.touches.length === 1) {
+        panX = e.touches[0].clientX - startX;
+        panY = e.touches[0].clientY - startY;
+        updateLightboxTransform();
+      }
+    });
+
+    viewport.addEventListener("touchend", () => {
+      isDragging = false;
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "+" || e.key === "=") zoomLightbox(0.25);
+      if (e.key === "-") zoomLightbox(-0.25);
+      if (e.key === "0") resetLightboxZoom();
+    });
+
+    // =========================================================================
+    // SERVICE WORKER & PWA
     // =========================================================================
     let deferredPrompt = null;
 
@@ -708,13 +899,13 @@
     });
 
     // =========================================================================
-    // CONFIGURATION SUPABASE, SYNC GLOBALE & REALTIME MULTI-ÉCRANS
+    // CONFIGURATION SUPABASE OFFICIELLE
     // =========================================================================
-    const SUPABASE_URL = "https://xyzcompanyproject.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5emNvbXBhbnlwcm9qZWN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3M...VOTRE_CLE_ANON";
+    const SUPABASE_URL = "https://cyosixmthqbrmqggcspw.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN5b3NpeG10aHFicm1xZ2djc3B3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNTQ4NDgsImV4cCI6MjA3MjgzMDg0OH0.U61AQhGqgBSvYU8WmxupQ8SnaXN2eiQBiwR6foQI7lI";
 
     let supabaseClient = null;
-    if (SUPABASE_URL && !SUPABASE_URL.includes("xyzcompanyproject")) {
+    if (SUPABASE_URL && window.supabase) {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
@@ -730,7 +921,6 @@
       }
     }
 
-    // 1. Synchronisation initiale complète
     async function syncFromSupabase() {
       if (!supabaseClient || !navigator.onLine) {
         setSyncStatus(false, "Mode Hors-ligne");
@@ -740,7 +930,7 @@
       try {
         setSyncStatus(false, "Sync...");
 
-        // A. Étapes
+        // Étapes
         const { data: stepsData, error: stepsErr } = await supabaseClient
           .from('iceland_steps')
           .select('*')
@@ -765,7 +955,7 @@
           recalculateMap();
         }
 
-        // B. Hébergements
+        // Hébergements
         const { data: lodgingsData, error: lErr } = await supabaseClient
           .from('iceland_lodgings')
           .select('*')
@@ -786,7 +976,7 @@
           renderLodgings();
         }
 
-        // C. Menus
+        // Menus
         const { data: mealsData, error: mErr } = await supabaseClient
           .from('iceland_meals')
           .select('*');
@@ -803,17 +993,14 @@
           renderPlacesList();
         }
 
-        // D. Valises (100% Supabase + Local)
         await syncLuggageFromSupabase();
-
         setSyncStatus(true, "Synchronisé");
       } catch (e) {
-        console.warn("Échec sync cloud, maintien local :", e);
+        console.warn("Échec sync cloud :", e);
         setSyncStatus(false, "Local (Hors-ligne)");
       }
     }
 
-    // 2. Écoute temps réel (Realtime) sur toutes les tables
     function initSupabaseRealtime() {
       if (!supabaseClient) return;
 
@@ -879,7 +1066,7 @@
     window.addEventListener('offline', () => setSyncStatus(false, "Hors-ligne"));
 
     // =========================================================================
-    // 1. COMPTE À REBOURS DU VOL ALLER
+    // COMPTE À REBOURS DU VOL ALLER
     // =========================================================================
     const TARGET_DATE = new Date("2027-01-26T04:00:00Z").getTime();
 
@@ -910,7 +1097,7 @@
     updateCountdown();
 
     // =========================================================================
-    // 2. CONVERTISSEUR MONNAIE EXPRESS
+    // CONVERTISSEUR MONNAIE
     // =========================================================================
     const RATE = 150;
     function convertCurrency(source) {
@@ -924,7 +1111,7 @@
     }
 
     // =========================================================================
-    // 3. MODULE VALISES : VIDES PAR DÉFAUT + SYNCHRO SUPABASE
+    // MODULE VALISES
     // =========================================================================
     let activeBag = 'bag1';
 
@@ -1113,7 +1300,7 @@
     renderLuggage();
 
     // =========================================================================
-    // 4. MODULE DES MENUS DU MIDI ET DU SOIR (PAR DATE)
+    // MODULE MENUS
     // =========================================================================
     const DEFAULT_MEALS = {
       "2027-01-26": {
@@ -1202,7 +1389,7 @@
     }
 
     // =========================================================================
-    // 5. ÉTAPES DU SÉJOUR AVEC CHEMINS LOCAUX
+    // CONFIGURATION DES ÉTAPES
     // =========================================================================
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
@@ -1307,7 +1494,7 @@
     }
 
     // =========================================================================
-    // 6. HÉBERGEMENTS PAR NUITÉE
+    // HÉBERGEMENTS PAR NUITÉE
     // =========================================================================
     const BLANK_LODGINGS = [
       { night: 1, date: "Mardi 26 Janvier", name: "", location: "Zone Selfoss", checkin: "Dès 15h00", address: "", phone: "", notes: "Arrivée après Raufarhólshellir et courses Bónus" },
@@ -1450,7 +1637,7 @@
     renderLodgings();
 
     // =========================================================================
-    // 7. GESTION DES LISTES, ÉTAPES ET MENUS PAR JOUR
+    // LISTE DES ÉTAPES & MENUS DU JOUR
     // =========================================================================
     let sortableInstances = [];
 
@@ -1504,11 +1691,17 @@
                     `;
                   }
 
+                  const stepImg = getImgSrc(s.img);
+
                   return `
                     ${distanceTag}
-                    <div class="step-card flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-surface-border text-xs cursor-move hover:border-brand-400/50 transition-all" data-id="${s.id}">
-                      <div class="flex items-center gap-2 truncate mr-2">
+                    <div class="step-card flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-surface-border text-xs cursor-move hover:border-brand-400/50 transition-all gap-2" data-id="${s.id}">
+                      <div class="flex items-center gap-2 truncate flex-1">
                         <span class="drag-handle text-slate-500 hover:text-slate-200 cursor-grab active:cursor-grabbing font-mono text-sm select-none">⋮⋮</span>
+                        
+                        <!-- Miniature cliquable pour Lightbox / Plein écran -->
+                        <img src="${stepImg}" alt="${s.name}" onclick="openLightbox('${stepImg}', '${s.name.replace(/'/g, "\\'")}')" class="w-10 h-10 rounded-lg object-cover bg-slate-800 border border-surface-border shrink-0 cursor-zoom-in hover:scale-105 transition-transform" onerror="handleImgError(this)" title="Agrandir et zoomer" />
+
                         <div class="truncate">
                           <div class="flex items-center gap-1.5">
                             <span class="font-medium text-white truncate">${s.name}</span>${s.time ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-400 font-mono font-bold shrink-0">${s.time}</span>` : ''}
@@ -1518,6 +1711,7 @@
                           </div>
                         </div>
                       </div>
+
                       <div class="flex items-center gap-1 shrink-0">
                         <button onclick="centerOnCoord(${s.lat},${s.lng})" title="Voir sur carte" class="p-1 text-slate-400 hover:text-brand-400">
                           <i data-lucide="eye" class="w-3.5 h-3.5"></i>
@@ -1675,7 +1869,7 @@
     renderPlacesList();
 
     // =========================================================================
-    // 8. CARTE INTERACTIVE LEAFLET
+    // CARTE LEAFLET
     // =========================================================================
     const map = L.map('map', { zoomControl: false }).setView([63.9, -19.5], 8);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -1743,7 +1937,10 @@
         const imgSrc = getImgSrc(s.img);
         const popupContent = `
           <div>
-            <img src="${imgSrc}" class="popup-cover-img" alt="${s.name}" onerror="handleImgError(this)" />
+            <div class="popup-photo-box" onclick="openLightbox('${imgSrc}', '${s.name.replace(/'/g, "\\'")}')" title="Survole pour agrandir • Clique pour le plein écran">
+              <img src="${imgSrc}" class="popup-photo-img" alt="${s.name}" onerror="handleImgError(this)" />
+              <div class="popup-photo-hint">Déplier ⤢</div>
+            </div>
             <div class="popup-body">
               <span class="popup-tag" style="background:${dayCfg.color}; color:#fff;">${dayCfg.fullLabel}</span>
               <div class="popup-title">${s.name}</div>
@@ -1756,7 +1953,9 @@
             </div>
           </div>
         `;
-        const m = L.marker([s.lat, s.lng], { icon: makeCustomPin(s.dateKey) }).bindPopup(popupContent).addTo(map);
+        const m = L.marker([s.lat, s.lng], { icon: makeCustomPin(s.dateKey) })
+          .bindPopup(popupContent, { autoPanPadding: [25, 25] })
+          .addTo(map);
         markerLayers.push(m);
       });
 
@@ -1818,11 +2017,11 @@
     }
 
     // =========================================================================
-    // 9. MÉTÉO 10 JOURS
+    // MÉTÉO 10 JOURS
     // =========================================================================
     function getWeatherIcon(code) {
       if ([0].includes(code)) return "☀️";
-      if ([1, 2].includes(code)) return "🌤️";
+      if ([1, 2].includes(code)) return "🌤️️";
       if ([3].includes(code)) return "☁️";
       if ([45, 48].includes(code)) return "🌫️";
       if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return "🌧️";
@@ -1893,6 +2092,7 @@
       }
     }
 
+    // Initialisation
     recalculateMap();
     fetchWeather();
     syncFromSupabase();
