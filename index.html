@@ -173,7 +173,7 @@
           <span class="font-bold tracking-tight text-white block text-sm sm:text-base">Roadtrip Islande 2027</span>
           <div class="flex items-center gap-1.5 -mt-0.5">
             <span class="text-xs text-brand-400 font-medium">Cockpit Interactif</span>
-            <span id="syncBadge" class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono">Local</span>
+            <span id="syncBadge" class="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Local</span>
           </div>
         </div>
       </div>
@@ -186,7 +186,7 @@
         <a href="#tools-section" class="hover:text-brand-400 transition-colors">Outils</a>
       </nav>
       <div class="flex items-center gap-2">
-        <button id="pwaInstallBtn" onclick="installPWA()" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
+        <button id="pwaInstallBtn" data-action="installPWA" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
           <i data-lucide="download" class="w-3.5 h-3.5"></i> Installer
         </button>
         <a href="#map-section" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-white transition-all shadow-lg shadow-brand-500/20">
@@ -310,19 +310,19 @@
       </div>
 
       <div class="flex items-center gap-2 p-1.5 glass rounded-xl border border-surface-border self-start">
-        <button id="btn-out" onclick="setMode('out')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Aller (26-29 Jan)</button>
-        <button id="btn-in" onclick="setMode('in')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Retour (30 Jan-01 Fév)</button>
-        <button id="btn-all" onclick="setMode('all')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-white transition-all">Tout le séjour</button>
+        <button id="btn-out" data-action="setMode" data-value="out" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Aller (26-29 Jan)</button>
+        <button id="btn-in" data-action="setMode" data-value="in" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Retour (30 Jan-01 Fév)</button>
+        <button id="btn-all" data-action="setMode" data-value="all" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-white transition-all">Tout le séjour</button>
       </div>
     </div>
 
     <div class="relative w-full h-[580px] rounded-3xl overflow-hidden border border-surface-border shadow-2xl">
       <div id="map" class="w-full h-full"></div>
       <div class="absolute top-3 right-3 z-[999] flex flex-col gap-2">
-        <button onclick="toggleGasPins()" id="gasFilterBtn" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
+        <button data-action="toggleGasPins" id="gasFilterBtn" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
           <span>⛽</span> <span id="gasFilterLabel">Stations : ON</span>
         </button>
-        <button onclick="resetMapView()" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
+        <button data-action="resetMapView" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
           <span>🎯</span> Recentrer
         </button>
       </div>
@@ -337,8 +337,8 @@
         <p class="text-xs text-slate-400">Cliquez sur une photo pour l'ouvrir dans la visionneuse plein écran avec zoom.</p>
       </div>
       <div class="flex gap-2">
-        <button onclick="resetDefaultSteps()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser dates</button>
-        <button onclick="toggleAddPlaceForm()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-500 hover:bg-brand-600 text-white flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
+        <button data-action="resetDefaultSteps" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser dates</button>
+        <button data-action="toggleAddPlaceForm" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-500 hover:bg-brand-600 text-white flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
           <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter un lieu
         </button>
       </div>
@@ -384,8 +384,8 @@
         </div>
       </div>
       <div class="mt-3 flex justify-end gap-2">
-        <button onclick="toggleAddPlaceForm()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Annuler</button>
-        <button onclick="saveNewPlace()" class="px-4 py-1.5 bg-brand-500 rounded-xl text-xs font-bold text-white">Ajouter au parcours</button>
+        <button data-action="toggleAddPlaceForm" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Annuler</button>
+        <button data-action="saveNewPlace" class="px-4 py-1.5 bg-brand-500 rounded-xl text-xs font-bold text-white">Ajouter au parcours</button>
       </div>
     </div>
 
@@ -399,7 +399,7 @@
         <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Hébergements par Nuitée</h2>
         <p class="text-xs text-slate-400">Vos 7 nuitées réservées du 26 janvier au 01 février au soir (nuit à l'aéroport KEF).</p>
       </div>
-      <button onclick="clearAllLodgings()" class="text-xs text-slate-500 hover:text-red-400 transition-colors">Vider toutes les fiches</button>
+      <button data-action="clearAllLodgings" class="text-xs text-slate-500 hover:text-red-400 transition-colors">Vider toutes les fiches</button>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="lodging-cards-container"></div>
@@ -518,8 +518,8 @@
             </div>
 
             <div class="flex items-center gap-1.5 p-1 glass rounded-xl border border-surface-border">
-              <button id="btnTabBag1" onclick="switchBagTab('bag1')" class="px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all">Valise 1</button>
-              <button id="btnTabBag2" onclick="switchBagTab('bag2')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">Valise 2</button>
+              <button id="btnTabBag1" data-action="switchBagTab" data-value="bag1" class="px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all">Valise 1</button>
+              <button id="btnTabBag2" data-action="switchBagTab" data-value="bag2" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">Valise 2</button>
             </div>
           </div>
 
@@ -548,7 +548,7 @@
               <input type="number" step="0.1" min="0" id="newItemWeight" placeholder="Poids" class="w-full bg-slate-900 border border-surface-border rounded-xl pl-3 pr-7 py-2 text-xs text-white font-mono focus:outline-none focus:border-brand-400" />
               <span class="absolute right-2 top-2 text-[10px] text-slate-400 font-mono">kg</span>
             </div>
-            <button onclick="addBagItem()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-1">
+            <button data-action="addBagItem" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-1">
               <span>+</span> Ajouter
             </button>
           </div>
@@ -556,7 +556,7 @@
 
         <div class="mt-4 pt-3 border-t border-surface-border/50 flex justify-between items-center text-[11px] text-slate-400">
           <span>Synchro temps réel Supabase Cloud & Hors-ligne</span>
-          <button onclick="clearCurrentBag()" class="hover:text-red-400 transition-colors">Vider cette valise</button>
+          <button data-action="clearCurrentBag" class="hover:text-red-400 transition-colors">Vider cette valise</button>
         </div>
       </div>
 
@@ -617,7 +617,7 @@
     <div class="glass w-full max-w-md p-6 rounded-3xl border border-surface-border">
       <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
         <span id="modalLodgingTitle">Renseigner l'Hébergement</span>
-        <button onclick="closeLodgingModal()" class="text-slate-400 hover:text-white">✕</button>
+        <button data-action="closeLodgingModal" class="text-slate-400 hover:text-white">✕</button>
       </h3>
       <input type="hidden" id="editLodgingIndex" />
       <div class="space-y-3 text-xs">
@@ -649,8 +649,8 @@
         </div>
       </div>
       <div class="mt-5 flex justify-end gap-2">
-        <button onclick="closeLodgingModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
-        <button onclick="saveLodgingData()" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer</button>
+        <button data-action="closeLodgingModal" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
+        <button data-action="saveLodgingData" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer</button>
       </div>
     </div>
   </div>
@@ -660,7 +660,7 @@
     <div class="glass w-full max-w-lg p-6 rounded-3xl border border-surface-border">
       <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
         <span id="modalMealTitle">Repas du Jour</span>
-        <button onclick="closeMealModal()" class="text-slate-400 hover:text-white">✕</button>
+        <button data-action="closeMealModal" class="text-slate-400 hover:text-white">✕</button>
       </h3>
       <input type="hidden" id="editMealDateKey" />
 
@@ -695,8 +695,8 @@
       </div>
 
       <div class="mt-5 flex justify-end gap-2">
-        <button onclick="closeMealModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
-        <button onclick="saveMealData()" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer le menu</button>
+        <button data-action="closeMealModal" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
+        <button data-action="saveMealData" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer le menu</button>
       </div>
     </div>
   </div>
@@ -709,16 +709,16 @@
         <p id="lightboxSubtitle" class="text-[11px] text-slate-400">Molette ou boutons pour zoomer • Glisser pour explorer</p>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="zoomLightbox(0.25)" title="Zoom avant (+)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
+        <button data-action="zoomLightbox" data-value="0.25" title="Zoom avant (+)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
           <i data-lucide="zoom-in" class="w-4 h-4"></i>
         </button>
-        <button onclick="zoomLightbox(-0.25)" title="Zoom arrière (-)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
+        <button data-action="zoomLightbox" data-value="-0.25" title="Zoom arrière (-)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
           <i data-lucide="zoom-out" class="w-4 h-4"></i>
         </button>
-        <button onclick="resetLightboxZoom()" title="Taille réelle (1:1)" class="glass px-2.5 py-1.5 rounded-xl text-slate-200 hover:text-brand-400 text-xs font-mono">
+        <button data-action="resetLightboxZoom" title="Taille réelle (1:1)" class="glass px-2.5 py-1.5 rounded-xl text-slate-200 hover:text-brand-400 text-xs font-mono">
           1:1
         </button>
-        <button onclick="closeLightbox()" title="Fermer (Échap)" class="glass p-2 rounded-xl text-slate-200 hover:text-red-400 text-xs flex items-center justify-center">
+        <button data-action="closeLightbox" title="Fermer (Échap)" class="glass p-2 rounded-xl text-slate-200 hover:text-red-400 text-xs flex items-center justify-center">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
       </div>
@@ -736,6 +736,50 @@
   <script>
     lucide.createIcons();
 
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      })[char]);
+    }
+
+    document.addEventListener('click', event => {
+      const button = event.target.closest('[data-action]');
+      if (!button) return;
+      const value = button.dataset.value;
+      const actions = {
+        addBagItem,
+        centerOnCoord: () => centerOnCoord(Number(button.dataset.lat), Number(button.dataset.lng)),
+        clearAllLodgings,
+        clearCurrentBag,
+        closeLightbox,
+        closeLodgingModal,
+        closeMealModal,
+        installPWA,
+        openLightbox: () => openLightbox(button.dataset.src, button.dataset.title),
+        openLodgingModal: () => openLodgingModal(Number(value)),
+        openMealModal: () => openMealModal(value),
+        removeBagItem: () => removeBagItem(value),
+        removeStep: () => removeStep(value),
+        resetDefaultSteps,
+        resetLightboxZoom,
+        resetMapView,
+        saveLodgingData,
+        saveMealData,
+        saveNewPlace,
+        setMode: () => setMode(value),
+        switchBagTab: () => switchBagTab(value),
+        toggleAddPlaceForm,
+        toggleBagItemCheck: () => toggleBagItemCheck(value),
+        toggleGasPins,
+        zoomLightbox: () => zoomLightbox(Number(value))
+      };
+      if (actions[button.dataset.action]) actions[button.dataset.action]();
+    });
+
     // =========================================================================
     // HELPER GESTION IMAGES AVEC FALLBACK AUTO (JPG / PNG)
     // =========================================================================
@@ -749,13 +793,20 @@
     }
 
     function handleImgError(el) {
-      if (!el.src) return;
-      if (el.src.endsWith('.jpg')) {
-        el.src = el.src.replace(/\.jpg$/, '.png');
-      } else if (el.src.endsWith('.png')) {
-        el.src = el.src.replace(/\.png$/, '.jpg');
+      if (el.dataset.fallbackTried === 'true') {
+        el.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2240%22 height=%2240%22 viewBox=%220 0 40 40%22%3E%3Crect width=%2240%22 height=%2240%22 fill=%22%230f172a%22/%3E%3Cpath d=%22M8 29l8-9 5 5 4-4 7 8%22 fill=%22none%22 stroke=%22%2338bdf8%22 stroke-width=%222%22/%3E%3Ccircle cx=%2215%22 cy=%2213%22 r=%223%22 fill=%22%2338bdf8%22/%3E%3C/svg%3E';
+        el.onerror = null;
+        return;
+      }
+      el.dataset.fallbackTried = 'true';
+      const source = el.getAttribute('src') || '';
+      if (/\.jpe?g(?:[?#].*)?$/i.test(source)) {
+        el.src = source.replace(/\.jpe?g(?=([?#]|$))/i, '.png');
+      } else if (/\.png(?:[?#].*)?$/i.test(source)) {
+        el.src = source.replace(/\.png(?=([?#]|$))/i, '.jpg');
       } else {
-        el.style.display = 'none';
+        el.dataset.fallbackTried = 'true';
+        el.dispatchEvent(new Event('error'));
       }
     }
 
@@ -857,6 +908,7 @@
 
     window.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closeLightbox();
+      if (e.target instanceof Element && (e.target.matches("input, textarea, select, [contenteditable='true']") || e.target.isContentEditable)) return;
       if (e.key === "+" || e.key === "=") zoomLightbox(0.25);
       if (e.key === "-") zoomLightbox(-0.25);
       if (e.key === "0") resetLightboxZoom();
@@ -909,14 +961,166 @@
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     }
 
+    let queueDatabasePromise;
+    let pendingFlush = null;
+    function openQueueDatabase() {
+      if (!('indexedDB' in window)) return Promise.reject(new Error('IndexedDB indisponible'));
+      if (!queueDatabasePromise) {
+        queueDatabasePromise = new Promise((resolve, reject) => {
+          const request = indexedDB.open('islande-offline-queue', 1);
+          request.onupgradeneeded = () => request.result.createObjectStore('writes', { keyPath: 'id' });
+          request.onsuccess = () => resolve(request.result);
+          request.onerror = () => reject(request.error);
+        });
+      }
+      return queueDatabasePromise;
+    }
+
+    async function getQueuedWrites() {
+      const db = await openQueueDatabase();
+      return new Promise((resolve, reject) => {
+        const request = db.transaction('writes', 'readonly').objectStore('writes').getAll();
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+    }
+
+    async function putQueuedWrite(write) {
+      const db = await openQueueDatabase();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction('writes', 'readwrite');
+        transaction.objectStore('writes').put(write);
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error);
+      });
+    }
+
+    async function removeQueuedWrite(id, expectedRevision) {
+      const db = await openQueueDatabase();
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction('writes', 'readwrite');
+        const store = transaction.objectStore('writes');
+        const request = store.get(id);
+        request.onsuccess = () => {
+          if (request.result?.revision === expectedRevision) store.delete(id);
+        };
+        transaction.oncomplete = resolve;
+        transaction.onerror = () => reject(transaction.error);
+      });
+    }
+
+    async function queueCloudWrite(table, keyColumn, key, record, deleted = false, flush = true) {
+      const updatedAt = record?.updated_at || new Date().toISOString();
+      try {
+        await putQueuedWrite({
+          id: `${table}:${key}`,
+          table,
+          keyColumn,
+          key: String(key),
+          record: record ? { ...record, updated_at: updatedAt } : null,
+          deleted,
+          updatedAt: new Date(updatedAt).toISOString(),
+          revision: `${Date.now()}-${Math.random()}`
+        });
+      } catch (error) {
+        console.warn('Impossible de mettre en file une écriture hors-ligne :', error);
+        setSyncStatus(false, 'En attente locale');
+        return;
+      }
+      if (flush && navigator.onLine && supabaseClient) await flushPendingWrites();
+      else if (!navigator.onLine || !supabaseClient) setSyncStatus(false, 'En attente de réseau');
+    }
+
+    async function flushPendingWrites() {
+      if (pendingFlush) return pendingFlush;
+      if (!supabaseClient || !navigator.onLine) return;
+      pendingFlush = (async () => {
+        let retry = true;
+        while (retry && navigator.onLine) {
+          let writes;
+          try {
+            writes = await getQueuedWrites();
+          } catch (error) {
+            console.warn('Impossible de lire la file hors-ligne :', error);
+            break;
+          }
+          if (!writes.length) break;
+          writes.sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+          let failed = false;
+          for (const write of writes) {
+            try {
+              if (!navigator.onLine) {
+                failed = true;
+                break;
+              }
+              const { data: remote, error: readError } = await supabaseClient
+                .from(write.table)
+                .select('updated_at')
+                .eq(write.keyColumn, write.key)
+                .maybeSingle();
+              if (readError) {
+                failed = true;
+                break;
+              }
+              if (remote?.updated_at && Date.parse(remote.updated_at) > Date.parse(write.updatedAt)) {
+                await removeQueuedWrite(write.id, write.revision);
+                continue;
+              }
+              const result = write.deleted
+                ? await supabaseClient.from(write.table).delete().eq(write.keyColumn, write.key)
+                : await supabaseClient.from(write.table).upsert(write.record);
+              if (result.error) {
+                failed = true;
+                break;
+              }
+              await removeQueuedWrite(write.id, write.revision);
+            } catch (error) {
+              console.warn('Échec de rejeu hors-ligne :', error);
+              failed = true;
+              break;
+            }
+          }
+          retry = !failed && navigator.onLine && (await getQueuedWrites()).length > 0;
+        }
+        try {
+          const remaining = await getQueuedWrites();
+          setSyncStatus(remaining.length === 0, remaining.length ? 'En attente de synchro' : 'Synchronisé');
+        } catch (error) {
+          console.warn('Impossible de vérifier la file hors-ligne :', error);
+        }
+      })().finally(() => { pendingFlush = null; });
+      return pendingFlush;
+    }
+
+    async function mergeQueuedRows(table, keyColumn, cloudRows) {
+      const rows = new Map((cloudRows || []).map(row => [String(row[keyColumn]), row]));
+      let pending = [];
+      try {
+        pending = await getQueuedWrites();
+      } catch (error) {
+        console.warn('Impossible de lire la file hors-ligne :', error);
+      }
+      for (const write of pending.filter(item => item.table === table)) {
+        const remote = rows.get(write.key);
+        if (remote?.updated_at && Date.parse(remote.updated_at) > Date.parse(write.updatedAt)) {
+          await removeQueuedWrite(write.id, write.revision);
+        } else if (write.deleted) {
+          rows.delete(write.key);
+        } else {
+          rows.set(write.key, write.record);
+        }
+      }
+      return [...rows.values()];
+    }
+
     function setSyncStatus(isSynced, text) {
       const badge = document.getElementById("syncBadge");
       if (!badge) return;
       if (isSynced) {
-        badge.className = "text-[9px] px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-mono";
+        badge.className = "text-[9px] px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-mono";
         badge.innerText = text || "Cloud OK";
       } else {
-        badge.className = "text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono";
+        badge.className = "text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400 font-mono";
         badge.innerText = text || "Local (Offline)";
       }
     }
@@ -929,6 +1133,7 @@
 
       try {
         setSyncStatus(false, "Sync...");
+        await flushPendingWrites();
 
         // Étapes
         const { data: stepsData, error: stepsErr } = await supabaseClient
@@ -937,8 +1142,9 @@
           .order('date_key', { ascending: true })
           .order('position_order', { ascending: true });
 
-        if (!stepsErr && stepsData && stepsData.length > 0) {
-          const formatted = stepsData.map(s => ({
+        if (!stepsErr && stepsData) {
+          const mergedSteps = await mergeQueuedRows('iceland_steps', 'id', stepsData);
+          const formatted = mergedSteps.map(s => ({
             id: s.id,
             dateKey: s.date_key,
             dateLabel: s.date_label,
@@ -948,8 +1154,9 @@
             lng: s.lng,
             price: s.price,
             desc: s.description,
-            img: s.img
-          }));
+            img: s.img,
+            positionOrder: s.position_order
+          })).sort((a, b) => a.dateKey.localeCompare(b.dateKey) || (a.positionOrder || 0) - (b.positionOrder || 0));
           localStorage.setItem("iceland_custom_steps_v11", JSON.stringify(formatted));
           renderPlacesList();
           recalculateMap();
@@ -961,8 +1168,9 @@
           .select('*')
           .order('night', { ascending: true });
 
-        if (!lErr && lodgingsData && lodgingsData.length > 0) {
-          const formattedL = lodgingsData.map(l => ({
+        if (!lErr && lodgingsData) {
+          const mergedLodgings = await mergeQueuedRows('iceland_lodgings', 'night', lodgingsData);
+          const formattedL = mergedLodgings.map(l => ({
             night: l.night,
             date: l.date_label,
             name: l.name,
@@ -981,9 +1189,10 @@
           .from('iceland_meals')
           .select('*');
 
-        if (!mErr && mealsData && mealsData.length > 0) {
+        if (!mErr && mealsData) {
+          const mergedMeals = await mergeQueuedRows('iceland_meals', 'date_key', mealsData);
           const mealsMap = {};
-          mealsData.forEach(m => {
+          mergedMeals.forEach(m => {
             mealsMap[m.date_key] = {
               lunch: { title: m.lunch_title || '', notes: m.lunch_notes || '' },
               dinner: { title: m.dinner_title || '', notes: m.dinner_notes || '' }
@@ -994,7 +1203,8 @@
         }
 
         await syncLuggageFromSupabase();
-        setSyncStatus(true, "Synchronisé");
+        const remainingWrites = await getQueuedWrites();
+        setSyncStatus(remainingWrites.length === 0, remainingWrites.length ? "En attente de synchro" : "Synchronisé");
       } catch (e) {
         console.warn("Échec sync cloud :", e);
         setSyncStatus(false, "Local (Hors-ligne)");
@@ -1008,7 +1218,8 @@
         .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_steps' }, async () => {
           const { data } = await supabaseClient.from('iceland_steps').select('*').order('date_key', { ascending: true }).order('position_order', { ascending: true });
           if (data) {
-            const formatted = data.map(s => ({
+            const merged = await mergeQueuedRows('iceland_steps', 'id', data);
+            const formatted = merged.map(s => ({
               id: s.id,
               dateKey: s.date_key,
               dateLabel: s.date_label,
@@ -1018,8 +1229,9 @@
               lng: s.lng,
               price: s.price,
               desc: s.description,
-              img: s.img
-            }));
+              img: s.img,
+              positionOrder: s.position_order
+            })).sort((a, b) => a.dateKey.localeCompare(b.dateKey) || (a.positionOrder || 0) - (b.positionOrder || 0));
             localStorage.setItem("iceland_custom_steps_v11", JSON.stringify(formatted));
             renderPlacesList();
             recalculateMap();
@@ -1031,8 +1243,9 @@
         .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_meals' }, async () => {
           const { data } = await supabaseClient.from('iceland_meals').select('*');
           if (data) {
+            const merged = await mergeQueuedRows('iceland_meals', 'date_key', data);
             const mealsMap = {};
-            data.forEach(m => {
+            merged.forEach(m => {
               mealsMap[m.date_key] = {
                 lunch: { title: m.lunch_title || '', notes: m.lunch_notes || '' },
                 dinner: { title: m.dinner_title || '', notes: m.dinner_notes || '' }
@@ -1045,7 +1258,8 @@
         .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_lodgings' }, async () => {
           const { data } = await supabaseClient.from('iceland_lodgings').select('*').order('night', { ascending: true });
           if (data) {
-            const formattedL = data.map(l => ({
+            const merged = await mergeQueuedRows('iceland_lodgings', 'night', data);
+            const formattedL = merged.map(l => ({
               night: l.night,
               date: l.date_label,
               name: l.name,
@@ -1062,7 +1276,10 @@
         .subscribe();
     }
 
-    window.addEventListener('online', () => syncFromSupabase());
+    window.addEventListener('online', async () => {
+      await flushPendingWrites();
+      await syncFromSupabase();
+    });
     window.addEventListener('offline', () => setSyncStatus(false, "Hors-ligne"));
 
     // =========================================================================
@@ -1127,8 +1344,9 @@
       try {
         const { data, error } = await supabaseClient.from('iceland_packing_items').select('*');
         if (!error && data) {
+          const merged = await mergeQueuedRows('iceland_packing_items', 'id', data);
           const grouped = { bag1: [], bag2: [] };
-          data.forEach(item => {
+          merged.forEach(item => {
             const bId = item.bag_id === 'bag2' ? 'bag2' : 'bag1';
             grouped[bId].push({
               id: item.id,
@@ -1184,11 +1402,11 @@
       if (totalWeight > 23) {
         progressBar.className = "bg-red-500 h-full transition-all duration-300";
         weightDisplay.className = "text-sm font-mono font-black text-red-400";
-        remainingDisplay.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge : +${(totalWeight - 23).toFixed(1)} kg au-delà des 23 kg !</span>`;
+        remainingDisplay.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge : +${escapeHtml((totalWeight - 23).toFixed(1))} kg au-delà des 23 kg !</span>`;
       } else {
         progressBar.className = (totalWeight >= 21 ? "bg-amber-400" : "bg-brand-500") + " h-full transition-all duration-300";
         weightDisplay.className = "text-sm font-mono font-black text-brand-400";
-        remainingDisplay.innerHTML = `<span>Reste disponible : <strong>${(23 - totalWeight).toFixed(1)} kg</strong></span>`;
+        remainingDisplay.innerHTML = `<span>Reste disponible : <strong>${escapeHtml((23 - totalWeight).toFixed(1))} kg</strong></span>`;
       }
 
       document.getElementById("currentBagCheckRatio").innerText = `${checkedCount}/${items.length} coché(s)`;
@@ -1201,12 +1419,12 @@
       container.innerHTML = items.map(item => `
         <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-surface-border hover:border-brand-400/40 text-xs transition-all">
           <label class="flex items-center gap-2 cursor-pointer truncate flex-1 mr-2">
-            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBagItemCheck('${item.id}')" class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-surface-border focus:ring-0" />
-            <span class="${item.checked ? 'line-through text-slate-500' : 'text-slate-200'} truncate">${item.name}</span>
+            <input type="checkbox" ${item.checked ? 'checked' : ''} data-action="toggleBagItemCheck" data-value="${escapeHtml(item.id)}" class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-surface-border focus:ring-0" />
+            <span class="${item.checked ? 'line-through text-slate-500' : 'text-slate-200'} truncate">${escapeHtml(item.name)}</span>
           </label>
           <div class="flex items-center gap-2 shrink-0">
             <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-brand-400 border border-surface-border">${parseFloat(item.weight).toFixed(1)} kg</span>
-            <button onclick="removeBagItem('${item.id}')" title="Supprimer" class="text-slate-500 hover:text-red-400 p-1">
+            <button data-action="removeBagItem" data-value="${escapeHtml(item.id)}" title="Supprimer" class="text-slate-500 hover:text-red-400 p-1">
               <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
             </button>
           </div>
@@ -1239,16 +1457,14 @@
       nameInput.value = "";
       weightInput.value = "";
 
-      if (supabaseClient && navigator.onLine) {
-        await supabaseClient.from('iceland_packing_items').upsert([{
+      await queueCloudWrite('iceland_packing_items', 'id', newItem.id, {
           id: newItem.id,
           bag_id: activeBag,
           name: newItem.name,
           weight: newItem.weight,
           is_checked: false,
-          updated_at: new Date()
-        }]);
-      }
+          updated_at: new Date().toISOString()
+        });
     }
 
     async function toggleBagItemCheck(itemId) {
@@ -1258,12 +1474,14 @@
         item.checked = !item.checked;
         saveLuggageLocal(data);
 
-        if (supabaseClient && navigator.onLine) {
-          await supabaseClient.from('iceland_packing_items').update({
-            is_checked: item.checked,
-            updated_at: new Date()
-          }).eq('id', itemId);
-        }
+        await queueCloudWrite('iceland_packing_items', 'id', item.id, {
+          id: item.id,
+          bag_id: activeBag,
+          name: item.name,
+          weight: item.weight,
+          is_checked: item.checked,
+          updated_at: new Date().toISOString()
+        });
       }
     }
 
@@ -1272,9 +1490,7 @@
       data[activeBag] = data[activeBag].filter(i => i.id !== itemId);
       saveLuggageLocal(data);
 
-      if (supabaseClient && navigator.onLine) {
-        await supabaseClient.from('iceland_packing_items').delete().eq('id', itemId);
-      }
+      await queueCloudWrite('iceland_packing_items', 'id', itemId, null, true);
     }
 
     async function clearCurrentBag() {
@@ -1284,9 +1500,10 @@
         data[activeBag] = [];
         saveLuggageLocal(data);
 
-        if (supabaseClient && navigator.onLine && deletedIds.length > 0) {
-          await supabaseClient.from('iceland_packing_items').delete().in('id', deletedIds);
+        for (const id of deletedIds) {
+          await queueCloudWrite('iceland_packing_items', 'id', id, null, true, false);
         }
+        if (navigator.onLine && supabaseClient) await flushPendingWrites();
       }
     }
 
@@ -1375,17 +1592,16 @@
       closeMealModal();
       renderPlacesList();
 
-      if (supabaseClient && navigator.onLine) {
-        await supabaseClient.from('iceland_meals').upsert([{
+      const updatedAt = new Date().toISOString();
+      await queueCloudWrite('iceland_meals', 'date_key', dateKey, {
           date_key: dateKey,
           date_label: cfg ? cfg.fullLabel : dateKey,
           lunch_title: lunchTitle,
           lunch_notes: lunchNotes,
           dinner_title: dinnerTitle,
           dinner_notes: dinnerNotes,
-          updated_at: new Date()
-        }]);
-      }
+          updated_at: updatedAt
+        });
     }
 
     // =========================================================================
@@ -1460,10 +1676,34 @@
     }
 
     async function saveSteps(steps) {
-      localStorage.setItem("iceland_custom_steps_v11", JSON.stringify(steps));
-      if (supabaseClient && navigator.onLine) {
-        setSyncStatus(false, "Sync...");
-        const payload = steps.map((s, index) => ({
+      const previousSteps = getSteps();
+      const normalizedSteps = [...steps].sort((a, b) => a.dateKey.localeCompare(b.dateKey));
+      localStorage.setItem("iceland_custom_steps_v11", JSON.stringify(normalizedSteps));
+      const timestamp = new Date().toISOString();
+      const positions = new Map();
+      const previousPositions = new Map();
+      const previousRows = new Map();
+      previousSteps.forEach(step => {
+        const position = previousPositions.get(step.dateKey) || 0;
+        previousPositions.set(step.dateKey, position + 1);
+        previousRows.set(step.id, {
+          id: step.id,
+          date_key: step.dateKey,
+          date_label: step.dateLabel,
+          name: step.name,
+          time_slot: step.time || "",
+          lat: step.lat,
+          lng: step.lng,
+          price: step.price,
+          description: step.desc,
+          img: step.img,
+          position_order: position
+        });
+      });
+      const payload = normalizedSteps.map(s => {
+        const position = positions.get(s.dateKey) || 0;
+        positions.set(s.dateKey, position + 1);
+        return {
           id: s.id,
           date_key: s.dateKey,
           date_label: s.dateLabel,
@@ -1474,22 +1714,30 @@
           price: s.price,
           description: s.desc,
           img: s.img,
-          position_order: index,
-          updated_at: new Date()
-        }));
-        const { error } = await supabaseClient.from('iceland_steps').upsert(payload);
-        if (!error) setSyncStatus(true, "Synchronisé");
+          position_order: position,
+          updated_at: timestamp
+        };
+      });
+      for (const step of previousSteps) {
+        if (!normalizedSteps.some(current => current.id === step.id)) {
+          await queueCloudWrite('iceland_steps', 'id', step.id, null, true, false);
+        }
       }
+      for (const step of payload) {
+        const previous = previousRows.get(step.id);
+        if (!previous || Object.keys(previous).some(key => previous[key] !== step[key])) {
+          await queueCloudWrite('iceland_steps', 'id', step.id, step, false, false);
+        }
+      }
+      if (navigator.onLine && supabaseClient) await flushPendingWrites();
     }
 
     function resetDefaultSteps() {
       if (confirm("Rétablir les étapes et chemins d'images par défaut ?")) {
-        localStorage.removeItem("iceland_custom_steps_v11");
-        renderPlacesList();
-        recalculateMap();
-        if (supabaseClient && navigator.onLine) {
-          saveSteps(INITIAL_STEPS);
-        }
+        saveSteps(INITIAL_STEPS).then(() => {
+          renderPlacesList();
+          recalculateMap();
+        });
       }
     }
 
@@ -1520,31 +1768,31 @@
           <div class="glass p-5 rounded-3xl border border-surface-border flex flex-col justify-between hover:border-brand-400/40 transition-all">
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider" style="background:${dayColor};">Nuit du ${l.date}</span>
-                <button onclick="openLodgingModal(${index})" class="text-xs text-brand-400 font-semibold hover:underline flex items-center gap-1">
+                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider" style="background:${dayColor};">Nuit du ${escapeHtml(l.date)}</span>
+                <button data-action="openLodgingModal" data-value="${index}" class="text-xs text-brand-400 font-semibold hover:underline flex items-center gap-1">
                   <i data-lucide="${isFilled ? 'edit-3' : 'plus-circle'}" class="w-3.5 h-3.5"></i> ${isFilled ? 'Modifier' : 'Renseigner'}
                 </button>
               </div>
 
               <h3 class="text-sm font-bold ${isFilled ? 'text-white' : 'text-slate-500 italic'} mb-1">
-                ${isFilled ? l.name : 'Aucun hébergement renseigné'}
+                ${isFilled ? escapeHtml(l.name) : 'Aucun hébergement renseigné'}
               </h3>
               <p class="text-xs text-brand-400 mb-3 flex items-center gap-1">
-                <i data-lucide="map-pin" class="w-3 h-3"></i> ${l.location || 'Localisation à préciser'}
+                <i data-lucide="map-pin" class="w-3 h-3"></i> ${escapeHtml(l.location || 'Localisation à préciser')}
               </p>
               
               <div class="space-y-1.5 text-xs text-slate-300 bg-slate-900/60 p-3 rounded-2xl border border-surface-border">
                 <div class="flex justify-between">
                   <span class="text-slate-400">Arrivée :</span>
-                  <span class="font-medium">${l.checkin || '—'}</span>
+                  <span class="font-medium">${escapeHtml(l.checkin || '—')}</span>
                 </div>
                 <div class="flex justify-between">
                   <span class="text-slate-400">Contact :</span>
-                  <span class="font-medium">${l.phone ? `<a href="tel:${l.phone}" class="hover:text-brand-400 underline">${l.phone}</a>` : '—'}</span>
+                  <span class="font-medium">${l.phone ? `<a href="tel:${escapeHtml(l.phone)}" class="hover:text-brand-400 underline">${escapeHtml(l.phone)}</a>` : '—'}</span>
                 </div>
                 <div class="pt-1 border-t border-surface-border">
                   <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Accès / Boîte à clés :</span>
-                  <span class="text-[11px] ${l.notes ? 'text-amber-200' : 'text-slate-500 italic'}">${l.notes || 'Aucune consigne saisie'}</span>
+                  <span class="text-[11px] ${l.notes ? 'text-amber-200' : 'text-slate-500 italic'}">${escapeHtml(l.notes || 'Aucune consigne saisie')}</span>
                 </div>
               </div>
             </div>
@@ -1554,7 +1802,7 @@
                 📍 Naviguer vers le logement ➔
               </a>
             ` : `
-              <button onclick="openLodgingModal(${index})" class="mt-4 w-full py-2 rounded-xl bg-slate-900/50 hover:bg-brand-500/20 hover:text-brand-400 border border-dashed border-surface-border text-center text-xs font-semibold text-slate-400 transition-all">
+              <button data-action="openLodgingModal" data-value="${index}" class="mt-4 w-full py-2 rounded-xl bg-slate-900/50 hover:bg-brand-500/20 hover:text-brand-400 border border-dashed border-surface-border text-center text-xs font-semibold text-slate-400 transition-all">
                 + Ajouter les coordonnées
               </button>
             `}
@@ -1599,8 +1847,7 @@
       closeLodgingModal();
       renderLodgings();
 
-      if (supabaseClient && navigator.onLine) {
-        await supabaseClient.from('iceland_lodgings').upsert([{
+      await queueCloudWrite('iceland_lodgings', 'night', updated.night, {
           night: updated.night,
           date_label: updated.date,
           name: updated.name,
@@ -1609,9 +1856,8 @@
           address: updated.address,
           phone: updated.phone,
           notes: updated.notes,
-          updated_at: new Date()
-        }]);
-      }
+          updated_at: new Date().toISOString()
+        });
     }
 
     async function clearAllLodgings() {
@@ -1619,19 +1865,20 @@
         localStorage.setItem("iceland_lodgings_data_v11", JSON.stringify(BLANK_LODGINGS));
         renderLodgings();
 
-        if (supabaseClient && navigator.onLine) {
-          await supabaseClient.from('iceland_lodgings').upsert(BLANK_LODGINGS.map(l => ({
-            night: l.night,
-            date_label: l.date,
+        for (const lodging of BLANK_LODGINGS) {
+          await queueCloudWrite('iceland_lodgings', 'night', lodging.night, {
+            night: lodging.night,
+            date_label: lodging.date,
             name: '',
-            location: l.location,
+            location: lodging.location,
             checkin: '',
             address: '',
             phone: '',
             notes: '',
-            updated_at: new Date()
-          })));
+            updated_at: new Date().toISOString()
+          }, false, false);
         }
+        if (navigator.onLine && supabaseClient) await flushPendingWrites();
       }
     }
     renderLodgings();
@@ -1676,7 +1923,7 @@
                 </div>
               </div>
 
-              <div class="min-h-[40px] p-1 rounded-2xl bg-slate-900/30 border border-surface-border/30 drop-zone mb-3" data-date="${dayCfg.key}" id="day-list-${dayCfg.key}">
+              <div class="min-h-[40px] p-1 rounded-2xl bg-slate-900/30 border border-surface-border/30 drop-zone mb-3" data-date="${escapeHtml(dayCfg.key)}" id="day-list-${escapeHtml(dayCfg.key)}">
                 ${daySteps.map((s, idx) => {
                   let distanceTag = '';
                   if (idx > 0) {
@@ -1695,28 +1942,28 @@
 
                   return `
                     ${distanceTag}
-                    <div class="step-card flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-surface-border text-xs cursor-move hover:border-brand-400/50 transition-all gap-2" data-id="${s.id}">
+                    <div class="step-card flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-surface-border text-xs cursor-move hover:border-brand-400/50 transition-all gap-2" data-id="${escapeHtml(s.id)}">
                       <div class="flex items-center gap-2 truncate flex-1">
                         <span class="drag-handle text-slate-500 hover:text-slate-200 cursor-grab active:cursor-grabbing font-mono text-sm select-none">⋮⋮</span>
                         
                         <!-- Miniature cliquable pour Lightbox / Plein écran -->
-                        <img src="${stepImg}" alt="${s.name}" onclick="openLightbox('${stepImg}', '${s.name.replace(/'/g, "\\'")}')" class="w-10 h-10 rounded-lg object-cover bg-slate-800 border border-surface-border shrink-0 cursor-zoom-in hover:scale-105 transition-transform" onerror="handleImgError(this)" title="Agrandir et zoomer" />
+                        <img src="${escapeHtml(stepImg)}" alt="${escapeHtml(s.name)}" data-action="openLightbox" data-src="${escapeHtml(stepImg)}" data-title="${escapeHtml(s.name)}" class="w-10 h-10 rounded-lg object-cover bg-slate-800 border border-surface-border shrink-0 cursor-zoom-in hover:scale-105 transition-transform" onerror="handleImgError(this)" title="Agrandir et zoomer" />
 
                         <div class="truncate">
                           <div class="flex items-center gap-1.5">
-                            <span class="font-medium text-white truncate">${s.name}</span>${s.time ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-400 font-mono font-bold shrink-0">${s.time}</span>` : ''}
+                            <span class="font-medium text-white truncate">${escapeHtml(s.name)}</span>${s.time ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-brand-500/20 text-brand-400 font-mono font-bold shrink-0">${escapeHtml(s.time)}</span>` : ''}
                           </div>
                           <div class="text-[10px] text-brand-400 font-semibold flex items-center gap-1">
-                            <span>💶</span> ${s.price || 'Gratuit'}
+                            <span>💶</span> ${escapeHtml(s.price || 'Gratuit')}
                           </div>
                         </div>
                       </div>
 
                       <div class="flex items-center gap-1 shrink-0">
-                        <button onclick="centerOnCoord(${s.lat},${s.lng})" title="Voir sur carte" class="p-1 text-slate-400 hover:text-brand-400">
+                        <button data-action="centerOnCoord" data-lat="${escapeHtml(s.lat)}" data-lng="${escapeHtml(s.lng)}" title="Voir sur carte" class="p-1 text-slate-400 hover:text-brand-400">
                           <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                         </button>
-                        <button onclick="removeStep('${s.id}')" title="Retirer" class="p-1 text-slate-400 hover:text-red-400">
+                        <button data-action="removeStep" data-value="${escapeHtml(s.id)}" title="Retirer" class="p-1 text-slate-400 hover:text-red-400">
                           <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                         </button>
                       </div>
@@ -1730,7 +1977,7 @@
                   <span class="text-[11px] font-bold text-white flex items-center gap-1">
                     <span>🍽️</span> Menus du Jour
                   </span>
-                  <button onclick="openMealModal('${dayCfg.key}')" class="text-[10px] font-semibold text-brand-400 hover:underline flex items-center gap-0.5">
+                  <button data-action="openMealModal" data-value="${escapeHtml(dayCfg.key)}" class="text-[10px] font-semibold text-brand-400 hover:underline flex items-center gap-0.5">
                     <i data-lucide="edit-3" class="w-3 h-3"></i> Modifier
                   </button>
                 </div>
@@ -1740,8 +1987,8 @@
                     <span class="shrink-0 mt-0.5">🥪</span>
                     <div class="leading-snug truncate">
                       <span class="font-bold text-brand-400">Midi :</span>
-                      <span class="${hasLunch ? 'text-slate-200' : 'text-slate-500 italic'}">${dayMeal.lunch.title || 'À définir'}</span>
-                      ${dayMeal.lunch.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${dayMeal.lunch.notes}</div>` : ''}
+                      <span class="${hasLunch ? 'text-slate-200' : 'text-slate-500 italic'}">${escapeHtml(dayMeal.lunch.title || 'À définir')}</span>
+                      ${dayMeal.lunch.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${escapeHtml(dayMeal.lunch.notes)}</div>` : ''}
                     </div>
                   </div>
 
@@ -1749,8 +1996,8 @@
                     <span class="shrink-0 mt-0.5">🍲</span>
                     <div class="leading-snug truncate">
                       <span class="font-bold text-amber-300">Soir :</span>
-                      <span class="${hasDinner ? 'text-slate-200' : 'text-slate-500 italic'}">${dayMeal.dinner.title || 'À définir'}</span>
-                      ${dayMeal.dinner.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${dayMeal.dinner.notes}</div>` : ''}
+                      <span class="${hasDinner ? 'text-slate-200' : 'text-slate-500 italic'}">${escapeHtml(dayMeal.dinner.title || 'À définir')}</span>
+                      ${dayMeal.dinner.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${escapeHtml(dayMeal.dinner.notes)}</div>` : ''}
                     </div>
                   </div>
                 </div>
@@ -1766,6 +2013,7 @@
     }
 
     function initSortable() {
+      const allSteps = getSteps();
       DAYS_CONFIG.forEach(dayCfg => {
         const el = document.getElementById(`day-list-${dayCfg.key}`);
         if (!el) return;
@@ -1784,7 +2032,7 @@
 
               items.forEach(card => {
                 const id = card.getAttribute('data-id');
-                const existing = getSteps().find(s => s.id === id);
+                const existing = allSteps.find(s => s.id === id);
                 if (existing) {
                   newStepsOrder.push({
                     ...existing,
@@ -1809,7 +2057,7 @@
       document.getElementById("addPlaceBox").classList.toggle("hidden");
     }
 
-    function saveNewPlace() {
+    async function saveNewPlace() {
       const name = document.getElementById("newPlaceName").value.trim();
       const time = document.getElementById("newPlaceTime").value.trim();
       const dateKey = document.getElementById("newPlaceDateKey").value;
@@ -1824,7 +2072,7 @@
       }
 
       const steps = getSteps();
-      steps.push({
+      const newStep = {
         id: "step_" + Date.now(),
         dateKey: dateKey,
         dateLabel: dayCfg.fullLabel,
@@ -1835,9 +2083,15 @@
         lng: lng,
         desc: "Étape ajoutée au trajet.",
         img: "./seljalandsfoss"
-      });
+      };
+      const dayStart = steps.findIndex(step => step.dateKey > dateKey);
+      const daySteps = steps.filter(step => step.dateKey === dateKey);
+      const insertAt = daySteps.length
+        ? steps.lastIndexOf(daySteps[daySteps.length - 1]) + 1
+        : (dayStart === -1 ? steps.length : dayStart);
+      steps.splice(insertAt, 0, newStep);
 
-      saveSteps(steps);
+      await saveSteps(steps);
       document.getElementById("newPlaceName").value = "";
       document.getElementById("newPlaceTime").value = "";
       document.getElementById("newPlacePrice").value = "";
@@ -1852,13 +2106,10 @@
       if (confirm("Supprimer cette étape ?")) {
         let steps = getSteps();
         steps = steps.filter(s => s.id !== stepId);
-        saveSteps(steps);
+        await saveSteps(steps);
         renderPlacesList();
         recalculateMap();
 
-        if (supabaseClient && navigator.onLine) {
-          await supabaseClient.from('iceland_steps').delete().eq('id', stepId);
-        }
       }
     }
 
@@ -1896,6 +2147,8 @@
     const markerLayers = [];
     const gasLayers = [];
     let polylines = [];
+    let mapRenderVersion = 0;
+    const routeCache = new Map();
     let currentFilterMode = 'all';
     let showGas = true;
 
@@ -1917,6 +2170,7 @@
     }
 
     async function recalculateMap() {
+      const renderVersion = ++mapRenderVersion;
       markerLayers.forEach(m => map.removeLayer(m));
       gasLayers.forEach(g => map.removeLayer(g));
       polylines.forEach(p => map.removeLayer(p));
@@ -1937,17 +2191,17 @@
         const imgSrc = getImgSrc(s.img);
         const popupContent = `
           <div>
-            <div class="popup-photo-box" onclick="openLightbox('${imgSrc}', '${s.name.replace(/'/g, "\\'")}')" title="Survole pour agrandir • Clique pour le plein écran">
-              <img src="${imgSrc}" class="popup-photo-img" alt="${s.name}" onerror="handleImgError(this)" />
+            <div class="popup-photo-box" data-action="openLightbox" data-src="${escapeHtml(imgSrc)}" data-title="${escapeHtml(s.name)}" title="Survole pour agrandir • Clique pour le plein écran">
+              <img src="${escapeHtml(imgSrc)}" class="popup-photo-img" alt="${escapeHtml(s.name)}" onerror="handleImgError(this)" />
               <div class="popup-photo-hint">Déplier ⤢</div>
             </div>
             <div class="popup-body">
               <span class="popup-tag" style="background:${dayCfg.color}; color:#fff;">${dayCfg.fullLabel}</span>
-              <div class="popup-title">${s.name}</div>
-              ${s.time ? `<div class="text-[10px] text-brand-400 font-mono font-bold mb-1">⏰ ${s.time}</div>` : ''}
-              <div class="popup-desc">${s.desc}</div>
-              <div class="popup-price">💶 ${s.price || 'Gratuit'}</div>
-              <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}" target="_blank" class="popup-link">
+              <div class="popup-title">${escapeHtml(s.name)}</div>
+              ${s.time ? `<div class="text-[10px] text-brand-400 font-mono font-bold mb-1">⏰ ${escapeHtml(s.time)}</div>` : ''}
+              <div class="popup-desc">${escapeHtml(s.desc)}</div>
+              <div class="popup-price">💶 ${escapeHtml(s.price || 'Gratuit')}</div>
+              <a href="https://www.google.com/maps/dir/?api=1&amp;destination=${escapeHtml(Number(s.lat))},${escapeHtml(Number(s.lng))}" target="_blank" class="popup-link">
                 🗺️ Naviguer avec Google Maps ➔
               </a>
             </div>
@@ -1972,15 +2226,26 @@
         const p1 = activeSteps[i];
         const p2 = activeSteps[i + 1];
 
-        let coords = [[p1.lat, p1.lng], [p2.lat, p2.lng]];
+        if (renderVersion !== mapRenderVersion) return;
+        let coords = [[Number(p1.lat), Number(p1.lng)], [Number(p2.lat), Number(p2.lng)]];
+        const routeKey = `${Number(p1.lat)},${Number(p1.lng)}:${Number(p2.lat)},${Number(p2.lng)}`;
 
         try {
-          const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${p1.lng},${p1.lat};${p2.lng},${p2.lat}?overview=full&geometries=geojson`);
-          const data = await res.json();
-          if (data.routes && data.routes[0]) {
-            coords = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          if (!routeCache.has(routeKey)) {
+            const routeRequest = fetch(`https://router.project-osrm.org/route/v1/driving/${Number(p1.lng)},${Number(p1.lat)};${Number(p2.lng)},${Number(p2.lat)}?overview=full&geometries=geojson`)
+              .then(async res => {
+                if (!res.ok) throw new Error(`OSRM ${res.status}`);
+                const data = await res.json();
+                return data.routes?.[0]?.geometry?.coordinates.map(c => [c[1], c[0]]) || null;
+              });
+            routeCache.set(routeKey, routeRequest);
+            routeRequest.catch(() => {
+              if (routeCache.get(routeKey) === routeRequest) routeCache.delete(routeKey);
+            });
           }
+          coords = (await routeCache.get(routeKey)) || coords;
         } catch (e) {}
+        if (renderVersion !== mapRenderVersion) return;
 
         const targetDayCfg = DAYS_CONFIG.find(d => d.key === p2.dateKey) || DAYS_CONFIG[0];
         const poly = L.polyline(coords, {
@@ -2072,13 +2337,13 @@
                       Aujourd'hui
                     </div>
                   ` : ''}
-                  <div class="font-bold text-white capitalize text-[11px] ${isToday ? 'text-brand-400 font-black pt-1' : ''}">${dayName}</div>
-                  <div class="text-[10px] text-slate-400 mb-1">${dayNum}</div>
+                  <div class="font-bold text-white capitalize text-[11px] ${isToday ? 'text-brand-400 font-black pt-1' : ''}">${escapeHtml(dayName)}</div>
+                  <div class="text-[10px] text-slate-400 mb-1">${escapeHtml(dayNum)}</div>
                   <div class="text-2xl my-1">${icon}</div>
-                  <div class="font-semibold text-white text-[11px]">${tMax}° / <span class="text-brand-400">${tMin}°</span></div>
+                  <div class="font-semibold text-white text-[11px]">${escapeHtml(tMax)}° / <span class="text-brand-400">${escapeHtml(tMin)}°</span></div>
                 </div>
                 <div class="mt-2 pt-1.5 border-t border-surface-border text-[10px] ${windAlert ? 'text-amber-400 font-bold' : 'text-slate-400'}">
-                  💨 ${gusts} km/h
+                  💨 ${escapeHtml(gusts)} km/h
                 </div>
               </div>
             `;
