@@ -1,19 +1,24 @@
 <!DOCTYPE html>
-<html lang="fr" class="scroll-smooth">
+<html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Islande 2027 🇮🇸 — Cockpit & Itinéraire</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>Islande 2027 — Carnet de route boréal</title>
 
   <!-- PWA & Mobile App Meta Tags -->
   <link rel="manifest" href="./manifest.json" />
-  <meta name="theme-color" content="#090d16" />
+  <meta name="theme-color" content="#050816" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Islande 2027" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+
+  <!-- Typographie : Fraunces (titres expressifs) + Manrope (lecture) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..700,0..100;1,9..144,200..700,0..100&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS & Lucide Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -33,708 +38,738 @@
     tailwind.config = {
       theme: {
         extend: {
+          fontFamily: {
+            sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['Fraunces', 'Georgia', 'serif'],
+          },
           colors: {
-            brand: {
-              400: '#38bdf8',
-              500: '#0ea5e9',
-              600: '#0284c7',
-            },
-            surface: {
-              base: '#090d16',
-              card: '#131b2e',
-              border: 'rgba(255, 255, 255, 0.08)',
-            }
+            brand: { 400: '#7cc4ff', 500: '#3f8fd6', 600: '#2d74b8' },
+            surface: { base: '#050816', card: '#0d152e', border: 'rgba(190, 225, 255, 0.13)' },
+            slate: { 400: '#b4c4da', 500: '#98a9c2' }
           }
         }
       }
     }
   </script>
+  <link rel="stylesheet" href="./styles.css" />
 
-  <style>
-    .glass {
-      background: rgba(19, 27, 46, 0.85);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    /* POPUP LEAFLET ÉLÉGANTE ET STABLE */
-    .leaflet-popup-content-wrapper {
-      background: #0f172a !important;
-      color: #f8fafc !important;
-      border: 1px solid rgba(56, 189, 248, 0.4) !important;
-      border-radius: 20px !important;
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75) !important;
-      padding: 0 !important;
-      overflow: hidden;
-      width: 290px;
-    }
-    .leaflet-popup-content { margin: 0 !important; }
-    .leaflet-popup-tip { background: #0f172a !important; }
-
-    /* CADRE PHOTO EXTENSIBLE SANS CASSER LA CARTE */
-    .popup-photo-box {
-      position: relative;
-      width: 100%;
-      height: 135px;
-      background: #020617;
-      overflow: hidden;
-      cursor: zoom-in;
-      transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .popup-photo-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .popup-photo-hint {
-      position: absolute;
-      bottom: 8px;
-      right: 8px;
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 8px;
-      padding: 3px 7px;
-      font-size: 10px;
-      font-weight: 600;
-      color: #e2e8f0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
-    }
-
-    /* AU SURVOL : DÉPLIEMENT HARMONIEUX PLEINE HAUTEUR */
-    .popup-photo-box:hover {
-      height: 225px;
-    }
-    .popup-photo-box:hover .popup-photo-img {
-      object-fit: contain;
-      transform: scale(1.02);
-    }
-    .popup-photo-box:hover .popup-photo-hint {
-      opacity: 0;
-    }
-
-    .popup-body { padding: 13px 15px; }
-    .popup-tag { display: inline-block; padding: 2.5px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
-    .popup-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 3px; }
-    .popup-desc { font-size: 11px; color: #94a3b8; line-height: 1.45; }
-    .popup-price { font-size: 11px; font-weight: 700; color: #38bdf8; margin-top: 6px; }
-    .popup-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 8px; font-size: 11px; font-weight: 600; color: #38bdf8; }
-    .popup-link:hover { text-decoration: underline; }
-
-    .pin-wrap { display: flex; flex-direction: column; align-items: center; cursor: pointer; }
-    .pin-body {
-      width: 32px; height: 32px; border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg); display: flex; align-items: center; justify-content: center;
-      border: 2px solid #ffffff; box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-    }
-    .pin-inner { transform: rotate(45deg); font-size: 10px; line-height: 1; font-weight: 800; color: #fff; }
-    .gas-pin {
-      width: 20px; height: 20px; border-radius: 50%; background: #f97316;
-      border: 2px solid #fff; display: flex; align-items: center; justify-content: center;
-      font-size: 10px; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4);
-    }
-
-    .sortable-ghost {
-      opacity: 0.35;
-      background: #0284c7 !important;
-      border: 1px dashed #38bdf8 !important;
-    }
-    .sortable-chosen {
-      cursor: grabbing !important;
-    }
-    .drag-handle {
-      touch-action: none;
-    }
-
-    /* VISIONNEUSE PLEIN ÉCRAN */
-    #imageLightbox {
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    #lightboxImg {
-      transform-origin: center center;
-      transition: transform 0.15s ease-out;
-      will-change: transform;
-    }
-  </style>
 </head>
-<body class="bg-surface-base text-slate-100 antialiased selection:bg-brand-500 selection:text-white pb-20">
+<body class="antialiased" data-mood="prologue">
 
-  <!-- NAVIGATION FIXE -->
-  <header class="fixed top-0 inset-x-0 z-50 glass border-b border-surface-border">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <span class="text-2xl">🇮🇸</span>
-        <div>
-          <span class="font-bold tracking-tight text-white block text-sm sm:text-base">Roadtrip Islande 2027</span>
-          <div class="flex items-center gap-1.5 -mt-0.5">
-            <span class="text-xs text-brand-400 font-medium">Cockpit Interactif</span>
-            <span id="syncBadge" class="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono">Local</span>
-          </div>
-        </div>
-      </div>
-      <nav class="hidden md:flex items-center space-x-5 text-xs font-semibold uppercase tracking-wider text-slate-300">
-        <a href="#weather-section" class="hover:text-brand-400 transition-colors">Météo 10j</a>
-        <a href="#map-section" class="hover:text-brand-400 transition-colors">Carte</a>
-        <a href="#places-manager" class="hover:text-brand-400 transition-colors">Planning & Menus</a>
-        <a href="#lodging-section" class="hover:text-brand-400 transition-colors">Hébergements</a>
-        <a href="#flights-section" class="hover:text-brand-400 transition-colors">Vols</a>
-        <a href="#tools-section" class="hover:text-brand-400 transition-colors">Outils</a>
+  <!-- Gradients partagés par les illustrations météo -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <radialGradient id="gSun" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff4c4"/><stop offset=".55" stop-color="#ffd05a"/><stop offset="1" stop-color="#ff9d2e"/></radialGradient>
+      <linearGradient id="gCloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9cde6"/></linearGradient>
+      <linearGradient id="gCloudDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdd9ea"/><stop offset="1" stop-color="#7488ab"/></linearGradient>
+    </defs>
+  </svg>
+
+  <!-- CIEL VIVANT : étoiles + rideaux d'aurore (couleurs pilotées par le chapitre visible) -->
+  <div class="sky" aria-hidden="true">
+    <div class="stars"></div><div class="stars s2"></div>
+    <div class="ribbon"></div><div class="ribbon r2"></div><div class="ribbon r3"></div>
+  </div>
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- EN-TÊTE : transparent sur le héros, verre dépoli ensuite -->
+  <header id="topbar">
+    <div class="topbar-in">
+      <a href="#hero" class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7cc4ff"/><stop offset="1" stop-color="#c4ecff"/></linearGradient></defs>
+          <path d="M2 27 L12 9 L17 18 L21 12 L30 27Z" fill="none" stroke="url(#bm)" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M5 8 Q16 -1 27 8" fill="none" stroke="url(#bm)" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+          <circle cx="24" cy="5" r="1.3" fill="#fff"/>
+        </svg>
+        <span class="brand-name">Islande 2027<small>Carnet de route</small></span>
+      </a>
+      <nav class="top-links" aria-label="Chapitres">
+        <a href="#weather-section">Ciel</a>
+        <a href="#map-section">Carte</a>
+        <a href="#places-manager">Jours</a>
+        <a href="#lodging-section">Nuits</a>
+        <a href="#flights-section">Vols</a>
+        <a href="#tools-section">Sac</a>
       </nav>
       <div class="flex items-center gap-2">
-        <button id="pwaInstallBtn" onclick="installPWA()" class="hidden px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-1.5">
+        <button id="pwaInstallBtn" onclick="installPWA()" class="hidden btn-install">
           <i data-lucide="download" class="w-3.5 h-3.5"></i> Installer
         </button>
-        <a href="#map-section" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-500 hover:bg-brand-600 text-white transition-all shadow-lg shadow-brand-500/20">
-          Voir Carte
-        </a>
+        <span id="syncBadge">Local</span>
       </div>
     </div>
   </header>
 
-  <!-- BANDEAU COMPTE À REBOURS JOUR J -->
-  <section id="countdown-section" class="max-w-6xl mx-auto px-4 pt-20 pb-2">
-    <div class="glass p-5 sm:p-6 rounded-3xl border border-brand-400/30 shadow-2xl relative overflow-hidden">
-      <div class="absolute -right-10 -bottom-10 w-44 h-44 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- DOCK DE NAVIGATION FLOTTANT -->
+  <nav id="mobileBottomNav" aria-label="Navigation principale">
+    <a href="#weather-section" data-tab="weather-section"><i data-lucide="cloud-sun"></i>Ciel</a>
+    <a href="#map-section" data-tab="map-section"><i data-lucide="map"></i>Carte</a>
+    <a href="#places-manager" data-tab="places-manager"><i data-lucide="signpost"></i>Jours</a>
+    <a href="#lodging-section" data-tab="lodging-section"><i data-lucide="moon-star"></i>Nuits</a>
+    <a href="#flights-section" data-tab="flights-section"><i data-lucide="plane"></i>Vols</a>
+    <a href="#tools-section" data-tab="tools-section"><i data-lucide="backpack"></i>Sac</a>
+  </nav>
 
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-5 relative z-10">
-        <div>
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-brand-500/10 text-brand-400 border border-brand-400/20 mb-2">
-            <span class="w-2 h-2 rounded-full bg-brand-400 animate-pulse"></span> Décollage le 26 Janvier 2027 à 05h00
-          </span>
-          <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2">
-            <span>❄️️</span> Cap sur l'Islande
-          </h2>
-          <p class="text-xs text-slate-400 mt-1">
-            Du <strong class="text-slate-200">26 janvier</strong> au <strong class="text-slate-200">01 février 2027 au soir</strong> (restitution 4x4) • Vol retour le 02 février à 08h30.
-          </p>
-        </div>
+  <main>
 
-        <div class="grid grid-cols-4 gap-2.5 sm:gap-3 text-center shrink-0">
-          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
-            <span id="cd-days" class="block text-2xl sm:text-3xl font-black text-white font-mono">00</span>
-            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Jours</span>
-          </div>
-          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
-            <span id="cd-hours" class="block text-2xl sm:text-3xl font-black text-brand-400 font-mono">00</span>
-            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Heures</span>
-          </div>
-          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
-            <span id="cd-minutes" class="block text-2xl sm:text-3xl font-black text-white font-mono">00</span>
-            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Minutes</span>
-          </div>
-          <div class="bg-slate-900/80 border border-surface-border rounded-2xl p-2.5 sm:p-3 min-w-[65px] sm:min-w-[75px]">
-            <span id="cd-seconds" class="block text-2xl sm:text-3xl font-black text-brand-400 font-mono">00</span>
-            <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold">Sec</span>
-          </div>
-        </div>
+  <!-- PROLOGUE : héros immersif -->
+  <section id="hero" data-mood="prologue" aria-label="Accueil">
+    <div class="hero-photos" data-depth="0.22" aria-hidden="true">
+      <img src="./diamond-beach.jpg" alt="" />
+      <img src="./jokulsarlon.jpg" alt="" />
+      <img src="./reynisfjara.jpg" alt="" />
+    </div>
+    <div class="hero-grade" aria-hidden="true"></div>
+    <div id="shootingStar" aria-hidden="true"></div>
+
+    <div class="mountains" aria-hidden="true">
+      <svg class="m1" data-depth="0.12" viewBox="0 0 1440 400" preserveAspectRatio="none"><defs><linearGradient id="mg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#27407a"/><stop offset="1" stop-color="#0b1330"/></linearGradient></defs>
+        <path d="M0 400V250L90 190L170 235L270 150L360 220L450 170L560 260L660 140L760 230L860 180L960 250L1060 160L1160 240L1260 190L1350 230L1440 200V400Z" fill="url(#mg1)" stroke="rgba(170,225,255,.35)" stroke-width="1.5"/></svg>
+      <svg class="m2" data-depth="0.06" viewBox="0 0 1440 400" preserveAspectRatio="none"><defs><linearGradient id="mg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a2a58"/><stop offset="1" stop-color="#080e24"/></linearGradient></defs>
+        <path d="M0 400V300L120 240L200 290L330 210L430 280L540 230L640 300L760 220L880 290L1000 235L1120 300L1240 250L1340 290L1440 260V400Z" fill="url(#mg2)" stroke="rgba(170,225,255,.22)" stroke-width="1.5"/></svg>
+      <svg class="m3" viewBox="0 0 1440 400" preserveAspectRatio="none">
+        <path d="M0 400V340L140 310L260 345L400 300L520 340L680 315L820 350L980 310L1120 345L1280 320L1440 340V400Z" fill="#050816"/></svg>
+    </div>
+
+    <div class="hero-body" data-depth="-0.1">
+      <span class="hero-kicker reveal">Carnet de route · Hiver 2027</span>
+      <h1 class="hero-title reveal d1">Is<em>lande</em></h1>
+      <p class="hero-tag reveal d2">Là où la terre respire le feu<br/>et s’endort sous la glace.</p>
+      <div class="hero-meta reveal d3">
+        <span class="chip"><i data-lucide="calendar-days"></i> 26 janv. → 2 fév.</span>
+        <span class="chip"><i data-lucide="users"></i> Deux voyageurs</span>
+        <span class="chip"><i data-lucide="car-front"></i> Un SUV 4x4</span>
+        <span class="chip"><i data-lucide="moon"></i> 7 nuits</span>
       </div>
+    </div>
+    <div class="scroll-cue" aria-hidden="true"></div>
+  </section>
+
+  <!-- COMPTE À REBOURS : carte flottante à cheval sur le héros -->
+  <section id="countdown-section">
+    <div class="cd-card reveal">
+      <div class="cd-top">
+        <span class="cd-label"><span class="pulse-dot"></span> Décollage dans</span>
+        <span class="cd-flight">EJU4583 · 26 janv. · 05h00</span>
+      </div>
+      <div class="cd-grid">
+        <div class="cd-cell"><span id="cd-days" class="cd-num">00</span><span class="cd-unit">Jours</span></div>
+        <div class="cd-cell"><span id="cd-hours" class="cd-num">00</span><span class="cd-unit">Heures</span></div>
+        <div class="cd-cell"><span id="cd-minutes" class="cd-num">00</span><span class="cd-unit">Minutes</span></div>
+        <div class="cd-cell"><span id="cd-seconds" class="cd-num">00</span><span class="cd-unit">Secondes</span></div>
+      </div>
+      <div class="cd-route">
+        <b>CDG</b>
+        <div class="cd-arc" aria-hidden="true">
+          <svg viewBox="0 0 120 22" preserveAspectRatio="none"><path d="M0 18 Q60 -14 120 18" fill="none" stroke="rgba(190,225,255,.35)" stroke-width="1.2" stroke-dasharray="2 4" stroke-linecap="round"/></svg>
+          <svg class="plane" viewBox="0 0 24 24"><path d="M12 2l2.5 7L22 13v2l-7.5-2-.5 6 2 2v1l-4-1-4 1v-1l2-2-.5-6L2 15v-2l7.5-4z" fill="currentColor"/></svg>
+        </div>
+        <b>KEF</b>
+      </div>
+      <p class="cd-dates">Du <strong>26 janvier</strong> au <strong>1er février 2027 au soir</strong> (restitution du 4x4) · vol retour le <strong>2 février à 08h30</strong>.</p>
     </div>
   </section>
 
-  <!-- BARRE RAPIDE : CONVERTISSEUR EXPRESS ISK / EUR -->
-  <section class="max-w-6xl mx-auto px-4 py-2">
-    <div class="glass px-4 py-3 rounded-2xl border border-brand-400/30 flex flex-wrap items-center justify-between gap-3 shadow-lg">
-      <div class="flex items-center gap-2">
-        <span class="p-1 rounded-lg bg-brand-500/20 text-brand-400 text-sm">💱</span>
-        <div class="leading-tight">
-          <span class="text-xs font-bold text-white block">Change Express</span>
-          <span class="text-[10px] text-slate-400 font-mono">1 € ≈ 150 ISK</span>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 flex-1 max-w-md">
-        <div class="relative flex-1">
-          <input type="number" id="iskInput" value="5000" step="500" class="w-full bg-slate-900/90 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-white font-bold text-xs pr-11 outline-none" oninput="convertCurrency('isk')" />
-          <span class="absolute right-2.5 top-1.5 text-[10px] text-slate-400 font-mono">ISK</span>
-        </div>
-
-        <span class="text-xs text-brand-400 font-bold">➔</span>
-
-        <div class="relative flex-1">
-          <input type="number" id="eurInput" value="33.33" step="1" class="w-full bg-slate-900/90 border border-surface-border focus:border-brand-400 rounded-xl px-3 py-1.5 text-brand-400 font-extrabold text-xs pr-8 outline-none" oninput="convertCurrency('eur')" />
-          <span class="absolute right-2.5 top-1.5 text-[10px] text-brand-500 font-mono">€</span>
-        </div>
-      </div>
-
-      <div class="hidden sm:flex items-center gap-3 text-[10px] text-slate-400 border-l border-surface-border pl-3">
-        <span>Skyr : <strong>~400 ISK</strong> (2,7 €)</span>
-        <span>Plein SUV : <strong>~15 000 ISK</strong> (100 €)</span>
-      </div>
-    </div>
+  <!-- AUJOURD'HUI : n'apparaît que pendant le voyage -->
+  <section id="today-section" class="hidden">
+    <div id="today-widget-container"></div>
   </section>
 
-  <!-- 1. SECTION MÉTÉO 10 JOURS -->
-  <section id="weather-section" class="max-w-6xl mx-auto px-4 py-3">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-      <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-          <i data-lucide="cloud-snow" class="w-6 h-6 text-brand-400"></i> Météo Directe sur 10 Jours
-        </h2>
-        <p class="text-xs text-slate-400">Prévisions & rafales de vent en direct via Open-Meteo.</p>
-      </div>
-      <div class="flex items-center gap-2">
-        <label class="text-xs text-slate-400">Zone :</label>
-        <select id="weatherLocationSelect" onchange="fetchWeather()" class="bg-slate-900 border border-surface-border text-white text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-brand-400">
-          <option value="64.1466,-21.9426">Reykjavík / Ouest</option>
-          <option value="63.9335,-21.0014">Selfoss / Hella</option>
-          <option value="63.4186,-19.0062">Vík í Mýrdal (Sud)</option>
-          <option value="64.0483,-16.1795">Skaftafell / Jökulsárlón (Glaciers)</option>
-          <option value="64.3138,-20.3008">Geysir / Cercle d'Or</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="glass p-5 rounded-3xl border border-surface-border overflow-hidden">
-      <div id="weatherLoader" class="text-center py-6 text-xs text-slate-400 flex items-center justify-center gap-2">
-        <span class="w-3 h-3 rounded-full bg-brand-400 animate-ping"></span> Chargement des prévisions météo...
-      </div>
-      <div id="weatherForecastGrid" class="hidden grid grid-cols-2 sm:grid-cols-5 md:grid-cols-10 gap-2.5 text-center"></div>
-      <div class="mt-4 pt-3 border-t border-surface-border/50 flex flex-wrap items-center justify-between text-[11px] text-slate-400 gap-2">
-        <span>💨 <strong>Alerte vent</strong> : Au-delà de 50-60 km/h de rafales, redoublez de prudence en 4x4.</span>
-        <span class="text-brand-400">Source : Open-Meteo API</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- 2. CARTE INTERACTIVE -->
-  <section id="map-section" class="max-w-6xl mx-auto px-4 py-5">
-    <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-4 gap-3">
-      <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Carte Google Maps & Tracé Continu</h2>
-        <p class="text-xs text-slate-400">Survolez la photo d'une étape pour la déplier entièrement sans rognage.</p>
-      </div>
-
-      <div class="flex items-center gap-2 p-1.5 glass rounded-xl border border-surface-border self-start">
-        <button id="btn-out" onclick="setMode('out')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Aller (26-29 Jan)</button>
-        <button id="btn-in" onclick="setMode('in')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all">Retour (30 Jan-01 Fév)</button>
-        <button id="btn-all" onclick="setMode('all')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-white transition-all">Tout le séjour</button>
-      </div>
-    </div>
-
-    <div class="relative w-full h-[580px] rounded-3xl overflow-hidden border border-surface-border shadow-2xl">
-      <div id="map" class="w-full h-full"></div>
-      <div class="absolute top-3 right-3 z-[999] flex flex-col gap-2">
-        <button onclick="toggleGasPins()" id="gasFilterBtn" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
-          <span>⛽</span> <span id="gasFilterLabel">Stations : ON</span>
-        </button>
-        <button onclick="resetMapView()" class="glass px-3 py-2 rounded-xl text-xs font-medium text-white shadow-lg flex items-center gap-2">
-          <span>🎯</span> Recentrer
-        </button>
-      </div>
-    </div>
-  </section>
-
-  <!-- 3. ÉTAPES, HORAIRES & MENUS PAR JOUR -->
-  <section id="places-manager" class="max-w-6xl mx-auto px-4 py-6">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-      <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Programme, Horaires & Menus du Jour</h2>
-        <p class="text-xs text-slate-400">Cliquez sur une photo pour l'ouvrir dans la visionneuse plein écran avec zoom.</p>
-      </div>
-      <div class="flex gap-2">
-        <button onclick="resetDefaultSteps()" class="px-3 py-2 text-xs text-slate-400 hover:text-white">Réinitialiser dates</button>
-        <button onclick="toggleAddPlaceForm()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-500 hover:bg-brand-600 text-white flex items-center gap-1.5 shadow-lg shadow-brand-500/20">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i> Ajouter un lieu
-        </button>
-      </div>
-    </div>
-
-    <!-- Formulaire d'ajout rapide -->
-    <div id="addPlaceBox" class="hidden glass p-5 rounded-3xl border border-brand-400/40 mb-6">
-      <h3 class="text-sm font-bold text-white mb-3 flex items-center gap-2">
-        <i data-lucide="map-pin" class="w-4 h-4 text-brand-400"></i> Nouveau point d'étape
-      </h3>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-3 text-xs">
-        <div>
-          <label class="block text-slate-400 mb-1">Nom du lieu</label>
-          <input type="text" id="newPlaceName" placeholder="Ex: Spot Cascade Secrète" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+  <!-- CHANGE EXPRESS : la « poche » du voyageur -->
+  <div class="pocket">
+    <div class="pocket-card glass reveal">
+      <span class="coin">kr</span>
+      <div class="pocket-title">Dans la poche<small>1 € ≈ 150 ISK</small></div>
+      <div class="pocket-fields">
+        <div class="field-money">
+          <input type="number" id="iskInput" value="5000" step="500" inputmode="decimal" oninput="convertCurrency('isk')" aria-label="Couronnes islandaises" />
+          <span>ISK</span>
         </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Créneau horaire</label>
-          <input type="text" id="newPlaceTime" placeholder="Ex: 11h30 - 13h00" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        <span class="pocket-arrow">⇄</span>
+        <div class="field-money eur">
+          <input type="number" id="eurInput" value="33.33" step="1" inputmode="decimal" oninput="convertCurrency('eur')" aria-label="Euros" />
+          <span>€</span>
         </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Date</label>
-          <select id="newPlaceDateKey" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white">
-            <option value="2027-01-26">Mardi 26 Janvier (Arrivée KEF / Selfoss)</option>
-            <option value="2027-01-27">Mercredi 27 Janvier (Cascades / Vík)</option>
-            <option value="2027-01-28">Jeudi 28 Janvier (Canyons / Skaftafell)</option>
-            <option value="2027-01-29">Vendredi 29 Janvier (Jökulsárlón / Glaciers)</option>
-            <option value="2027-01-30">Samedi 30 Janvier (Grotte de Glace / Hella)</option>
-            <option value="2027-01-31">Dimanche 31 Janvier (Cercle d'Or / Bains)</option>
-            <option value="2027-02-01">Lundi 01 Février (Kerið / Reykjavík / Restitution 4x4)</option>
+      </div>
+      <div class="pocket-hints">
+        <span>🥛 Skyr <strong>~400 ISK</strong> · 2,7 €</span>
+        <span>⛽ Plein SUV <strong>~15 000 ISK</strong> · 100 €</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAPITRE I — LE CIEL -->
+  <section id="weather-section" class="chapter" data-mood="ciel">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">I</span>
+        <p class="chap-kicker">Chapitre I · Le ciel</p>
+        <h2 class="chap-title">Quatre saisons<br/><em>en une heure</em></h2>
+        <p class="chap-sub">En Islande, la météo n’est pas un détail : c’est le personnage principal. Voici ce qu’elle prépare pour les dix prochains jours.</p>
+      </div>
+
+      <div class="sky-controls reveal">
+        <label class="select-pill">
+          <i data-lucide="map-pin"></i>
+          <select id="weatherLocationSelect" onchange="fetchWeather()" aria-label="Zone météo">
+            <option value="64.1466,-21.9426">Reykjavík / Ouest</option>
+            <option value="63.9335,-21.0014">Selfoss / Hella</option>
+            <option value="63.4186,-19.0062">Vík í Mýrdal (Sud)</option>
+            <option value="64.0483,-16.1795">Skaftafell / Jökulsárlón (Glaciers)</option>
+            <option value="64.3138,-20.3008">Geysir / Cercle d'Or</option>
           </select>
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Prix (€)</label>
-          <input type="text" id="newPlacePrice" placeholder="Ex: Gratuit ou 6,70 €" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Latitude</label>
-          <input type="number" step="any" id="newPlaceLat" placeholder="Ex: 63.5321" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Longitude</label>
-          <input type="number" step="any" id="newPlaceLng" placeholder="Ex: -19.5114" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
-        </div>
+        </label>
       </div>
-      <div class="mt-3 flex justify-end gap-2">
-        <button onclick="toggleAddPlaceForm()" class="px-3 py-1.5 text-xs text-slate-400 hover:text-white">Annuler</button>
-        <button onclick="saveNewPlace()" class="px-4 py-1.5 bg-brand-500 rounded-xl text-xs font-bold text-white">Ajouter au parcours</button>
+
+      <p id="weatherSummary" class="reveal"></p>
+
+      <div class="wx-rail-wrap">
+        <div id="weatherLoader" class="wx-loader" style="padding-left:16px">
+          <div class="wx-skel"></div><div class="wx-skel"></div><div class="wx-skel"></div><div class="wx-skel"></div>
+        </div>
+        <div id="weatherForecastGrid" class="hidden"></div>
+      </div>
+
+      <div class="wx-foot">
+        <span>💨 <b>Alerte vent</b> : au-delà de 50-60 km/h de rafales, prudence au volant du 4x4.</span>
+        <span>Source : Open-Meteo</span>
       </div>
     </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="places-container"></div>
   </section>
 
-  <!-- 4. HÉBERGEMENTS PAR NUITÉE -->
-  <section id="lodging-section" class="max-w-6xl mx-auto px-4 py-6">
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Hébergements par Nuitée</h2>
-        <p class="text-xs text-slate-400">Vos 7 nuitées réservées du 26 janvier au 01 février au soir (nuit à l'aéroport KEF).</p>
+
+  <!-- CHAPITRE II — LA ROUTE (la carte, élément central) -->
+  <section id="map-section" class="chapter" data-mood="route">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">II</span>
+        <p class="chap-kicker">Chapitre II · La route</p>
+        <h2 class="chap-title">Un ruban d’asphalte<br/><em>entre feu et glace</em></h2>
+        <p class="chap-sub">Sept jours, une seule route. Touche une épingle pour dévoiler l’étape ; la photo se déplie au survol, et s’ouvre en grand d’un tap.</p>
       </div>
-      <button onclick="clearAllLodgings()" class="text-xs text-slate-500 hover:text-red-400 transition-colors">Vider toutes les fiches</button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="lodging-cards-container"></div>
+    <div class="map-wrap reveal">
+      <div class="map-stage">
+        <div id="map"></div>
+        <div class="map-vignette" aria-hidden="true"></div>
+
+        <div class="map-top">
+          <div class="seg" role="group" aria-label="Filtrer le tracé">
+            <button id="btn-out" onclick="setMode('out')" class="seg-btn"><b>Aller</b><small>26–29 janv.</small></button>
+            <button id="btn-in" onclick="setMode('in')" class="seg-btn"><b>Retour</b><small>30 janv.–1 fév.</small></button>
+            <button id="btn-all" onclick="setMode('all')" class="seg-btn on"><b>Tout</b><small>le séjour</small></button>
+          </div>
+        </div>
+
+        <div class="map-fabs">
+          <button onclick="toggleGasPins()" id="gasFilterBtn" class="fab" title="Afficher / masquer les stations">
+            <span>⛽</span> <span id="gasFilterLabel">Stations : ON</span>
+          </button>
+          <button onclick="resetMapView()" class="fab" title="Recentrer la carte">
+            <span>🎯</span> Recentrer
+          </button>
+        </div>
+      </div>
+
+      <div class="legend" aria-label="Légende des jours">
+        <a class="lg" style="--dc:#f59e0b" href="#day-2027-01-26"><i></i>J1 · 26 janv.</a>
+        <a class="lg" style="--dc:#06b6d4" href="#day-2027-01-27"><i></i>J2 · 27 janv.</a>
+        <a class="lg" style="--dc:#3b82f6" href="#day-2027-01-28"><i></i>J3 · 28 janv.</a>
+        <a class="lg" style="--dc:#8b5cf6" href="#day-2027-01-29"><i></i>J4 · 29 janv.</a>
+        <a class="lg" style="--dc:#ec4899" href="#day-2027-01-30"><i></i>J5 · 30 janv.</a>
+        <a class="lg" style="--dc:#10b981" href="#day-2027-01-31"><i></i>J6 · 31 janv.</a>
+        <a class="lg" style="--dc:#f43f5e" href="#day-2027-02-01"><i></i>J7 · 1 fév.</a>
+      </div>
+    </div>
   </section>
 
-  <!-- 5. SECTION VOLS OFFICIELS EASYJET -->
-  <section id="flights-section" class="max-w-6xl mx-auto px-4 py-6">
-    <div class="mb-4">
-      <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-        <i data-lucide="plane" class="w-6 h-6 text-brand-400"></i> Vols Officiels EasyJet
-      </h2>
-      <p class="text-xs text-slate-400">Horaires stricts, dépose-bagages et restitution du véhicule avant départ.</p>
+  <!-- CHAPITRE III — LES JOURS -->
+  <section id="places-manager" class="chapter" data-mood="jours">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">III</span>
+        <p class="chap-kicker">Chapitre III · Les jours</p>
+        <h2 class="chap-title">Sept journées,<br/><em>sept petits mondes</em></h2>
+        <p class="chap-sub">Glisse une étape par sa poignée <span class="grip-demo">⋮⋮</span> pour la réorganiser, ou la déposer dans un autre jour. Touche une photo pour l’admirer en plein écran.</p>
+      </div>
+
+      <div class="chap-actions reveal">
+        <button onclick="toggleAddPlaceForm()" class="btn-aurora">
+          <i data-lucide="plus-circle"></i> Ajouter un lieu
+        </button>
+        <button onclick="resetDefaultSteps()" class="btn-quiet">Réinitialiser dates</button>
+      </div>
+
+      <!-- Formulaire d'ajout rapide -->
+      <div id="addPlaceBox" class="hidden sheet">
+        <h3 class="sheet-title"><i data-lucide="map-pin"></i> Nouveau point d’étape</h3>
+        <div class="form-grid">
+          <div class="fld">
+            <label for="newPlaceName">Nom du lieu</label>
+            <input type="text" id="newPlaceName" placeholder="Ex: Spot Cascade Secrète" />
+          </div>
+          <div class="fld">
+            <label for="newPlaceTime">Créneau horaire</label>
+            <input type="text" id="newPlaceTime" placeholder="Ex: 11h30 - 13h00" />
+          </div>
+          <div class="fld span2">
+            <label for="newPlaceDateKey">Date</label>
+            <select id="newPlaceDateKey">
+              <option value="2027-01-26">Mardi 26 Janvier (Arrivée KEF / Selfoss)</option>
+              <option value="2027-01-27">Mercredi 27 Janvier (Cascades / Vík)</option>
+              <option value="2027-01-28">Jeudi 28 Janvier (Canyons / Skaftafell)</option>
+              <option value="2027-01-29">Vendredi 29 Janvier (Jökulsárlón / Glaciers)</option>
+              <option value="2027-01-30">Samedi 30 Janvier (Grotte de Glace / Hella)</option>
+              <option value="2027-01-31">Dimanche 31 Janvier (Cercle d'Or / Bains)</option>
+              <option value="2027-02-01">Lundi 01 Février (Kerið / Reykjavík / Restitution 4x4)</option>
+            </select>
+          </div>
+          <div class="fld span2">
+            <label for="newPlacePrice">Prix (€)</label>
+            <input type="text" id="newPlacePrice" placeholder="Ex: Gratuit ou 6,70 €" />
+          </div>
+          <div class="fld">
+            <label for="newPlaceLat">Latitude</label>
+            <input type="number" step="any" id="newPlaceLat" placeholder="Ex: 63.5321" />
+          </div>
+          <div class="fld">
+            <label for="newPlaceLng">Longitude</label>
+            <input type="number" step="any" id="newPlaceLng" placeholder="Ex: -19.5114" />
+          </div>
+        </div>
+        <div class="sheet-actions">
+          <button onclick="toggleAddPlaceForm()" class="btn-quiet">Annuler</button>
+          <button onclick="saveNewPlace()" class="btn-aurora">Ajouter au parcours</button>
+        </div>
+      </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Vol Aller -->
-      <div class="glass p-5 rounded-3xl border border-surface-border relative overflow-hidden">
-        <div class="flex items-center justify-between pb-2 mb-3 border-b border-surface-border">
-          <div class="flex items-center gap-2">
-            <span class="p-1.5 rounded-xl bg-brand-500/20 text-brand-400">🛫</span>
-            <div>
-              <span class="text-xs font-bold text-white block">Vol Aller • EJU4583</span>
-              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
+    <nav class="day-strip" aria-label="Aller à un jour">
+      <a href="#day-2027-01-26" style="--dc:#f59e0b"><b>J1</b>26 janv.</a>
+      <a href="#day-2027-01-27" style="--dc:#06b6d4"><b>J2</b>27 janv.</a>
+      <a href="#day-2027-01-28" style="--dc:#3b82f6"><b>J3</b>28 janv.</a>
+      <a href="#day-2027-01-29" style="--dc:#8b5cf6"><b>J4</b>29 janv.</a>
+      <a href="#day-2027-01-30" style="--dc:#ec4899"><b>J5</b>30 janv.</a>
+      <a href="#day-2027-01-31" style="--dc:#10b981"><b>J6</b>31 janv.</a>
+      <a href="#day-2027-02-01" style="--dc:#f43f5e"><b>J7</b>1 fév.</a>
+    </nav>
+
+    <div class="wrap">
+      <div class="days" id="places-container"></div>
+    </div>
+  </section>
+
+  <!-- CHAPITRE IV — LES NUITS -->
+  <section id="lodging-section" class="chapter" data-mood="nuits">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">IV</span>
+        <p class="chap-kicker">Chapitre IV · Les nuits</p>
+        <h2 class="chap-title">Où poser<br/><em>la lune</em></h2>
+        <p class="chap-sub">Sept nuitées du 26 janvier au 1<sup>er</sup> février au soir (la dernière, à l’aéroport KEF). Un toit chaud, et peut-être une aurore par la fenêtre.</p>
+      </div>
+      <div class="chap-actions reveal">
+        <button onclick="clearAllLodgings()" class="btn-quiet danger">Vider toutes les fiches</button>
+      </div>
+    </div>
+    <div class="rail" id="lodging-cards-container"></div>
+  </section>
+
+  <!-- CHAPITRE V — LES AILES -->
+  <section id="flights-section" class="chapter" data-mood="vols">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">V</span>
+        <p class="chap-kicker">Chapitre V · Les ailes</p>
+        <h2 class="chap-title">Deux billets,<br/><em>un grand détour</em></h2>
+        <p class="chap-sub">Horaires stricts, dépose-bagages et restitution du véhicule avant le départ. Garde ces cartes d’embarquement sous la main.</p>
+      </div>
+
+      <div class="passes">
+        <!-- Vol Aller -->
+        <article class="pass reveal">
+          <div class="pass-main">
+            <div class="pass-top">
+              <span class="pass-air"><i data-lucide="plane-takeoff"></i> Vol Aller • EJU4583</span>
+              <span class="pass-date">Mardi 26 Janvier 2027</span>
             </div>
-          </div>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-brand-500/10 text-brand-400 border border-brand-400/20">Mardi 26 Janvier 2027</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Départ Paris</span>
-            <span class="font-bold text-white text-sm">05h00</span>
-            <span class="text-[11px] text-slate-300 block">CDG (Terminal 2D)</span>
-          </div>
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Arrivée Islande</span>
-            <span class="font-bold text-brand-400 text-sm">07h50</span>
-            <span class="text-[11px] text-slate-300 block">Keflavík (KEF)</span>
-          </div>
-        </div>
-        <div class="space-y-1.5 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
-          <div class="flex justify-between">
-            <span>Dépose-bagages ouvre :</span>
-            <strong class="text-slate-200">02h00</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Dépose-bagages ferme :</span>
-            <strong class="text-amber-400">04h00</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Fin enregistrement :</span>
-            <span class="text-slate-300">04h00 (H-60 min)</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Vol Retour -->
-      <div class="glass p-5 rounded-3xl border border-surface-border relative overflow-hidden">
-        <div class="flex items-center justify-between pb-2 mb-3 border-b border-surface-border">
-          <div class="flex items-center gap-2">
-            <span class="p-1.5 rounded-xl bg-purple-500/20 text-purple-400">🛬</span>
-            <div>
-              <span class="text-xs font-bold text-white block">Vol Retour • EJU4584</span>
-              <span class="text-[10px] text-slate-400">M. Corentin LEBOUCHER</span>
+            <div class="pass-route">
+              <div class="pass-city"><b>CDG</b><span>Paris</span></div>
+              <div class="pass-path" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+              <div class="pass-city r"><b>KEF</b><span>Keflavík</span></div>
             </div>
+            <div class="pass-times">
+              <div><small>Départ Paris</small><strong>05h00</strong><span>CDG (Terminal 2D)</span></div>
+              <div class="r"><small>Arrivée Islande</small><strong class="acc">07h50</strong><span>Keflavík (KEF)</span></div>
+            </div>
+            <div class="pass-pax"><small>Passager</small><b>M. Corentin LEBOUCHER</b></div>
           </div>
-          <span class="text-[10px] font-bold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-400 border border-purple-400/20">Mardi 02 Février 2027</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2 text-xs mb-3">
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Départ Islande</span>
-            <span class="font-bold text-white text-sm">08h30</span>
-            <span class="text-[11px] text-slate-300 block">Keflavík (KEF)</span>
+          <div class="pass-stub">
+            <div class="stub-row"><span>Dépose-bagages ouvre</span><strong>02h00</strong></div>
+            <div class="stub-row"><span>Dépose-bagages ferme</span><strong class="warn">04h00</strong></div>
+            <div class="stub-row"><span>Fin enregistrement</span><em>04h00 (H-60 min)</em></div>
+            <div class="transport">
+              <label for="tr-arrival-mode"><i data-lucide="route"></i> Au départ de l'aéroport</label>
+              <select id="tr-arrival-mode" onchange="saveTransport('arrival')">
+                <option value="">Choisir…</option>
+                <option>Voiture de location</option>
+                <option>Bus Flybus / Airport Direct</option>
+                <option>Taxi / VTC</option>
+                <option>Navette de l'hôtel</option>
+                <option>À pied</option>
+                <option>Autre</option>
+              </select>
+              <input type="text" id="tr-arrival-notes" onchange="saveTransport('arrival')" placeholder="Précisions (horaire, résa, lien…)" />
+            </div>
+            <div class="barcode" aria-hidden="true"></div>
           </div>
-          <div class="bg-slate-900/60 p-2.5 rounded-2xl border border-surface-border">
-            <span class="text-[10px] text-slate-400 block">Arrivée Paris</span>
-            <span class="font-bold text-brand-400 text-sm">12h55</span>
-            <span class="text-[11px] text-slate-300 block">CDG (Terminal 2D)</span>
+        </article>
+
+        <!-- Vol Retour -->
+        <article class="pass pass-return reveal d1">
+          <div class="pass-main">
+            <div class="pass-top">
+              <span class="pass-air"><i data-lucide="plane-landing"></i> Vol Retour • EJU4584</span>
+              <span class="pass-date">Mardi 02 Février 2027</span>
+            </div>
+            <div class="pass-route">
+              <div class="pass-city"><b>KEF</b><span>Keflavík</span></div>
+              <div class="pass-path" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+              <div class="pass-city r"><b>CDG</b><span>Paris</span></div>
+            </div>
+            <div class="pass-times">
+              <div><small>Départ Islande</small><strong>08h30</strong><span>Keflavík (KEF)</span></div>
+              <div class="r"><small>Arrivée Paris</small><strong class="acc">12h55</strong><span>CDG (Terminal 2D)</span></div>
+            </div>
+            <div class="pass-pax"><small>Passager</small><b>M. Corentin LEBOUCHER</b></div>
           </div>
-        </div>
-        <div class="space-y-1.5 text-[11px] text-slate-400 border-t border-surface-border/50 pt-2 font-mono">
-          <div class="flex justify-between">
-            <span>Dépose-bagages ouvre :</span>
-            <strong class="text-slate-200">06h30</strong>
+          <div class="pass-stub">
+            <div class="stub-row"><span>Dépose-bagages ouvre</span><strong>06h30</strong></div>
+            <div class="stub-row"><span>Dépose-bagages ferme</span><strong class="warn">07h50</strong></div>
+            <div class="stub-row"><span>Restitution 4x4</span><strong class="ok">Lundi 01 Février au soir</strong></div>
+            <div class="transport">
+              <label for="tr-departure-mode"><i data-lucide="route"></i> Pour rejoindre l'aéroport</label>
+              <select id="tr-departure-mode" onchange="saveTransport('departure')">
+                <option value="">Choisir…</option>
+                <option>Voiture de location</option>
+                <option>Bus Flybus / Airport Direct</option>
+                <option>Taxi / VTC</option>
+                <option>Navette de l'hôtel</option>
+                <option>À pied</option>
+                <option>Autre</option>
+              </select>
+              <input type="text" id="tr-departure-notes" onchange="saveTransport('departure')" placeholder="Précisions (horaire, résa, lien…)" />
+            </div>
+            <div class="barcode" aria-hidden="true"></div>
           </div>
-          <div class="flex justify-between">
-            <span>Dépose-bagages ferme :</span>
-            <strong class="text-amber-400">07h50</strong>
-          </div>
-          <div class="flex justify-between">
-            <span>Restitution 4x4 :</span>
-            <strong class="text-emerald-400">Lundi 01 Février au soir</strong>
-          </div>
-        </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- 6. MODULES OUTILS TERRAIN -->
-  <section id="tools-section" class="max-w-6xl mx-auto px-4 py-6">
-    <div class="mb-6">
-      <h2 class="text-xl sm:text-2xl font-bold text-white tracking-tight">Outils Terrain Indispensables</h2>
-      <p class="text-xs text-slate-400">Gestion personnalisée des 2 valises avec synchronisation Supabase en direct.</p>
-    </div>
+  <!-- CHAPITRE VI — LE SAC -->
+  <section id="tools-section" class="chapter" data-mood="sac">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">VI</span>
+        <p class="chap-kicker">Chapitre VI · Le sac</p>
+        <h2 class="chap-title">Ce qu’on emporte,<br/><em>ce qu’on n’oublie pas</em></h2>
+        <p class="chap-sub">Deux valises pesées à la volée, les bons réflexes sécurité et les papiers du voyage. Tout se synchronise, même sans réseau.</p>
+      </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between lg:col-span-2">
-        <div>
-          <!-- Onglets Valises -->
-          <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-surface-border">
-            <div class="flex items-center gap-2">
-              <i data-lucide="luggage" class="w-5 h-5 text-brand-400"></i>
+      <div class="tools-grid">
+        <!-- Valises -->
+        <div class="panel reveal lg-span2">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico"><i data-lucide="luggage"></i></span>
               <div>
-                <h3 class="text-sm font-bold text-white">Valise & Pesée Automatique</h3>
-                <span class="text-[10px] text-slate-400">EasyJet soute : <strong>23,0 kg</strong> par bagage</span>
+                <h3>Valise & pesée automatique</h3>
+                <small>EasyJet soute : <strong>23,0 kg</strong> par bagage</small>
               </div>
             </div>
-
-            <div class="flex items-center gap-1.5 p-1 glass rounded-xl border border-surface-border">
-              <button id="btnTabBag1" onclick="switchBagTab('bag1')" class="px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all">Valise 1</button>
-              <button id="btnTabBag2" onclick="switchBagTab('bag2')" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all">Valise 2</button>
+            <div class="seg seg-sm" role="group" aria-label="Choisir la valise">
+              <button id="btnTabBag1" onclick="switchBagTab('bag1')" class="seg-btn on">Valise 1</button>
+              <button id="btnTabBag2" onclick="switchBagTab('bag2')" class="seg-btn">Valise 2</button>
             </div>
           </div>
 
-          <!-- Jauge -->
-          <div class="bg-slate-900/80 p-4 rounded-2xl border border-surface-border mb-4">
-            <div class="flex items-center justify-between mb-1.5">
-              <span id="currentBagLabel" class="text-xs font-bold text-white">Valise 1</span>
-              <span id="currentBagWeightDisplay" class="text-sm font-mono font-black text-brand-400">0.0 / 23.0 kg</span>
+          <div class="gauge">
+            <div class="gauge-row">
+              <span id="currentBagLabel" class="gauge-label">Valise 1</span>
+              <span id="currentBagWeightDisplay" class="gauge-weight">0.0 / 23.0 kg</span>
             </div>
-            
-            <div class="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden mb-2">
-              <div id="currentBagProgressBar" class="bg-brand-500 h-full transition-all duration-300" style="width: 0%;"></div>
-            </div>
-
-            <div class="flex items-center justify-between text-[11px] text-slate-400">
+            <div class="gtrack"><div id="currentBagProgressBar" class="gbar" style="width: 0%;"></div></div>
+            <div class="gauge-row sm">
               <span id="currentBagRemaining">Reste disponible : 23.0 kg</span>
-              <span id="currentBagCheckRatio" class="font-mono">0/0 coché</span>
+              <span id="currentBagCheckRatio" class="mono">0/0 coché</span>
             </div>
           </div>
 
-          <div class="space-y-1.5 max-h-60 overflow-y-auto pr-1" id="bag-items-list"></div>
+          <div class="checklist" id="bag-items-list"></div>
 
-          <div class="flex gap-2 mt-4 pt-3 border-t border-surface-border">
-            <input type="text" id="newItemName" placeholder="Nouvelle affaire (ex: Doudoune, Gants...)" class="flex-1 bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-400" />
-            <div class="relative w-24">
-              <input type="number" step="0.1" min="0" id="newItemWeight" placeholder="Poids" class="w-full bg-slate-900 border border-surface-border rounded-xl pl-3 pr-7 py-2 text-xs text-white font-mono focus:outline-none focus:border-brand-400" />
-              <span class="absolute right-2 top-2 text-[10px] text-slate-400 font-mono">kg</span>
+          <div class="add-row">
+            <input type="text" id="newItemName" placeholder="Nouvelle affaire (ex: Doudoune, Gants...)" />
+            <div class="kg-field">
+              <input type="number" step="0.1" min="0" id="newItemWeight" placeholder="Poids" />
+              <span>kg</span>
             </div>
-            <button onclick="addBagItem()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 rounded-xl text-xs font-bold text-white transition-all flex items-center gap-1">
-              <span>+</span> Ajouter
-            </button>
+            <button onclick="addBagItem()" class="btn-aurora sm"><span>+</span> Ajouter</button>
+          </div>
+
+          <div class="panel-foot">
+            <span>Synchro temps réel Supabase Cloud & hors-ligne</span>
+            <button onclick="clearCurrentBag()" class="btn-quiet danger">Vider cette valise</button>
           </div>
         </div>
 
-        <div class="mt-4 pt-3 border-t border-surface-border/50 flex justify-between items-center text-[11px] text-slate-400">
-          <span>Synchro temps réel Supabase Cloud & Hors-ligne</span>
-          <button onclick="clearCurrentBag()" class="hover:text-red-400 transition-colors">Vider cette valise</button>
-        </div>
-      </div>
-
-      <!-- Liens Sécurité -->
-      <div class="glass rounded-3xl p-5 border border-surface-border flex flex-col justify-between">
-        <div>
-          <h3 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
-            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-400"></i> Sécurité & Alertes Live
-          </h3>
-          <p class="text-xs text-slate-400 mb-3">À consulter tous les matins avant de démarrer :</p>
-
-          <div class="space-y-2">
-            <a href="https://www.road.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
-              <div class="flex items-center gap-2">
-                <span>🛣️</span>
-                <div>
-                  <div class="font-semibold text-white">Road.is</div>
-                  <div class="text-[10px] text-slate-400">Verglas & fermetures Route 1</div>
-                </div>
+        <!-- Sécurité -->
+        <div class="panel reveal d1">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico warn"><i data-lucide="shield-alert"></i></span>
+              <div>
+                <h3>Sécurité & alertes live</h3>
+                <small>À consulter chaque matin avant de démarrer</small>
               </div>
-              <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-            </a>
+            </div>
+          </div>
 
-            <a href="https://en.vedur.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
-              <div class="flex items-center gap-2">
-                <span>🌬️</span>
-                <div>
-                  <div class="font-semibold text-white">Vedur.is</div>
-                  <div class="text-[10px] text-slate-400">Rafales de vent & prévisions aurores</div>
-                </div>
-              </div>
-              <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
+          <div class="signs">
+            <a href="https://www.road.is/" target="_blank" rel="noopener" class="sign">
+              <span class="sign-ico">🛣️</span>
+              <div><b>Road.is</b><small>Verglas & fermetures Route 1</small></div>
+              <i data-lucide="external-link"></i>
             </a>
+            <a href="https://en.vedur.is/" target="_blank" rel="noopener" class="sign">
+              <span class="sign-ico">🌬️</span>
+              <div><b>Vedur.is</b><small>Rafales de vent & prévisions aurores</small></div>
+              <i data-lucide="external-link"></i>
+            </a>
+            <a href="https://safetravel.is/" target="_blank" rel="noopener" class="sign">
+              <span class="sign-ico">🛡</span>
+              <div><b>SafeTravel.is</b><small>Enregistrer son plan de route</small></div>
+              <i data-lucide="external-link"></i>
+            </a>
+          </div>
 
-            <a href="https://safetravel.is/" target="_blank" class="flex items-center justify-between p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 border border-surface-border transition-all text-xs">
-              <div class="flex items-center gap-2">
-                <span>🛡</span>
-                <div>
-                  <div class="font-semibold text-white">SafeTravel.is</div>
-                  <div class="text-[10px] text-slate-400">Enregistrer son plan de route</div>
-                </div>
-              </div>
-              <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400"></i>
-            </a>
+          <div class="sos">
+            <div class="sos-beacon" aria-hidden="true"></div>
+            <div>
+              <b>Urgences Islande : 112</b>
+              <small>Toujours tenir fermement la portière contre les rafales.</small>
+            </div>
           </div>
         </div>
 
-        <div class="mt-4 p-2.5 rounded-xl bg-red-950/40 border border-red-500/20 text-center">
-          <span class="text-xs font-bold text-red-400 block">Urgences Islande : 112</span>
-          <span class="text-[10px] text-red-300">Toujours tenir fermement la portière contre les rafales.</span>
+        <!-- Documents & sauvegarde -->
+        <div class="panel reveal lg-span3">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico"><i data-lucide="file-check-2"></i></span>
+              <div>
+                <h3>Documents à ne pas oublier</h3>
+                <small>Passeports, assurances, permis, réservations…</small>
+              </div>
+            </div>
+            <span id="docsCheckRatio" class="ratio">0/0</span>
+          </div>
+
+          <div class="checklist two-col" id="docs-checklist-list"></div>
+
+          <div class="add-row">
+            <input type="text" id="newDocName" placeholder="Ajouter un document (ex: Visa, ordonnance...)" />
+            <button onclick="addDocItem()" class="btn-aurora sm"><span>+</span> Ajouter</button>
+          </div>
+
+          <div class="panel-foot no-print">
+            <div class="foot-btns">
+              <button onclick="exportAllData()" class="btn-ghost"><i data-lucide="download-cloud"></i> Exporter mes données</button>
+              <button onclick="printPlan()" class="btn-ghost"><i data-lucide="printer"></i> Imprimer le planning</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- ÉPILOGUE -->
+  <footer class="epilogue" data-mood="prologue">
+    <div class="epi-mtn" aria-hidden="true">
+      <svg viewBox="0 0 400 120" preserveAspectRatio="none"><path d="M0 120V78l40-28 34 22 52-50 44 46 36-22 60 52 40-30 54 32 40-24v94z" fill="#070d22"/><path d="M0 120V96l56-26 40 24 60-44 52 40 50-28 70 44 72-32v76z" fill="#04081a"/></svg>
+    </div>
+    <p class="epi-kicker">Épilogue</p>
+    <h2 class="epi-title">Góða ferð<span>.</span></h2>
+    <p class="epi-sub">« Bon voyage », en islandais. Sept jours à deux, un volcan, deux glaciers et, avec un peu de chance, le ciel qui danse.</p>
+    <p class="epi-fine">Islande · 26 janvier — 2 février 2027</p>
+  </footer>
+
+  </main>
 
   <!-- MODAL D'ÉDITION D'HÉBERGEMENT -->
-  <div id="lodgingModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass w-full max-w-md p-6 rounded-3xl border border-surface-border">
-      <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
-        <span id="modalLodgingTitle">Renseigner l'Hébergement</span>
-        <button onclick="closeLodgingModal()" class="text-slate-400 hover:text-white">✕</button>
+  <div id="lodgingModal" class="hidden modal-back" onclick="if(event.target===this)closeLodgingModal()">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalLodgingTitle">
+      <div class="modal-grip" aria-hidden="true"></div>
+      <h3 class="modal-title">
+        <span><small>Nuit à renseigner</small><em id="modalLodgingTitle">Renseigner l'Hébergement</em></span>
+        <button onclick="closeLodgingModal()" class="x-btn" aria-label="Fermer">✕</button>
       </h3>
       <input type="hidden" id="editLodgingIndex" />
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block text-slate-400 mb-1">Nom du logement / Hôtel</label>
-          <input type="text" id="editLodgingName" placeholder="Ex: Aurora Hotel Keflavík Airport" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+      <div class="form-stack">
+        <div class="fld">
+          <label for="editLodgingName">Nom du logement / Hôtel</label>
+          <input type="text" id="editLodgingName" placeholder="Ex: Aurora Hotel Keflavík Airport" />
         </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-slate-400 mb-1">Ville / Secteur</label>
-            <input type="text" id="editLodgingLocation" placeholder="Ex: Aéroport Keflavík" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        <div class="form-grid">
+          <div class="fld">
+            <label for="editLodgingLocation">Ville / Secteur</label>
+            <input type="text" id="editLodgingLocation" placeholder="Ex: Aéroport Keflavík" />
           </div>
-          <div>
-            <label class="block text-slate-400 mb-1">Heure de Check-in</label>
-            <input type="text" id="editLodgingCheckin" placeholder="Ex: 15h00 - 22h00" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+          <div class="fld">
+            <label for="editLodgingCheckin">Heure de Check-in</label>
+            <input type="text" id="editLodgingCheckin" placeholder="Ex: 15h00 - 22h00" />
           </div>
         </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Adresse exacte ou Coordonnées GPS</label>
-          <input type="text" id="editLodgingAddress" placeholder="Ex: Blikavellir 2, 235 Keflavík" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        <div class="fld">
+          <label for="editLodgingAddress">Adresse exacte ou Coordonnées GPS</label>
+          <input type="text" id="editLodgingAddress" placeholder="Ex: Blikavellir 2, 235 Keflavík" />
         </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Numéro de téléphone / Contact hôte</label>
-          <input type="text" id="editLodgingPhone" placeholder="Ex: +354 487 0000" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white" />
+        <div class="fld">
+          <label for="editLodgingPhone">Numéro de téléphone / Contact hôte</label>
+          <input type="text" id="editLodgingPhone" placeholder="Ex: +354 487 0000" />
         </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Code Boîte à Clés / Instructions d'arrivée</label>
-          <textarea id="editLodgingNotes" rows="2" placeholder="Ex: Restitution du 4x4 effectuée, accès direct à pied terminal" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white"></textarea>
+        <div class="fld">
+          <label for="editLodgingUrl">Lien de la réservation (Booking, Airbnb…)</label>
+          <input type="url" id="editLodgingUrl" placeholder="https://www.booking.com/..." />
+        </div>
+        <div class="fld">
+          <label for="editLodgingNotes">Code Boîte à Clés / Instructions d'arrivée</label>
+          <textarea id="editLodgingNotes" rows="2" placeholder="Ex: Restitution du 4x4 effectuée, accès direct à pied terminal"></textarea>
         </div>
       </div>
-      <div class="mt-5 flex justify-end gap-2">
-        <button onclick="closeLodgingModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
-        <button onclick="saveLodgingData()" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer</button>
+      <div class="sheet-actions">
+        <button onclick="closeLodgingModal()" class="btn-quiet">Annuler</button>
+        <button onclick="saveLodgingData()" class="btn-aurora">Enregistrer</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL D'ÉDITION DES REPAS -->
-  <div id="mealModal" class="hidden fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="glass w-full max-w-lg p-6 rounded-3xl border border-surface-border">
-      <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
-        <span id="modalMealTitle">Repas du Jour</span>
-        <button onclick="closeMealModal()" class="text-slate-400 hover:text-white">✕</button>
+  <div id="mealModal" class="hidden modal-back" onclick="if(event.target===this)closeMealModal()">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalMealTitle">
+      <div class="modal-grip" aria-hidden="true"></div>
+      <h3 class="modal-title">
+        <span><small>À table</small><em id="modalMealTitle">Repas du Jour</em></span>
+        <button onclick="closeMealModal()" class="x-btn" aria-label="Fermer">✕</button>
       </h3>
       <input type="hidden" id="editMealDateKey" />
 
-      <div class="space-y-4 text-xs">
-        <div class="p-3.5 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2">
-          <div class="flex items-center gap-2 font-bold text-brand-400">
-            <span>🥪</span> Repas du Midi (Déjeuner / Pique-nique)
+      <div class="form-stack">
+        <div class="meal-box">
+          <div class="meal-head lunch"><span>🥪</span> Repas du Midi (Déjeuner / Pique-nique)</div>
+          <div class="fld">
+            <label for="editLunchTitle">Nom du plat / Repas</label>
+            <input type="text" id="editLunchTitle" placeholder="Ex: Wraps thon maïs" />
           </div>
-          <div>
-            <label class="block text-slate-400 mb-1">Nom du plat / Repas</label>
-            <input type="text" id="editLunchTitle" placeholder="Ex: Wraps thon maïs" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-1">Ingrédients / Courses à prévoir / Adresse</label>
-            <input type="text" id="editLunchNotes" placeholder="Ex: Galettes, boîte de thon, maïs" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
+          <div class="fld">
+            <label for="editLunchNotes">Ingrédients / Courses à prévoir / Adresse</label>
+            <input type="text" id="editLunchNotes" placeholder="Ex: Galettes, boîte de thon, maïs" />
           </div>
         </div>
 
-        <div class="p-3.5 rounded-2xl bg-slate-900/60 border border-surface-border space-y-2">
-          <div class="flex items-center gap-2 font-bold text-amber-300">
-            <span>🍲</span> Repas du Soir (Dîner)
+        <div class="meal-box">
+          <div class="meal-head dinner"><span>🍲</span> Repas du Soir (Dîner)</div>
+          <div class="fld">
+            <label for="editDinnerTitle">Nom du plat / Restaurant</label>
+            <input type="text" id="editDinnerTitle" placeholder="Ex: Pavé de saumon & riz" />
           </div>
-          <div>
-            <label class="block text-slate-400 mb-1">Nom du plat / Restaurant</label>
-            <input type="text" id="editDinnerTitle" placeholder="Ex: Pavé de saumon & riz" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
-          </div>
-          <div>
-            <label class="block text-slate-400 mb-1">Ingrédients / Courses / Réservation</label>
-            <input type="text" id="editDinnerNotes" placeholder="Ex: Saumon Bónus, sachet de riz" class="w-full bg-slate-900 border border-surface-border rounded-xl px-3 py-2 text-white outline-none focus:border-brand-400" />
+          <div class="fld">
+            <label for="editDinnerNotes">Ingrédients / Courses / Réservation</label>
+            <input type="text" id="editDinnerNotes" placeholder="Ex: Saumon Bónus, sachet de riz" />
           </div>
         </div>
       </div>
 
-      <div class="mt-5 flex justify-end gap-2">
-        <button onclick="closeMealModal()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Annuler</button>
-        <button onclick="saveMealData()" class="px-4 py-2 bg-brand-500 rounded-xl text-xs font-bold text-white">Enregistrer le menu</button>
+      <div class="sheet-actions">
+        <button onclick="closeMealModal()" class="btn-quiet">Annuler</button>
+        <button onclick="saveMealData()" class="btn-aurora">Enregistrer le menu</button>
       </div>
     </div>
   </div>
 
   <!-- VISIONNEUSE PLEIN ÉCRAN INTERACTIVE -->
-  <div id="imageLightbox" class="hidden fixed inset-0 z-[200] bg-black/90 backdrop-blur-md flex flex-col justify-between p-4 transition-opacity">
-    <div class="flex items-center justify-between text-white z-10">
+  <div id="imageLightbox" class="hidden">
+    <div class="lb-top">
       <div>
-        <h3 id="lightboxTitle" class="text-sm font-bold tracking-tight">Photo du lieu</h3>
-        <p id="lightboxSubtitle" class="text-[11px] text-slate-400">Molette ou boutons pour zoomer • Glisser pour explorer</p>
+        <h3 id="lightboxTitle">Photo du lieu</h3>
+        <p id="lightboxSubtitle">Molette ou boutons pour zoomer • Glisser pour explorer</p>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="zoomLightbox(0.25)" title="Zoom avant (+)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
-          <i data-lucide="zoom-in" class="w-4 h-4"></i>
-        </button>
-        <button onclick="zoomLightbox(-0.25)" title="Zoom arrière (-)" class="glass p-2 rounded-xl text-slate-200 hover:text-brand-400 text-xs flex items-center justify-center">
-          <i data-lucide="zoom-out" class="w-4 h-4"></i>
-        </button>
-        <button onclick="resetLightboxZoom()" title="Taille réelle (1:1)" class="glass px-2.5 py-1.5 rounded-xl text-slate-200 hover:text-brand-400 text-xs font-mono">
-          1:1
-        </button>
-        <button onclick="closeLightbox()" title="Fermer (Échap)" class="glass p-2 rounded-xl text-slate-200 hover:text-red-400 text-xs flex items-center justify-center">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
+      <div class="lb-tools">
+        <button onclick="zoomLightbox(0.25)" title="Zoom avant (+)" class="lb-btn"><i data-lucide="zoom-in"></i></button>
+        <button onclick="zoomLightbox(-0.25)" title="Zoom arrière (-)" class="lb-btn"><i data-lucide="zoom-out"></i></button>
+        <button onclick="resetLightboxZoom()" title="Taille réelle (1:1)" class="lb-btn mono">1:1</button>
+        <button onclick="closeLightbox()" title="Fermer (Échap)" class="lb-btn close"><i data-lucide="x"></i></button>
       </div>
     </div>
 
-    <div id="lightboxViewport" class="flex-1 w-full h-full flex items-center justify-center overflow-hidden relative my-2 cursor-grab active:cursor-grabbing">
-      <img id="lightboxImg" src="" alt="Lieu" class="max-w-[90vw] max-h-[80vh] object-contain rounded-2xl shadow-2xl pointer-events-auto" />
+    <div id="lightboxViewport">
+      <img id="lightboxImg" src="" alt="Lieu" />
     </div>
 
-    <div class="text-center text-[11px] text-slate-400">
-      Niveau de zoom : <span id="zoomLevelDisplay" class="font-mono text-brand-400 font-bold">100%</span>
+    <div class="lb-foot">
+      Zoom <span id="zoomLevelDisplay">100%</span>
     </div>
   </div>
 
+  <script src="./fx.js"></script>
   <script>
     lucide.createIcons();
+
+    // =========================================================================
+    // SÉCURITÉ : ÉCHAPPEMENT DU TEXTE SAISI PAR LES UTILISATEURS
+    // Empêche qu'un nom de lieu / note / téléphone contenant des caractères
+    // HTML (ex: " onerror=...) ne puisse injecter du code dans la page.
+    // =========================================================================
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Pour injecter une valeur utilisateur à l'intérieur d'un onclick="...('...')"
+    // (échappe d'abord pour le JavaScript, puis pour l'attribut HTML qui le contient).
+    function escAttr(str) {
+      const jsEscaped = String(str ?? '')
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '');
+      return escapeHtml(jsEscaped);
+    }
+
+    // =========================================================================
+    // NAVIGATION MOBILE : met en surbrillance l'onglet de la section visible
+    // =========================================================================
+    (function initMobileNavHighlight() {
+      const links = document.querySelectorAll('#mobileBottomNav a');
+      if (!links.length || !('IntersectionObserver' in window)) return;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          links.forEach(l => l.classList.toggle('active-tab', l.dataset.tab === entry.target.id));
+        });
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      links.forEach(l => {
+        const section = document.getElementById(l.dataset.tab);
+        if (section) observer.observe(section);
+      });
+    })();
 
     // =========================================================================
     // HELPER GESTION IMAGES AVEC FALLBACK AUTO (JPG / PNG)
@@ -913,10 +948,10 @@
       const badge = document.getElementById("syncBadge");
       if (!badge) return;
       if (isSynced) {
-        badge.className = "text-[9px] px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-400 border border-emerald-500/30 font-mono";
+        badge.className = "ok";
         badge.innerText = text || "Cloud OK";
       } else {
-        badge.className = "text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 font-mono";
+        badge.className = "";
         badge.innerText = text || "Local (Offline)";
       }
     }
@@ -970,7 +1005,8 @@
             checkin: l.checkin,
             address: l.address,
             phone: l.phone,
-            notes: l.notes
+            notes: l.notes,
+            booking_url: l.booking_url || ''
           }));
           localStorage.setItem("iceland_lodgings_data_v11", JSON.stringify(formattedL));
           renderLodgings();
@@ -994,6 +1030,7 @@
         }
 
         await syncLuggageFromSupabase();
+        await syncTransport();
         setSyncStatus(true, "Synchronisé");
       } catch (e) {
         console.warn("Échec sync cloud :", e);
@@ -1053,15 +1090,51 @@
               checkin: l.checkin,
               address: l.address,
               phone: l.phone,
-              notes: l.notes
+              notes: l.notes,
+              booking_url: l.booking_url || ''
             }));
             localStorage.setItem("iceland_lodgings_data_v11", JSON.stringify(formattedL));
             renderLodgings();
           }
         })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'iceland_transport' }, () => syncTransport())
         .subscribe();
     }
 
+    // =========================================================================
+    // TRANSPORT AÉROPORT (arrival = sortie de KEF, departure = retour vers KEF)
+    // =========================================================================
+    const TRANSPORT_KEY = "iceland_transport_v1";
+    function getTransport() { return JSON.parse(localStorage.getItem(TRANSPORT_KEY) || "{}"); }
+
+    function renderTransport() {
+      const t = getTransport();
+      ['arrival', 'departure'].forEach(id => {
+        const sel = document.getElementById(`tr-${id}-mode`);
+        const inp = document.getElementById(`tr-${id}-notes`);
+        if (sel) sel.value = (t[id] && t[id].mode) || '';
+        if (inp) inp.value = (t[id] && t[id].notes) || '';
+      });
+    }
+
+    async function saveTransport(id) {
+      const t = getTransport();
+      t[id] = { mode: document.getElementById(`tr-${id}-mode`).value, notes: document.getElementById(`tr-${id}-notes`).value.trim() };
+      localStorage.setItem(TRANSPORT_KEY, JSON.stringify(t));
+      if (supabaseClient && navigator.onLine) {
+        await supabaseClient.from('iceland_transport').upsert([{ id, mode: t[id].mode, notes: t[id].notes, updated_at: new Date() }]);
+      }
+    }
+
+    async function syncTransport() {
+      const { data, error } = await supabaseClient.from('iceland_transport').select('*');
+      if (error || !data || !data.length) return;
+      const t = {};
+      data.forEach(r => { t[r.id] = { mode: r.mode || '', notes: r.notes || '' }; });
+      localStorage.setItem(TRANSPORT_KEY, JSON.stringify(t));
+      renderTransport();
+    }
+    renderTransport();
     window.addEventListener('online', () => syncFromSupabase());
     window.addEventListener('offline', () => setSyncStatus(false, "Hors-ligne"));
 
@@ -1152,13 +1225,8 @@
 
     function switchBagTab(bagKey) {
       activeBag = bagKey;
-      document.getElementById("btnTabBag1").className = (bagKey === 'bag1')
-        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all'
-        : 'px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
-
-      document.getElementById("btnTabBag2").className = (bagKey === 'bag2')
-        ? 'px-3 py-1 rounded-lg text-xs font-bold bg-brand-500 text-white transition-all'
-        : 'px-3 py-1 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all';
+      document.getElementById("btnTabBag1").className = (bagKey === 'bag1') ? 'seg-btn on' : 'seg-btn';
+      document.getElementById("btnTabBag2").className = (bagKey === 'bag2') ? 'seg-btn on' : 'seg-btn';
 
       renderLuggage();
     }
@@ -1182,32 +1250,32 @@
       progressBar.style.width = pct + "%";
 
       if (totalWeight > 23) {
-        progressBar.className = "bg-red-500 h-full transition-all duration-300";
-        weightDisplay.className = "text-sm font-mono font-black text-red-400";
-        remainingDisplay.innerHTML = `<span class="text-red-400 font-bold">⚠️ Surcharge : +${(totalWeight - 23).toFixed(1)} kg au-delà des 23 kg !</span>`;
+        progressBar.className = "gbar over";
+        weightDisplay.className = "gauge-weight over";
+        remainingDisplay.innerHTML = `<span class="over-msg">⚠️ Surcharge : +${(totalWeight - 23).toFixed(1)} kg au-delà des 23 kg !</span>`;
       } else {
-        progressBar.className = (totalWeight >= 21 ? "bg-amber-400" : "bg-brand-500") + " h-full transition-all duration-300";
-        weightDisplay.className = "text-sm font-mono font-black text-brand-400";
+        progressBar.className = totalWeight >= 21 ? "gbar warn" : "gbar";
+        weightDisplay.className = totalWeight >= 21 ? "gauge-weight warn" : "gauge-weight";
         remainingDisplay.innerHTML = `<span>Reste disponible : <strong>${(23 - totalWeight).toFixed(1)} kg</strong></span>`;
       }
 
       document.getElementById("currentBagCheckRatio").innerText = `${checkedCount}/${items.length} coché(s)`;
 
       if (items.length === 0) {
-        container.innerHTML = `<div class="text-[11px] text-slate-500 italic p-3 text-center">Cette valise est vide. Ajoute tes affaires librement ci-dessous.</div>`;
+        container.innerHTML = `<div class="empty-note">Cette valise est vide. Ajoute tes affaires librement ci-dessous.</div>`;
         return;
       }
 
       container.innerHTML = items.map(item => `
-        <div class="flex items-center justify-between p-2 rounded-xl bg-slate-900/60 border border-surface-border hover:border-brand-400/40 text-xs transition-all">
-          <label class="flex items-center gap-2 cursor-pointer truncate flex-1 mr-2">
-            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBagItemCheck('${item.id}')" class="w-4 h-4 rounded text-brand-500 bg-slate-900 border-surface-border focus:ring-0" />
-            <span class="${item.checked ? 'line-through text-slate-500' : 'text-slate-200'} truncate">${item.name}</span>
+        <div class="check-row ${item.checked ? 'done' : ''}">
+          <label class="check-main">
+            <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleBagItemCheck('${item.id}')" />
+            <span class="check-name">${escapeHtml(item.name)}</span>
           </label>
-          <div class="flex items-center gap-2 shrink-0">
-            <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-slate-800 text-brand-400 border border-surface-border">${parseFloat(item.weight).toFixed(1)} kg</span>
-            <button onclick="removeBagItem('${item.id}')" title="Supprimer" class="text-slate-500 hover:text-red-400 p-1">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          <div class="check-side">
+            <span class="kg-tag">${parseFloat(item.weight).toFixed(1)} kg</span>
+            <button onclick="removeBagItem('${item.id}')" title="Supprimer" aria-label="Supprimer" class="del">
+              <i data-lucide="trash-2"></i>
             </button>
           </div>
         </div>
@@ -1298,6 +1366,95 @@
     });
 
     renderLuggage();
+
+    // =========================================================================
+    // MODULE DOCUMENTS À NE PAS OUBLIER (liste locale, pas de synchro cloud :
+    // chacun a ses propres documents, pas besoin de les partager)
+    // =========================================================================
+    const DEFAULT_DOCS = ["Passeports", "Permis de conduire", "Carte bancaire", "Réservation voiture", "Réservations hôtels / vols (PDF)", "Assurance voyage", "Chargeurs & adaptateur prise"];
+
+    function getDocsChecklist() {
+      const stored = localStorage.getItem("iceland_docs_checklist_v1");
+      if (stored) return JSON.parse(stored);
+      return DEFAULT_DOCS.map((name, i) => ({ id: "doc_" + i, name, checked: false }));
+    }
+
+    function saveDocsChecklist(list) {
+      localStorage.setItem("iceland_docs_checklist_v1", JSON.stringify(list));
+      renderDocsChecklist();
+    }
+
+    function renderDocsChecklist() {
+      const list = getDocsChecklist();
+      const container = document.getElementById("docs-checklist-list");
+      if (!container) return;
+      const checkedCount = list.filter(d => d.checked).length;
+      document.getElementById("docsCheckRatio").innerText = `${checkedCount}/${list.length}`;
+      container.innerHTML = list.map(d => `
+        <label class="check-row ${d.checked ? 'done' : ''}">
+          <span class="check-main">
+            <input type="checkbox" ${d.checked ? 'checked' : ''} onchange="toggleDocItem('${d.id}')" />
+            <span class="check-name">${escapeHtml(d.name)}</span>
+          </span>
+          <button onclick="removeDocItem(event, '${d.id}')" title="Supprimer" aria-label="Supprimer" class="del">
+            <i data-lucide="x"></i>
+          </button>
+        </label>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function toggleDocItem(id) {
+      const list = getDocsChecklist();
+      const item = list.find(d => d.id === id);
+      if (item) { item.checked = !item.checked; saveDocsChecklist(list); }
+    }
+
+    function removeDocItem(event, id) {
+      event.preventDefault();
+      saveDocsChecklist(getDocsChecklist().filter(d => d.id !== id));
+    }
+
+    function addDocItem() {
+      const input = document.getElementById("newDocName");
+      const name = input.value.trim();
+      if (!name) return;
+      const list = getDocsChecklist();
+      list.push({ id: "doc_" + Date.now(), name, checked: false });
+      saveDocsChecklist(list);
+      input.value = "";
+    }
+
+    document.getElementById("newDocName").addEventListener("keyup", function(e) {
+      if (e.key === "Enter") addDocItem();
+    });
+
+    renderDocsChecklist();
+
+    // =========================================================================
+    // SAUVEGARDE : EXPORT JSON & IMPRESSION DU PLANNING
+    // =========================================================================
+    function exportAllData() {
+      const data = {
+        exportedAt: new Date().toISOString(),
+        steps: getSteps(),
+        lodgings: getLodgings(),
+        meals: getMeals(),
+        luggage: getStoredLuggage(),
+        documents: getDocsChecklist()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `islande-2027-sauvegarde-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function printPlan() {
+      window.print();
+    }
 
     // =========================================================================
     // MODULE MENUS
@@ -1510,6 +1667,14 @@
       return JSON.parse(localStorage.getItem("iceland_lodgings_data_v11") || JSON.stringify(BLANK_LODGINGS));
     }
 
+    // N'accepte que http(s) pour éviter les liens javascript:
+    function bookingHref(raw) {
+      let v = (raw || '').trim();
+      if (!v) return '';
+      if (!/^https?:\/\//i.test(v)) v = 'https://' + v;
+      try { const u = new URL(v); return /^https?:$/.test(u.protocol) ? escapeHtml(u.href) : ''; } catch (e) { return ''; }
+    }
+
     function renderLodgings() {
       const lodgings = getLodgings();
       const container = document.getElementById("lodging-cards-container");
@@ -1517,48 +1682,46 @@
         const isFilled = l.name && l.name.trim() !== "";
         const dayColor = DAYS_CONFIG[index] ? DAYS_CONFIG[index].color : '#38bdf8';
         return `
-          <div class="glass p-5 rounded-3xl border border-surface-border flex flex-col justify-between hover:border-brand-400/40 transition-all">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-white uppercase tracking-wider" style="background:${dayColor};">Nuit du ${l.date}</span>
-                <button onclick="openLodgingModal(${index})" class="text-xs text-brand-400 font-semibold hover:underline flex items-center gap-1">
-                  <i data-lucide="${isFilled ? 'edit-3' : 'plus-circle'}" class="w-3.5 h-3.5"></i> ${isFilled ? 'Modifier' : 'Renseigner'}
+          <article class="night ${isFilled ? 'filled' : 'empty'}" style="--dc:${dayColor}">
+            <div class="night-sky" aria-hidden="true">
+              <span class="moon"></span>
+              <i style="left:14%;top:30%"></i><i style="left:34%;top:58%"></i><i style="left:62%;top:22%"></i><i style="left:82%;top:52%"></i><i style="left:48%;top:12%"></i>
+              <svg class="ridge" viewBox="0 0 300 50" preserveAspectRatio="none"><path d="M0 50V30l30-14 28 16 40-26 36 24 42-18 44 26 36-18 44 20v34z"/></svg>
+            </div>
+            <div class="night-body">
+              <div class="night-top">
+                <span class="night-no">Nuit <b>${index + 1}</b></span>
+                <span class="night-date">${escapeHtml(l.date)}</span>
+              </div>
+
+              <h3 class="night-name ${isFilled ? '' : 'blank'}">
+                ${isFilled ? escapeHtml(l.name) : 'Aucun hébergement renseigné'}
+              </h3>
+              <p class="night-loc">
+                <i data-lucide="map-pin"></i> ${escapeHtml(l.location) || 'Localisation à préciser'}
+              </p>
+
+              <dl class="night-info">
+                <div><dt>Arrivée</dt><dd>${escapeHtml(l.checkin) || '—'}</dd></div>
+                <div><dt>Contact</dt><dd>${l.phone ? `<a href="tel:${encodeURIComponent(l.phone)}">${escapeHtml(l.phone)}</a>` : '—'}</dd></div>
+                <div class="key"><dt>Accès / Boîte à clés</dt><dd class="${l.notes ? 'note' : 'none'}">${escapeHtml(l.notes) || 'Aucune consigne saisie'}</dd></div>
+              </dl>
+
+              <div class="night-actions">
+                ${bookingHref(l.booking_url) ? `<a href="${bookingHref(l.booking_url)}" target="_blank" rel="noopener noreferrer" class="btn-ghost sm"><i data-lucide="ticket"></i> Ma réservation</a>` : ''}
+                ${isFilled && (l.address || l.location) ? `
+                  <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(l.address || l.location)}" target="_blank" rel="noopener" class="btn-aurora sm">
+                    📍 Naviguer ➔
+                  </a>
+                ` : `
+                  <button onclick="openLodgingModal(${index})" class="btn-ghost dashed">+ Ajouter les coordonnées</button>
+                `}
+                <button onclick="openLodgingModal(${index})" class="btn-quiet">
+                  <i data-lucide="${isFilled ? 'edit-3' : 'plus-circle'}"></i> ${isFilled ? 'Modifier' : 'Renseigner'}
                 </button>
               </div>
-
-              <h3 class="text-sm font-bold ${isFilled ? 'text-white' : 'text-slate-500 italic'} mb-1">
-                ${isFilled ? l.name : 'Aucun hébergement renseigné'}
-              </h3>
-              <p class="text-xs text-brand-400 mb-3 flex items-center gap-1">
-                <i data-lucide="map-pin" class="w-3 h-3"></i> ${l.location || 'Localisation à préciser'}
-              </p>
-              
-              <div class="space-y-1.5 text-xs text-slate-300 bg-slate-900/60 p-3 rounded-2xl border border-surface-border">
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Arrivée :</span>
-                  <span class="font-medium">${l.checkin || '—'}</span>
-                </div>
-                <div class="flex justify-between">
-                  <span class="text-slate-400">Contact :</span>
-                  <span class="font-medium">${l.phone ? `<a href="tel:${l.phone}" class="hover:text-brand-400 underline">${l.phone}</a>` : '—'}</span>
-                </div>
-                <div class="pt-1 border-t border-surface-border">
-                  <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-wider mb-0.5">Accès / Boîte à clés :</span>
-                  <span class="text-[11px] ${l.notes ? 'text-amber-200' : 'text-slate-500 italic'}">${l.notes || 'Aucune consigne saisie'}</span>
-                </div>
-              </div>
             </div>
-
-            ${isFilled && (l.address || l.location) ? `
-              <a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(l.address || l.location)}" target="_blank" class="mt-4 w-full py-2 rounded-xl bg-slate-900/90 hover:bg-brand-500 hover:text-white border border-surface-border text-center text-xs font-semibold text-slate-300 transition-all block">
-                📍 Naviguer vers le logement ➔
-              </a>
-            ` : `
-              <button onclick="openLodgingModal(${index})" class="mt-4 w-full py-2 rounded-xl bg-slate-900/50 hover:bg-brand-500/20 hover:text-brand-400 border border-dashed border-surface-border text-center text-xs font-semibold text-slate-400 transition-all">
-                + Ajouter les coordonnées
-              </button>
-            `}
-          </div>
+          </article>
         `;
       }).join('');
       lucide.createIcons();
@@ -1575,6 +1738,7 @@
       document.getElementById('editLodgingAddress').value = l.address || '';
       document.getElementById('editLodgingPhone').value = l.phone || '';
       document.getElementById('editLodgingNotes').value = l.notes || '';
+      document.getElementById('editLodgingUrl').value = l.booking_url || '';
       document.getElementById('lodgingModal').classList.remove('hidden');
     }
 
@@ -1592,7 +1756,8 @@
         checkin: document.getElementById('editLodgingCheckin').value.trim(),
         address: document.getElementById('editLodgingAddress').value.trim(),
         phone: document.getElementById('editLodgingPhone').value.trim(),
-        notes: document.getElementById('editLodgingNotes').value.trim()
+        notes: document.getElementById('editLodgingNotes').value.trim(),
+        booking_url: document.getElementById('editLodgingUrl').value.trim()
       };
       lodgings[index] = updated;
       localStorage.setItem("iceland_lodgings_data_v11", JSON.stringify(lodgings));
@@ -1609,6 +1774,7 @@
           address: updated.address,
           phone: updated.phone,
           notes: updated.notes,
+          booking_url: updated.booking_url,
           updated_at: new Date()
         }]);
       }
@@ -1629,6 +1795,7 @@
             address: '',
             phone: '',
             notes: '',
+            booking_url: '',
             updated_at: new Date()
           })));
         }
@@ -1649,7 +1816,7 @@
       const meals = getMeals();
       const container = document.getElementById("places-container");
 
-      container.innerHTML = DAYS_CONFIG.map(dayCfg => {
+      container.innerHTML = DAYS_CONFIG.map((dayCfg, dayIdx) => {
         const daySteps = steps.filter(s => s.dateKey === dayCfg.key);
         const dayMeal = meals[dayCfg.key] || { lunch: { title: "", notes: "" }, dinner: { title: "", notes: "" } };
 
@@ -1661,33 +1828,35 @@
         const hasLunch = dayMeal.lunch && dayMeal.lunch.title;
         const hasDinner = dayMeal.dinner && dayMeal.dinner.title;
 
-        return `
-          <div class="glass p-4 rounded-3xl border border-surface-border flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between pb-2 mb-2 border-b border-surface-border">
-                <span class="text-xs font-bold text-white flex items-center gap-1.5">
-                  <span class="w-2.5 h-2.5 rounded-full" style="background:${dayCfg.color}"></span> ${dayCfg.fullLabel}
-                </span>
-                <div class="flex items-center gap-1.5">
-                  <span class="text-[10px] font-semibold text-brand-400 bg-brand-500/10 px-2 py-0.5 rounded-md">
-                    ~${totalDayKm} km
-                  </span>
-                  <span class="text-[10px] text-slate-400" id="badge-day-${dayCfg.key}">${daySteps.length} arrêt(s)</span>
-                </div>
-              </div>
+        const art = (window.DAY_ART && window.DAY_ART[dayCfg.key]) || { t: dayCfg.fullLabel, e: '', p: '', img: './aurore' };
+        const cover = getImgSrc(art.img);
 
-              <div class="min-h-[40px] p-1 rounded-2xl bg-slate-900/30 border border-surface-border/30 drop-zone mb-3" data-date="${dayCfg.key}" id="day-list-${dayCfg.key}">
+        return `
+          <article class="day" id="day-${dayCfg.key}" style="--dc:${dayCfg.color}">
+            <header class="day-hero" style="--cover:url('${cover}')">
+              <div class="day-top">
+                <span class="day-num">Jour <b>${dayIdx + 1}</b></span>
+                <span class="day-chips">
+                  <span class="day-chip">~${totalDayKm} km</span>
+                  <span class="day-chip" id="badge-day-${dayCfg.key}">${daySteps.length} arrêt(s)</span>
+                </span>
+              </div>
+              <div class="day-ttl">
+                <p class="day-date">${dayCfg.fullLabel}</p>
+                <h3>${art.t}<br/><em>${art.e}</em></h3>
+                <p class="day-pitch">${art.p}</p>
+              </div>
+            </header>
+
+            <div class="day-body">
+              <div class="drop-zone tl" data-date="${dayCfg.key}" id="day-list-${dayCfg.key}">
                 ${daySteps.map((s, idx) => {
                   let distanceTag = '';
                   if (idx > 0) {
                     const prev = daySteps[idx - 1];
                     const distKm = calculateDistance(prev.lat, prev.lng, s.lat, s.lng);
                     distanceTag = `
-                      <div class="flex items-center justify-center my-1 select-none pointer-events-none">
-                        <span class="text-[10px] text-slate-400 font-mono flex items-center gap-1 bg-slate-800/80 px-2 py-0.5 rounded-full border border-surface-border/40">
-                          ⇣ ~${distKm} km
-                        </span>
-                      </div>
+                      <div class="leg"><span>⇣ ~${distKm} km</span></div>
                     `;
                   }
 
@@ -1695,74 +1864,67 @@
 
                   return `
                     ${distanceTag}
-                    <div class="step-card flex items-center justify-between p-2 rounded-xl bg-slate-900/80 border border-surface-border text-xs cursor-move hover:border-brand-400/50 transition-all gap-2" data-id="${s.id}">
-                      <div class="flex items-center gap-2 truncate flex-1">
-                        <span class="drag-handle text-slate-500 hover:text-slate-200 cursor-grab active:cursor-grabbing font-mono text-sm select-none">⋮⋮</span>
-                        
-                        <!-- Miniature cliquable pour Lightbox / Plein écran -->
-                        <img src="${stepImg}" alt="${s.name}" onclick="openLightbox('${stepImg}', '${s.name.replace(/'/g, "\\'")}')" class="w-10 h-10 rounded-lg object-cover bg-slate-800 border border-surface-border shrink-0 cursor-zoom-in hover:scale-105 transition-transform" onerror="handleImgError(this)" title="Agrandir et zoomer" />
+                    <div class="step-card" data-id="${s.id}">
+                      <span class="drag-handle" title="Glisser pour réorganiser">⋮⋮</span>
 
-                        <div class="truncate">
-                          <div class="flex items-center gap-1.5">
-                            <span class="font-medium text-white truncate">${s.name}</span>${s.time ? `<span class="text-[9px] px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-400 font-mono font-bold shrink-0">${s.time}</span>` : ''}
-                          </div>
-                          <div class="text-[10px] text-brand-400 font-semibold flex items-center gap-1">
-                            <span>💶</span> ${s.price || 'Gratuit'}
-                          </div>
+                      <!-- Miniature cliquable pour Lightbox / Plein écran -->
+                      <img src="${stepImg}" alt="${escapeHtml(s.name)}" onclick="openLightbox('${stepImg}', '${escAttr(s.name)}')" class="step-thumb" onerror="handleImgError(this)" title="Agrandir et zoomer" />
+
+                      <div class="step-info">
+                        <div class="step-name">${escapeHtml(s.name)}</div>
+                        <div class="step-meta">
+                          ${s.time ? `<span class="step-time">${escapeHtml(s.time)}</span>` : ''}
+                          <span class="step-price">💶 ${escapeHtml(s.price) || 'Gratuit'}</span>
                         </div>
+                        ${s.desc ? `<div class="step-desc">${escapeHtml(s.desc)}</div>` : ''}
                       </div>
 
-                      <div class="flex items-center gap-1 shrink-0">
-                        <button onclick="centerOnCoord(${s.lat},${s.lng})" title="Voir sur carte" class="p-1 text-slate-400 hover:text-brand-400">
-                          <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                      <div class="step-actions">
+                        <button onclick="centerOnCoord(${s.lat},${s.lng})" title="Voir sur carte" aria-label="Voir sur la carte">
+                          <i data-lucide="eye"></i>
                         </button>
-                        <button onclick="removeStep('${s.id}')" title="Retirer" class="p-1 text-slate-400 hover:text-red-400">
-                          <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        <button onclick="removeStep('${s.id}')" title="Retirer" aria-label="Retirer l'étape" class="del">
+                          <i data-lucide="trash-2"></i>
                         </button>
                       </div>
                     </div>
                   `;
                 }).join('')}
               </div>
+              <p class="drop-hint">Glisser ici pour réorganiser</p>
 
-              <div class="p-2.5 rounded-2xl bg-slate-900/70 border border-surface-border/60 text-xs">
-                <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-surface-border/40">
-                  <span class="text-[11px] font-bold text-white flex items-center gap-1">
-                    <span>🍽️</span> Menus du Jour
-                  </span>
-                  <button onclick="openMealModal('${dayCfg.key}')" class="text-[10px] font-semibold text-brand-400 hover:underline flex items-center gap-0.5">
-                    <i data-lucide="edit-3" class="w-3 h-3"></i> Modifier
-                  </button>
+              <div class="meals">
+                <div class="meals-head">
+                  <span>🍽️ Menus du jour</span>
+                  <button onclick="openMealModal('${dayCfg.key}')"><i data-lucide="edit-3"></i> Modifier</button>
                 </div>
 
-                <div class="space-y-1.5 text-[11px]">
-                  <div class="flex items-start gap-1.5">
-                    <span class="shrink-0 mt-0.5">🥪</span>
-                    <div class="leading-snug truncate">
-                      <span class="font-bold text-brand-400">Midi :</span>
-                      <span class="${hasLunch ? 'text-slate-200' : 'text-slate-500 italic'}">${dayMeal.lunch.title || 'À définir'}</span>
-                      ${dayMeal.lunch.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${dayMeal.lunch.notes}</div>` : ''}
-                    </div>
+                <div class="meal">
+                  <span class="meal-ico">🥪</span>
+                  <div>
+                    <small class="lunch">Midi</small>
+                    <p class="${hasLunch ? '' : 'empty'}">${escapeHtml(dayMeal.lunch.title) || 'À définir'}</p>
+                    ${dayMeal.lunch.notes ? `<em>${escapeHtml(dayMeal.lunch.notes)}</em>` : ''}
                   </div>
+                </div>
 
-                  <div class="flex items-start gap-1.5 pt-1 border-t border-surface-border/30">
-                    <span class="shrink-0 mt-0.5">🍲</span>
-                    <div class="leading-snug truncate">
-                      <span class="font-bold text-amber-300">Soir :</span>
-                      <span class="${hasDinner ? 'text-slate-200' : 'text-slate-500 italic'}">${dayMeal.dinner.title || 'À définir'}</span>
-                      ${dayMeal.dinner.notes ? `<div class="text-[10px] text-slate-400 italic truncate">${dayMeal.dinner.notes}</div>` : ''}
-                    </div>
+                <div class="meal">
+                  <span class="meal-ico">🍲</span>
+                  <div>
+                    <small class="dinner">Soir</small>
+                    <p class="${hasDinner ? '' : 'empty'}">${escapeHtml(dayMeal.dinner.title) || 'À définir'}</p>
+                    ${dayMeal.dinner.notes ? `<em>${escapeHtml(dayMeal.dinner.notes)}</em>` : ''}
                   </div>
                 </div>
               </div>
             </div>
-            <div class="text-[10px] text-slate-500 text-center mt-2 italic">Glisser ici pour réorganiser</div>
-          </div>
+          </article>
         `;
       }).join('');
 
       lucide.createIcons();
       initSortable();
+      renderTodayWidget();
     }
 
     function initSortable() {
@@ -1937,16 +2099,16 @@
         const imgSrc = getImgSrc(s.img);
         const popupContent = `
           <div>
-            <div class="popup-photo-box" onclick="openLightbox('${imgSrc}', '${s.name.replace(/'/g, "\\'")}')" title="Survole pour agrandir • Clique pour le plein écran">
-              <img src="${imgSrc}" class="popup-photo-img" alt="${s.name}" onerror="handleImgError(this)" />
+            <div class="popup-photo-box" onclick="openLightbox('${imgSrc}', '${escAttr(s.name)}')" title="Survole pour agrandir • Clique pour le plein écran">
+              <img src="${imgSrc}" class="popup-photo-img" alt="${escapeHtml(s.name)}" onerror="handleImgError(this)" />
               <div class="popup-photo-hint">Déplier ⤢</div>
             </div>
             <div class="popup-body">
               <span class="popup-tag" style="background:${dayCfg.color}; color:#fff;">${dayCfg.fullLabel}</span>
-              <div class="popup-title">${s.name}</div>
-              ${s.time ? `<div class="text-[10px] text-brand-400 font-mono font-bold mb-1">⏰ ${s.time}</div>` : ''}
-              <div class="popup-desc">${s.desc}</div>
-              <div class="popup-price">💶 ${s.price || 'Gratuit'}</div>
+              <div class="popup-title">${escapeHtml(s.name)}</div>
+              ${s.time ? `<div class="popup-time">⏰ ${escapeHtml(s.time)}</div>` : ''}
+              <div class="popup-desc">${escapeHtml(s.desc)}</div>
+              <div class="popup-price">💶 ${escapeHtml(s.price) || 'Gratuit'}</div>
               <a href="https://www.google.com/maps/dir/?api=1&destination=${s.lat},${s.lng}" target="_blank" class="popup-link">
                 🗺️ Naviguer avec Google Maps ➔
               </a>
@@ -1962,7 +2124,7 @@
       if (showGas) {
         GAS_STATIONS.forEach(g => {
           const gm = L.marker([g.lat, g.lng], { icon: makeGasPin() })
-            .bindPopup(`<div class="p-2 text-xs"><strong>Station ${g.brand}</strong><br/>Automate carburant 24/7</div>`)
+            .bindPopup(`<div class="gas-popup"><strong>Station ${g.brand}</strong><span>Automate carburant 24/7</span></div>`)
             .addTo(map);
           gasLayers.push(gm);
         });
@@ -1988,7 +2150,8 @@
           weight: 4.5,
           opacity: 0.9,
           lineCap: 'round',
-          lineJoin: 'round'
+          lineJoin: 'round',
+          className: 'route-line'
         }).addTo(map);
 
         polylines.push(poly);
@@ -1999,9 +2162,7 @@
       currentFilterMode = mode;
       ['all', 'out', 'in'].forEach(m => {
         const btn = document.getElementById('btn-' + m);
-        btn.className = (m === mode)
-          ? 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-500 text-white transition-all'
-          : 'px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-card hover:bg-slate-800 text-slate-300 transition-all';
+        btn.className = (m === mode) ? 'seg-btn on' : 'seg-btn';
       });
       recalculateMap();
     }
@@ -2048,6 +2209,17 @@
           const days = data.daily.time;
           const todayIso = new Date().toLocaleDateString('en-CA', { timeZone: 'Atlantic/Reykjavik' });
 
+          const kinds = days.map((d, i) => getWeatherKind(data.daily.weathercode[i]));
+          const snowDays = kinds.filter(k => k === 'snow').length;
+          const rainDays = kinds.filter(k => k === 'rain' || k === 'storm').length;
+          const sunDays = kinds.filter(k => k === 'sun' || k === 'partly').length;
+          const maxGust = Math.max(...data.daily.windgusts_10m_max.map(g => Math.round(g)));
+          const coldest = Math.round(Math.min(...data.daily.temperature_2m_min));
+          const summaryEl = document.getElementById("weatherSummary");
+          if (summaryEl) {
+            summaryEl.innerHTML = `Dix jours devant nous : <b>${snowDays}</b> de neige, <b>${rainDays}</b> de pluie, <b>${sunDays}</b> de ciel ouvert. Le thermomètre plonge à <b>${coldest}°</b>, le vent pointe à <b>${maxGust} km/h</b>${maxGust >= 50 ? ' — <span class="warn">tenez bien les portières.</span>' : ' — rien d\'effrayant.'}`;
+          }
+
           grid.innerHTML = days.map((dateStr, i) => {
             const date = new Date(dateStr);
             const dayName = date.toLocaleDateString('fr-FR', { weekday: 'short' });
@@ -2059,26 +2231,18 @@
             const windAlert = gusts >= 50;
 
             const isToday = (dateStr === todayIso);
-
-            const highlightClasses = isToday
-              ? 'border-brand-400 bg-brand-500/15 shadow-[0_0_20px_rgba(56,189,248,0.25)] ring-2 ring-brand-400/40 relative'
-              : (windAlert ? 'border-amber-500/40 bg-slate-900/60' : 'border-surface-border bg-slate-900/60');
+            const gustPct = Math.max(6, Math.min(100, Math.round(gusts / 80 * 100)));
 
             return `
-              <div class="p-2.5 rounded-2xl border ${highlightClasses} flex flex-col justify-between text-xs transition-all">
-                <div>
-                  ${isToday ? `
-                    <div class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-brand-500 text-white font-extrabold text-[8px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow-md">
-                      Aujourd'hui
-                    </div>
-                  ` : ''}
-                  <div class="font-bold text-white capitalize text-[11px] ${isToday ? 'text-brand-400 font-black pt-1' : ''}">${dayName}</div>
-                  <div class="text-[10px] text-slate-400 mb-1">${dayNum}</div>
-                  <div class="text-2xl my-1">${icon}</div>
-                  <div class="font-semibold text-white text-[11px]">${tMax}° / <span class="text-brand-400">${tMin}°</span></div>
-                </div>
-                <div class="mt-2 pt-1.5 border-t border-surface-border text-[10px] ${windAlert ? 'text-amber-400 font-bold' : 'text-slate-400'}">
-                  💨 ${gusts} km/h
+              <div class="wx-card ${isToday ? 'is-today' : ''}" data-kind="${kinds[i]}" role="img" aria-label="${dayName} ${dayNum} ${icon} ${tMax}° / ${tMin}°, rafales ${gusts} km/h">
+                ${isToday ? `<span class="wx-today-tag">Aujourd'hui</span>` : ''}
+                <div class="wx-day">${dayName}</div>
+                <div class="wx-date">${dayNum}</div>
+                <div class="wx-art-wrap">${weatherArt(kinds[i])}</div>
+                <div class="wx-temp">${tMax}°<small>${tMin}°</small></div>
+                <div class="wx-wind ${windAlert ? 'alert' : ''}">
+                  <span class="wnd">💨</span> ${gusts} km/h
+                  <div class="gust-bar"><i style="--g:${gustPct}%"></i></div>
                 </div>
               </div>
             `;
@@ -2086,10 +2250,44 @@
 
           loader.classList.add("hidden");
           grid.classList.remove("hidden");
+          const todayCard = grid.querySelector('.is-today');
+          if (todayCard) grid.scrollTo({ left: Math.max(0, todayCard.offsetLeft - 16), behavior: 'auto' });
         }
       } catch (e) {
-        loader.innerHTML = `<span class="text-red-400">Erreur de chargement météo.</span>`;
+        loader.innerHTML = `<span style="color:#ff6b7d;font-size:12px">Erreur de chargement météo.</span>`;
       }
+    }
+
+    // =========================================================================
+    // WIDGET "AUJOURD'HUI" : montre direct le programme du jour, sans scroller
+    // =========================================================================
+    function renderTodayWidget() {
+      const section = document.getElementById("today-section");
+      const container = document.getElementById("today-widget-container");
+      if (!section || !container) return;
+
+      const todayKey = new Date().toLocaleDateString('en-CA'); // format YYYY-MM-DD
+      const dayCfg = DAYS_CONFIG.find(d => d.key === todayKey);
+
+      if (!dayCfg) {
+        section.classList.add("hidden");
+        return;
+      }
+
+      section.classList.remove("hidden");
+      const steps = getSteps().filter(s => s.dateKey === todayKey);
+      const meals = getMeals()[todayKey] || { lunch: { title: "" }, dinner: { title: "" } };
+
+      container.innerHTML = `
+        <div class="today-card reveal">
+          <span class="cd-label"><span class="pulse-dot"></span> Aujourd'hui</span>
+          <h3>${dayCfg.fullLabel.split(' ')[0]} <em>${dayCfg.fullLabel.split(' ').slice(1).join(' ')}</em></h3>
+          <div class="today-steps">
+            ${steps.length ? steps.map(s => `<div class="today-step"><time>${escapeHtml(s.time) || '—'}</time><span>${escapeHtml(s.name)}</span></div>`).join('') : '<span style="font-size:12px;font-style:italic;color:var(--mist-2)">Pas d\'étape prévue aujourd\'hui.</span>'}
+          </div>
+          <div class="today-meals">🍽️ Midi : ${escapeHtml(meals.lunch.title) || 'À définir'} • Soir : ${escapeHtml(meals.dinner.title) || 'À définir'}</div>
+        </div>
+      `;
     }
 
     // Initialisation
@@ -2097,6 +2295,7 @@
     fetchWeather();
     syncFromSupabase();
     initSupabaseRealtime();
+    renderTodayWidget();
   </script>
 </body>
 </html>
