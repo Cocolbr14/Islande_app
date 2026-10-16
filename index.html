@@ -1158,6 +1158,7 @@
       if (el.dataset.v === val) return;
       const old = el.dataset.v;
       el.dataset.v = val;
+      el.classList.toggle('wide', val.length > 2); // 100 jours et + : on réduit un peu pour que ça rentre
       if (old === undefined || REDUCE) { el.textContent = val; return; }
       el.innerHTML = '<span class="cd-out">' + old + '</span><span class="cd-in">' + val + '</span>';
       clearTimeout(el._t);
@@ -1831,7 +1832,21 @@
         const daySteps = steps.filter(s => s.dateKey === dayCfg.key);
         const dayMeal = meals[dayCfg.key] || { lunch: { title: "", notes: "" }, dinner: { title: "", notes: "" } };
 
-        let totalDayKm = 0;
+        // Trajet "entre les jours" : dernier arrêt (nuitée) de la veille -> premier arrêt du jour
+        let prevLast = null;
+        for (let j = dayIdx - 1; j >= 0 && !prevLast; j--) {
+          const ps = steps.filter(x => x.dateKey === DAYS_CONFIG[j].key);
+          if (ps.length) prevLast = ps[ps.length - 1];
+        }
+        let approachKm = 0;
+        if (prevLast && daySteps.length) {
+          approachKm = calculateDistance(prevLast.lat, prevLast.lng, daySteps[0].lat, daySteps[0].lng);
+        }
+        const approachTag = (prevLast && daySteps.length && approachKm > 0)
+          ? `<div class="leg leg-day"><span>⇡ ~${approachKm} km · depuis ${escapeHtml(prevLast.name.replace(/^Nuitée\s*:\s*/, ''))}</span></div>`
+          : '';
+
+        let totalDayKm = approachKm;
         for (let i = 0; i < daySteps.length - 1; i++) {
           totalDayKm += calculateDistance(daySteps[i].lat, daySteps[i].lng, daySteps[i+1].lat, daySteps[i+1].lng);
         }
@@ -1860,6 +1875,7 @@
             </header>
 
             <div class="day-body">
+              ${approachTag}
               <div class="drop-zone tl" data-date="${dayCfg.key}" id="day-list-${dayCfg.key}">
                 ${daySteps.map((s, idx) => {
                   let distanceTag = '';

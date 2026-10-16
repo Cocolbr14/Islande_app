@@ -222,7 +222,8 @@ button:active, .press:active { transform: scale(.95); }
 .cd-num { display: block; font-family: var(--font-display); font-weight: 300; font-size: clamp(40px, 12.5vw, 76px); line-height: 1; letter-spacing: -.03em;
   font-variant-numeric: tabular-nums; font-variation-settings: 'opsz' 144; color: #fff; }
 .cd-cell:nth-child(2) .cd-num, .cd-cell:nth-child(4) .cd-num { color: var(--aurora); text-shadow: 0 0 26px rgba(124,196,255,.45); }
-.cd-num { position: relative; }
+.cd-num { position: relative; transition: font-size .4s var(--ease); }
+.cd-num.wide { font-size: clamp(32px, 10vw, 62px); }
 .cd-num .cd-out { position: absolute; inset: 0; animation: cdOut .5s var(--ease) forwards; }
 .cd-num .cd-in { display: block; animation: cdIn .5s var(--ease) both; }
 @keyframes cdOut { to { transform: translateY(-45%) scale(.9); opacity: 0; filter: blur(6px); } }
@@ -749,3 +750,5 @@ input[type="text"], input[type="number"], textarea, select { font-family: var(--
 .transport select:focus, .transport input:focus { outline: none; border-color: #3f8fd6; box-shadow: 0 0 0 3px rgba(63,143,214,.2); }
 .btn-ghost.sm { padding: 9px 14px; font-size: 12px; text-decoration: none; }
 @media print { .transport input, .transport select { border: 0; background: none; } }
+.leg-day { margin: 0 0 10px 2px; }
+.leg-day span { border-style: solid; border-color: color-mix(in srgb, var(--dc, #7cc4ff) 55%, transparent); color: var(--ice); }
