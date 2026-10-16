@@ -2052,8 +2052,12 @@
     }
 
     function centerOnCoord(lat, lng) {
-      document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
-      map.setView([lat, lng], 11);
+      const wait = window.openChapter ? window.openChapter('map-section') : 0;
+      setTimeout(() => {
+        document.getElementById('map-section').scrollIntoView({ behavior: 'smooth' });
+        map.invalidateSize();
+        map.setView([lat, lng], 11);
+      }, wait);
     }
     renderPlacesList();
 

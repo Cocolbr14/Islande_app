@@ -752,3 +752,37 @@ input[type="text"], input[type="number"], textarea, select { font-family: var(--
 @media print { .transport input, .transport select { border: 0; background: none; } }
 .leg-day { margin: 0 0 10px 2px; }
 .leg-day span { border-style: solid; border-color: color-mix(in srgb, var(--dc, #7cc4ff) 55%, transparent); color: var(--ice); }
+
+/* ---------- Tiroirs (chapitres repliables) ---------- */
+.drawer { display: grid; grid-template-rows: 0fr; visibility: hidden;
+  transition: grid-template-rows .5s var(--ease), visibility 0s linear .5s; }
+.chapter.open .drawer { grid-template-rows: 1fr; visibility: visible;
+  transition: grid-template-rows .5s var(--ease), visibility 0s; }
+.drawer-in { min-height: 0; overflow: hidden; }
+.chapter.open.settled .drawer-in { overflow: visible; } /* garde le sticky des jours */
+
+.drawer-head { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.chapter { transition: padding-top .5s var(--ease); }
+.chapter:not(.open) { padding-top: 46px; }
+.chapter:not(.open) .chap-head { margin-bottom: 6px; }
+.chap-head { transition: margin-bottom .5s var(--ease); }
+.chap-title { transition: font-size .5s var(--ease); }
+.chapter:not(.open) .chap-title { font-size: clamp(28px, 8vw, 46px); }
+.chap-num { transition: font-size .5s var(--ease), top .5s var(--ease); }
+.chapter:not(.open) .chap-num { font-size: clamp(72px, 24vw, 140px); top: -10px; }
+.chap-sub { max-height: 14em; transition: max-height .5s var(--ease), opacity .4s, margin-top .5s var(--ease); }
+.chapter:not(.open) .chap-sub { max-height: 0; opacity: 0; margin-top: 0; overflow: hidden; }
+
+.drawer-toggle { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; padding: 8px 14px; border-radius: 99px;
+  font: 700 11px var(--font-body); letter-spacing: .14em; text-transform: uppercase; color: var(--ice); cursor: pointer;
+  background: rgba(5,8,22,.5); border: 1px solid rgba(190,225,255,.25);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.drawer-toggle svg { transition: transform .4s var(--ease); }
+.chapter.open .drawer-toggle svg { transform: rotate(180deg); }
+.drawer-toggle:focus-visible { outline: 2px solid var(--a1, #7cc4ff); outline-offset: 3px; }
+.drawer-all { display: flex; justify-content: center; padding-top: 28px; }
+.drawer-all .drawer-toggle { margin-top: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .drawer, .chapter, .chap-head, .chap-title, .chap-num, .chap-sub, .drawer-toggle svg { transition: none !important; }
+}
+

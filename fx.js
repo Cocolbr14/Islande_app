@@ -173,7 +173,132 @@
     });
   }
 
-  /* ---------- Menu : défilement doux vers le chapitre ---------- */
+  /* ---------- Tiroirs : chaque chapitre se plie / se déplie ---------- */
+  var chapters = $$('.chapter');
+  var drawerState = {};
+  try { drawerState = JSON.parse(localStorage.getItem('islande-drawers') || '{}'); } catch (e) {}
+  function saveDrawers() { try { localStorage.setItem('islande-drawers', JSON.stringify(drawerState)); } catch (e) {} }
+  var CHEV = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
+  var ANIM = reduce ? 0 : 520;
+
+  function hasContent(nodes) {
+    return nodes.some(function (n) { return n.nodeType === 1 || (n.nodeType === 3 && n.textContent.trim()); });
+  }
+
+  function buildDrawer(sec) {
+    var head = $('.chap-head', sec);
+    if (!head || !sec.id) return;
+    var wrap = head.parentElement;
+    var drawer = document.createElement('div');
+    drawer.className = 'drawer';
+    drawer.id = sec.id + '-drawer';
+    var inner = document.createElement('div');
+    inner.className = 'drawer-in';
+    drawer.appendChild(inner);
+
+    // 1) ce qui suit le titre, dans le même bloc
+    var rest = [], n = head.nextSibling;
+    while (n) { rest.push(n); n = n.nextSibling; }
+    if (hasContent(rest)) {
+      var w2 = document.createElement('div');
+      w2.className = wrap.className;
+      rest.forEach(function (x) { w2.appendChild(x); });
+      inner.appendChild(w2);
+    }
+    // 2) ce qui suit ce bloc dans la section (liste des jours, cartes, etc.)
+    var after = [];
+    n = wrap.nextSibling;
+    while (n) { after.push(n); n = n.nextSibling; }
+    after.forEach(function (x) { inner.appendChild(x); });
+    sec.appendChild(drawer);
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'drawer-toggle';
+    btn.setAttribute('aria-controls', drawer.id);
+    btn.innerHTML = '<span class="dt-label"></span>' + CHEV;
+    head.appendChild(btn);
+    head.classList.add('drawer-head');
+    head.addEventListener('click', function (e) {
+      if (e.target.closest('a,input,select,textarea')) return;
+      setOpen(sec, !sec.classList.contains('open'));
+    });
+    sec._btn = btn; sec._drawer = drawer; sec._head = head;
+    syncAria(sec);
+  }
+
+  function syncAria(sec) {
+    var open = sec.classList.contains('open');
+    if (!sec._btn) return;
+    sec._btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    sec._btn.querySelector('.dt-label').textContent = open ? 'Replier' : 'Déplier';
+    if ('inert' in sec._drawer) sec._drawer.inert = !open;
+  }
+
+  function setOpen(sec, open, instant) {
+    if (!sec._drawer || open === sec.classList.contains('open')) return 0;
+    clearTimeout(sec._t);
+    if (open) {
+      sec.classList.add('open');
+      if (instant || !ANIM) { sec.classList.add('settled'); }
+      else {
+        sec._t = setTimeout(function () {
+          sec.classList.add('settled');
+          window.dispatchEvent(new Event('resize')); // la carte se recalcule
+        }, ANIM);
+      }
+    } else {
+      var top = sec._head.getBoundingClientRect().top;
+      if (top < 0) window.scrollTo({ top: window.scrollY + top - 70, behavior: 'auto' });
+      sec.classList.remove('settled');
+      void sec.offsetHeight;
+      sec.classList.remove('open');
+    }
+    drawerState[sec.id] = open ? 1 : 0;
+    saveDrawers();
+    syncAria(sec);
+    syncAll();
+    return instant ? 0 : ANIM;
+  }
+
+  // Ouvre le chapitre qui contient l'élément demandé (par son id) ; renvoie le délai à attendre avant de scroller
+  window.openChapter = function (id) {
+    var el = document.getElementById(id);
+    var sec = el && el.closest('.chapter');
+    if (!sec || sec.classList.contains('open')) return 0;
+    return setOpen(sec, true);
+  };
+
+  chapters.forEach(buildDrawer);
+  chapters.forEach(function (sec) { if (drawerState[sec.id]) { sec.classList.add('open', 'settled'); syncAria(sec); } });
+
+  // Bouton "Tout déplier / Tout replier"
+  var allBtn = null;
+  function syncAll() {
+    if (!allBtn) return;
+    var all = chapters.every(function (s) { return s.classList.contains('open'); });
+    allBtn.textContent = all ? 'Tout replier' : 'Tout déplier';
+    allBtn._all = all;
+  }
+  if (chapters[0]) {
+    var bar = document.createElement('div');
+    bar.className = 'wrap drawer-all';
+    allBtn = document.createElement('button');
+    allBtn.type = 'button';
+    allBtn.className = 'drawer-toggle';
+    bar.appendChild(allBtn);
+    chapters[0].parentNode.insertBefore(bar, chapters[0]);
+    allBtn.addEventListener('click', function () {
+      var target = !allBtn._all;
+      chapters.forEach(function (s) { setOpen(s, target); });
+    });
+    syncAll();
+  }
+
+  // Lien direct (#day-…) : on ouvre le bon tiroir au chargement
+  if (location.hash.length > 1) window.openChapter(decodeURIComponent(location.hash.slice(1)));
+
+  /* ---------- Menu : défilement doux vers le chapitre (ouvre le tiroir si besoin) ---------- */
   document.addEventListener('click', function (e) {
     var a = e.target.closest('a[href^="#"]');
     if (!a) return;
@@ -181,7 +306,10 @@
     var el = id && document.getElementById(id);
     if (!el) return;
     e.preventDefault();
-    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    var wait = window.openChapter(id);
+    setTimeout(function () {
+      el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    }, wait);
   });
 
   /* ---------- Illustrations météo animées ---------- */
