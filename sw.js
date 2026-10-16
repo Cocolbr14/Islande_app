@@ -2,7 +2,7 @@
 // même sans réseau (fréquent en Islande hors des villes).
 // shortcut: cache "best effort" uniquement (pas de vraie synchro hors-ligne
 // des écritures) ; si un jour l'appli grossit beaucoup, passer par Workbox.
-const CACHE_NAME = "islande-app-v4";
+const CACHE_NAME = "islande-app-v5";
 
 const APP_SHELL = [
   "./",
@@ -11,7 +11,9 @@ const APP_SHELL = [
   "./fx.js",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./icon-maskable-512.png",
+  "./apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (event) => {

@@ -222,8 +222,11 @@ button:active, .press:active { transform: scale(.95); }
 .cd-num { display: block; font-family: var(--font-display); font-weight: 300; font-size: clamp(40px, 12.5vw, 76px); line-height: 1; letter-spacing: -.03em;
   font-variant-numeric: tabular-nums; font-variation-settings: 'opsz' 144; color: #fff; }
 .cd-cell:nth-child(2) .cd-num, .cd-cell:nth-child(4) .cd-num { color: var(--aurora); text-shadow: 0 0 26px rgba(124,196,255,.45); }
-.cd-num.tick { animation: tick .4s var(--ease); }
-@keyframes tick { 0% { transform: translateY(-10%); opacity: .4; } 100% { transform: none; opacity: 1; } }
+.cd-num { position: relative; }
+.cd-num .cd-out { position: absolute; inset: 0; animation: cdOut .5s var(--ease) forwards; }
+.cd-num .cd-in { display: block; animation: cdIn .5s var(--ease) both; }
+@keyframes cdOut { to { transform: translateY(-45%) scale(.9); opacity: 0; filter: blur(6px); } }
+@keyframes cdIn { from { transform: translateY(45%) scale(.9); opacity: 0; filter: blur(6px); } to { transform: none; opacity: 1; filter: blur(0); } }
 .cd-unit { display: block; margin-top: 6px; font-size: 9px; font-weight: 800; letter-spacing: .24em; text-transform: uppercase; color: var(--mist-2); }
 .cd-route { position: relative; margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--line); display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--mist); }
 .cd-route b { font-family: var(--font-display); font-size: 16px; font-weight: 500; color: var(--ice); letter-spacing: .02em; }

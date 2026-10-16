@@ -89,17 +89,6 @@
     $$('[data-mood]').forEach(function (el) { moodIO.observe(el); });
   }
 
-  /* ---------- Compte à rebours : petit "tic" quand un chiffre change ---------- */
-  ['cd-days', 'cd-hours', 'cd-minutes', 'cd-seconds'].forEach(function (id) {
-    var el = document.getElementById(id);
-    if (!el) return;
-    new MutationObserver(function () {
-      el.classList.remove('tick');
-      void el.offsetWidth;
-      el.classList.add('tick');
-    }).observe(el, { childList: true, characterData: true, subtree: true });
-  });
-
   /* ---------- Neige douce (canvas fixe, très léger) ---------- */
   (function snow() {
     var c = $('#snow');

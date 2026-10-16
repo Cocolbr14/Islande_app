@@ -8,11 +8,13 @@
   <!-- PWA & Mobile App Meta Tags -->
   <link rel="manifest" href="./manifest.json" />
   <meta name="theme-color" content="#050816" />
+  <meta name="color-scheme" content="dark" />
+  <style>html,body{background:#050816;color-scheme:dark}</style>
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Islande 2027" />
-  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
 
   <!-- Typographie : Fraunces (titres expressifs) + Manrope (lecture) -->
@@ -1143,30 +1145,39 @@
     // =========================================================================
     const TARGET_DATE = new Date("2027-01-26T04:00:00Z").getTime();
 
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = TARGET_DATE - now;
+    const REDUCE = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const cdEls = {
+      d: document.getElementById("cd-days"),
+      h: document.getElementById("cd-hours"),
+      m: document.getElementById("cd-minutes"),
+      s: document.getElementById("cd-seconds")
+    };
 
-      if (distance <= 0) {
-        document.getElementById("cd-days").innerText = "00";
-        document.getElementById("cd-hours").innerText = "00";
-        document.getElementById("cd-minutes").innerText = "00";
-        document.getElementById("cd-seconds").innerText = "00";
-        return;
-      }
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      document.getElementById("cd-days").innerText = String(days).padStart(2, '0');
-      document.getElementById("cd-hours").innerText = String(hours).padStart(2, '0');
-      document.getElementById("cd-minutes").innerText = String(minutes).padStart(2, '0');
-      document.getElementById("cd-seconds").innerText = String(seconds).padStart(2, '0');
+    // Ne modifie un chiffre que s'il a vraiment changé, avec un fondu vertical
+    function setNum(el, val) {
+      if (el.dataset.v === val) return;
+      const old = el.dataset.v;
+      el.dataset.v = val;
+      if (old === undefined || REDUCE) { el.textContent = val; return; }
+      el.innerHTML = '<span class="cd-out">' + old + '</span><span class="cd-in">' + val + '</span>';
+      clearTimeout(el._t);
+      el._t = setTimeout(() => { el.textContent = val; }, 520);
     }
 
-    setInterval(updateCountdown, 1000);
+    function updateCountdown() {
+      const distance = Math.max(0, TARGET_DATE - Date.now());
+      const days = Math.floor(distance / 86400000);
+      const hours = Math.floor((distance % 86400000) / 3600000);
+      const minutes = Math.floor((distance % 3600000) / 60000);
+      const seconds = Math.floor((distance % 60000) / 1000);
+      const p = (n) => String(n).padStart(2, "0");
+      setNum(cdEls.d, p(days));
+      setNum(cdEls.h, p(hours));
+      setNum(cdEls.m, p(minutes));
+      setNum(cdEls.s, p(seconds));
+    }
+
+    setInterval(updateCountdown, 250);
     updateCountdown();
 
     // =========================================================================
