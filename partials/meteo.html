@@ -1,0 +1,38 @@
+  <!-- CHAPITRE I — LE CIEL -->
+  <section id="weather-section" class="chapter" data-mood="ciel">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">I</span>
+        <p class="chap-kicker">Chapitre I · Le ciel</p>
+        <h2 class="chap-title">Quatre saisons<br/><em>en une heure</em></h2>
+        <p class="chap-sub">En Islande, la météo n’est pas un détail : c’est le personnage principal. Voici ce qu’elle prépare pour les dix prochains jours.</p>
+      </div>
+
+      <div class="sky-controls reveal">
+        <label class="select-pill">
+          <i data-lucide="map-pin"></i>
+          <select id="weatherLocationSelect" onchange="fetchWeather()" aria-label="Zone météo">
+            <option value="64.1466,-21.9426">Reykjavík / Ouest</option>
+            <option value="63.9335,-21.0014">Selfoss / Hella</option>
+            <option value="63.4186,-19.0062">Vík í Mýrdal (Sud)</option>
+            <option value="64.0483,-16.1795">Skaftafell / Jökulsárlón (Glaciers)</option>
+            <option value="64.3138,-20.3008">Geysir / Cercle d'Or</option>
+          </select>
+        </label>
+      </div>
+
+      <p id="weatherSummary" class="reveal"></p>
+
+      <div class="wx-rail-wrap">
+        <div id="weatherLoader" class="wx-loader" style="padding-left:16px">
+          <div class="wx-skel"></div><div class="wx-skel"></div><div class="wx-skel"></div><div class="wx-skel"></div>
+        </div>
+        <div id="weatherForecastGrid" class="hidden"></div>
+      </div>
+
+      <div class="wx-foot">
+        <span>💨 <b>Alerte vent</b> : au-delà de 50-60 km/h de rafales, prudence au volant du 4x4.</span>
+        <span>Source : Open-Meteo</span>
+      </div>
+    </div>
+  </section>

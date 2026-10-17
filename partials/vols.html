@@ -1,0 +1,91 @@
+  <!-- CHAPITRE V — LES AILES -->
+  <section id="flights-section" class="chapter" data-mood="vols">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">V</span>
+        <p class="chap-kicker">Chapitre V · Les ailes</p>
+        <h2 class="chap-title">Deux billets,<br/><em>un grand détour</em></h2>
+        <p class="chap-sub">Horaires stricts, dépose-bagages et restitution du véhicule avant le départ. Garde ces cartes d’embarquement sous la main.</p>
+      </div>
+
+      <div class="passes">
+        <!-- Vol Aller -->
+        <article class="pass reveal">
+          <div class="pass-main">
+            <div class="pass-top">
+              <span class="pass-air"><i data-lucide="plane-takeoff"></i> Vol Aller • EJU4583</span>
+              <span class="pass-date">Mardi 26 Janvier 2027</span>
+            </div>
+            <div class="pass-route">
+              <div class="pass-city"><b>CDG</b><span>Paris</span></div>
+              <div class="pass-path" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+              <div class="pass-city r"><b>KEF</b><span>Keflavík</span></div>
+            </div>
+            <div class="pass-times">
+              <div><small>Départ Paris</small><strong>05h00</strong><span>CDG (Terminal 2D)</span></div>
+              <div class="r"><small>Arrivée Islande</small><strong class="acc">07h50</strong><span>Keflavík (KEF)</span></div>
+            </div>
+            <div class="pass-pax"><small>Passager</small><b>M. Corentin LEBOUCHER</b></div>
+          </div>
+          <div class="pass-stub">
+            <div class="stub-row"><span>Dépose-bagages ouvre</span><strong>02h00</strong></div>
+            <div class="stub-row"><span>Dépose-bagages ferme</span><strong class="warn">04h00</strong></div>
+            <div class="stub-row"><span>Fin enregistrement</span><em>04h00 (H-60 min)</em></div>
+            <div class="transport">
+              <label for="tr-arrival-mode"><i data-lucide="route"></i> Au départ de l'aéroport</label>
+              <select id="tr-arrival-mode" onchange="saveTransport('arrival')">
+                <option value="">Choisir…</option>
+                <option>Voiture de location</option>
+                <option>Bus Flybus / Airport Direct</option>
+                <option>Taxi / VTC</option>
+                <option>Navette de l'hôtel</option>
+                <option>À pied</option>
+                <option>Autre</option>
+              </select>
+              <input type="text" id="tr-arrival-notes" onchange="saveTransport('arrival')" placeholder="Précisions (horaire, résa, lien…)" />
+            </div>
+            <div class="barcode" aria-hidden="true"></div>
+          </div>
+        </article>
+
+        <!-- Vol Retour -->
+        <article class="pass pass-return reveal d1">
+          <div class="pass-main">
+            <div class="pass-top">
+              <span class="pass-air"><i data-lucide="plane-landing"></i> Vol Retour • EJU4584</span>
+              <span class="pass-date">Mardi 02 Février 2027</span>
+            </div>
+            <div class="pass-route">
+              <div class="pass-city"><b>KEF</b><span>Keflavík</span></div>
+              <div class="pass-path" aria-hidden="true"><i></i><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg></div>
+              <div class="pass-city r"><b>CDG</b><span>Paris</span></div>
+            </div>
+            <div class="pass-times">
+              <div><small>Départ Islande</small><strong>08h30</strong><span>Keflavík (KEF)</span></div>
+              <div class="r"><small>Arrivée Paris</small><strong class="acc">12h55</strong><span>CDG (Terminal 2D)</span></div>
+            </div>
+            <div class="pass-pax"><small>Passager</small><b>M. Corentin LEBOUCHER</b></div>
+          </div>
+          <div class="pass-stub">
+            <div class="stub-row"><span>Dépose-bagages ouvre</span><strong>06h30</strong></div>
+            <div class="stub-row"><span>Dépose-bagages ferme</span><strong class="warn">07h50</strong></div>
+            <div class="stub-row"><span>Restitution 4x4</span><strong class="ok">Lundi 01 Février au soir</strong></div>
+            <div class="transport">
+              <label for="tr-departure-mode"><i data-lucide="route"></i> Pour rejoindre l'aéroport</label>
+              <select id="tr-departure-mode" onchange="saveTransport('departure')">
+                <option value="">Choisir…</option>
+                <option>Voiture de location</option>
+                <option>Bus Flybus / Airport Direct</option>
+                <option>Taxi / VTC</option>
+                <option>Navette de l'hôtel</option>
+                <option>À pied</option>
+                <option>Autre</option>
+              </select>
+              <input type="text" id="tr-departure-notes" onchange="saveTransport('departure')" placeholder="Précisions (horaire, résa, lien…)" />
+            </div>
+            <div class="barcode" aria-hidden="true"></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>

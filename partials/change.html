@@ -1,0 +1,22 @@
+  <!-- CHANGE EXPRESS : la « poche » du voyageur -->
+  <div class="pocket">
+    <div class="pocket-card glass reveal">
+      <span class="coin">kr</span>
+      <div class="pocket-title">Dans la poche<small>1 € ≈ 150 ISK</small></div>
+      <div class="pocket-fields">
+        <div class="field-money">
+          <input type="number" id="iskInput" value="5000" step="500" inputmode="decimal" oninput="convertCurrency('isk')" aria-label="Couronnes islandaises" />
+          <span>ISK</span>
+        </div>
+        <span class="pocket-arrow">⇄</span>
+        <div class="field-money eur">
+          <input type="number" id="eurInput" value="33.33" step="1" inputmode="decimal" oninput="convertCurrency('eur')" aria-label="Euros" />
+          <span>€</span>
+        </div>
+      </div>
+      <div class="pocket-hints">
+        <span>🥛 Skyr <strong>~400 ISK</strong> · 2,7 €</span>
+        <span>⛽ Plein SUV <strong>~15 000 ISK</strong> · 100 €</span>
+      </div>
+    </div>
+  </div>

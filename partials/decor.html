@@ -1,0 +1,16 @@
+  <!-- Gradients partagés par les illustrations météo -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <radialGradient id="gSun" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fff4c4"/><stop offset=".55" stop-color="#ffd05a"/><stop offset="1" stop-color="#ff9d2e"/></radialGradient>
+      <linearGradient id="gCloud" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#b9cde6"/></linearGradient>
+      <linearGradient id="gCloudDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdd9ea"/><stop offset="1" stop-color="#7488ab"/></linearGradient>
+    </defs>
+  </svg>
+
+  <!-- CIEL VIVANT : étoiles + rideaux d'aurore (couleurs pilotées par le chapitre visible) -->
+  <div class="sky" aria-hidden="true">
+    <div class="stars"></div><div class="stars s2"></div>
+    <div class="ribbon"></div><div class="ribbon r2"></div><div class="ribbon r3"></div>
+  </div>
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div id="toast" role="status" aria-live="polite"></div>

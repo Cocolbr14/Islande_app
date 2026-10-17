@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <title>Islande 2027 — Carnet de route boréal</title>
+
+  <!-- PWA & Mobile App Meta Tags -->
+  <link rel="manifest" href="./manifest.json" />
+  <meta name="theme-color" content="#050816" />
+  <meta name="color-scheme" content="dark" />
+  <style>html,body{background:#050816;color-scheme:dark}</style>
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Islande 2027" />
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+
+  <!-- Typographie : Fraunces (titres expressifs) + Manrope (lecture) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,200..700,0..100;1,9..144,200..700,0..100&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Leaflet Map CSS & JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- SortableJS pour le Drag & Drop -->
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            display: ['Fraunces', 'Georgia', 'serif'],
+          },
+          colors: {
+            brand: { 400: '#7cc4ff', 500: '#3f8fd6', 600: '#2d74b8' },
+            surface: { base: '#050816', card: '#0d152e', border: 'rgba(190, 225, 255, 0.13)' },
+            slate: { 400: '#b4c4da', 500: '#98a9c2' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="./styles.css" />
+
+</head>
+<body class="antialiased" data-mood="prologue">
+
+  <div data-include="partials/decor.html"></div>  <!-- Étoiles, aurore, neige, toast -->
+  <div data-include="partials/navigation.html"></div>  <!-- En-tête + dock de navigation -->
+
+  <main>
+  <div data-include="partials/hero.html"></div>  <!-- Héros -->
+  <div data-include="partials/compte-a-rebours.html"></div>  <!-- Compte à rebours -->
+  <div data-include="partials/aujourdhui.html"></div>  <!-- Widget « Aujourd'hui » -->
+  <div data-include="partials/change.html"></div>  <!-- Change express -->
+  <div data-include="partials/meteo.html"></div>  <!-- Chapitre I — Ciel (météo) -->
+  <div data-include="partials/carte.html"></div>  <!-- Chapitre II — Route (carte) -->
+  <div data-include="partials/jours.html"></div>  <!-- Chapitre III — Jours (étapes + menus) -->
+  <div data-include="partials/nuits.html"></div>  <!-- Chapitre IV — Nuits (hébergements) -->
+  <div data-include="partials/vols.html"></div>  <!-- Chapitre V — Vols (+ transport aéroport) -->
+  <div data-include="partials/sac.html"></div>  <!-- Chapitre VI — Sac (valises, documents, export) -->
+  <div data-include="partials/epilogue.html"></div>  <!-- Épilogue -->
+  </main>
+
+  <div data-include="partials/modale-hebergement.html"></div>  <!-- Modale hébergement -->
+  <div data-include="partials/modale-repas.html"></div>  <!-- Modale repas -->
+  <div data-include="partials/visionneuse.html"></div>  <!-- Visionneuse plein écran -->
+
+  <!-- PWA : chargé tout de suite (doit écouter "load" et "beforeinstallprompt" avant tout le reste) -->
+  <script src="./js/pwa.js"></script>
+
+  <!-- DÉMARRAGE : 1) injecte les fragments HTML  2) fx.js  3) modules JS (dans l'ordre)  4) init -->
+  <script>
+    // Un module = un fichier js/<nom>.js. L'ordre compte (ils partagent les mêmes variables globales).
+    const MODULES = ['socle', 'lightbox', 'sync', 'vols', 'compte-a-rebours', 'change', 'sac', 'menus', 'etapes', 'nuits', 'jours', 'carte', 'meteo', 'aujourdhui'];
+
+    const loadScript = (src) => new Promise((ok, ko) => {
+      const s = document.createElement('script');
+      s.src = src; s.async = false;               // async=false => exécution dans l'ordre
+      s.onload = ok; s.onerror = () => ko(new Error('Fichier introuvable : ' + src));
+      document.body.appendChild(s);
+    });
+
+    (async function demarrer() {
+      try {
+        const slots = [...document.querySelectorAll('[data-include]')];
+        const pages = await Promise.all(slots.map(async (el) => {
+          const r = await fetch(el.dataset.include);
+          if (!r.ok) throw new Error('Fragment introuvable : ' + el.dataset.include);
+          return r.text();
+        }));
+        slots.forEach((el, i) => { el.outerHTML = pages[i]; });
+
+        await loadScript('./fx.js');
+        lucide.createIcons();
+        await Promise.all(MODULES.map((m) => loadScript('./js/' + m + '.js')));
+
+        // Initialisation
+        recalculateMap();
+        fetchWeather();
+        syncFromSupabase();
+        initSupabaseRealtime();
+        renderTodayWidget();
+
+        if (typeof deferredPrompt !== 'undefined' && deferredPrompt)       // invite d'installation arrivée trop tôt
+          document.getElementById('pwaInstallBtn')?.classList.remove('hidden');
+        if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+      } catch (err) {
+        console.error(err);
+        document.body.insertAdjacentHTML('afterbegin',
+          '<p style="padding:24px;color:#fff">Erreur de chargement : ' + err.message +
+          '<br>Ouvre l\'appli via un serveur (pas en double-cliquant sur index.html).</p>');
+      }
+    })();
+  </script>
+</body>
+</html>

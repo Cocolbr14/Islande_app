@@ -1,0 +1,23 @@
+  <!-- VISIONNEUSE PLEIN ÉCRAN INTERACTIVE -->
+  <div id="imageLightbox" class="hidden">
+    <div class="lb-top">
+      <div>
+        <h3 id="lightboxTitle">Photo du lieu</h3>
+        <p id="lightboxSubtitle">Molette ou boutons pour zoomer • Glisser pour explorer</p>
+      </div>
+      <div class="lb-tools">
+        <button onclick="zoomLightbox(0.25)" title="Zoom avant (+)" class="lb-btn"><i data-lucide="zoom-in"></i></button>
+        <button onclick="zoomLightbox(-0.25)" title="Zoom arrière (-)" class="lb-btn"><i data-lucide="zoom-out"></i></button>
+        <button onclick="resetLightboxZoom()" title="Taille réelle (1:1)" class="lb-btn mono">1:1</button>
+        <button onclick="closeLightbox()" title="Fermer (Échap)" class="lb-btn close"><i data-lucide="x"></i></button>
+      </div>
+    </div>
+
+    <div id="lightboxViewport">
+      <img id="lightboxImg" src="" alt="Lieu" />
+    </div>
+
+    <div class="lb-foot">
+      Zoom <span id="zoomLevelDisplay">100%</span>
+    </div>
+  </div>

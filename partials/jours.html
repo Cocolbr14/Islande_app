@@ -1,0 +1,75 @@
+  <!-- CHAPITRE III — LES JOURS -->
+  <section id="places-manager" class="chapter" data-mood="jours">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">III</span>
+        <p class="chap-kicker">Chapitre III · Les jours</p>
+        <h2 class="chap-title">Sept journées,<br/><em>sept petits mondes</em></h2>
+        <p class="chap-sub">Glisse une étape par sa poignée <span class="grip-demo">⋮⋮</span> pour la réorganiser, ou la déposer dans un autre jour. Touche une photo pour l’admirer en plein écran.</p>
+      </div>
+
+      <div class="chap-actions reveal">
+        <button onclick="toggleAddPlaceForm()" class="btn-aurora">
+          <i data-lucide="plus-circle"></i> Ajouter un lieu
+        </button>
+        <button onclick="resetDefaultSteps()" class="btn-quiet">Réinitialiser dates</button>
+      </div>
+
+      <!-- Formulaire d'ajout rapide -->
+      <div id="addPlaceBox" class="hidden sheet">
+        <h3 class="sheet-title"><i data-lucide="map-pin"></i> Nouveau point d’étape</h3>
+        <div class="form-grid">
+          <div class="fld">
+            <label for="newPlaceName">Nom du lieu</label>
+            <input type="text" id="newPlaceName" placeholder="Ex: Spot Cascade Secrète" />
+          </div>
+          <div class="fld">
+            <label for="newPlaceTime">Créneau horaire</label>
+            <input type="text" id="newPlaceTime" placeholder="Ex: 11h30 - 13h00" />
+          </div>
+          <div class="fld span2">
+            <label for="newPlaceDateKey">Date</label>
+            <select id="newPlaceDateKey">
+              <option value="2027-01-26">Mardi 26 Janvier (Arrivée KEF / Selfoss)</option>
+              <option value="2027-01-27">Mercredi 27 Janvier (Cascades / Vík)</option>
+              <option value="2027-01-28">Jeudi 28 Janvier (Canyons / Skaftafell)</option>
+              <option value="2027-01-29">Vendredi 29 Janvier (Jökulsárlón / Glaciers)</option>
+              <option value="2027-01-30">Samedi 30 Janvier (Grotte de Glace / Hella)</option>
+              <option value="2027-01-31">Dimanche 31 Janvier (Cercle d'Or / Bains)</option>
+              <option value="2027-02-01">Lundi 01 Février (Kerið / Reykjavík / Restitution 4x4)</option>
+            </select>
+          </div>
+          <div class="fld span2">
+            <label for="newPlacePrice">Prix (€)</label>
+            <input type="text" id="newPlacePrice" placeholder="Ex: Gratuit ou 6,70 €" />
+          </div>
+          <div class="fld">
+            <label for="newPlaceLat">Latitude</label>
+            <input type="number" step="any" id="newPlaceLat" placeholder="Ex: 63.5321" />
+          </div>
+          <div class="fld">
+            <label for="newPlaceLng">Longitude</label>
+            <input type="number" step="any" id="newPlaceLng" placeholder="Ex: -19.5114" />
+          </div>
+        </div>
+        <div class="sheet-actions">
+          <button onclick="toggleAddPlaceForm()" class="btn-quiet">Annuler</button>
+          <button onclick="saveNewPlace()" class="btn-aurora">Ajouter au parcours</button>
+        </div>
+      </div>
+    </div>
+
+    <nav class="day-strip" aria-label="Aller à un jour">
+      <a href="#day-2027-01-26" style="--dc:#f59e0b"><b>J1</b>26 janv.</a>
+      <a href="#day-2027-01-27" style="--dc:#06b6d4"><b>J2</b>27 janv.</a>
+      <a href="#day-2027-01-28" style="--dc:#3b82f6"><b>J3</b>28 janv.</a>
+      <a href="#day-2027-01-29" style="--dc:#8b5cf6"><b>J4</b>29 janv.</a>
+      <a href="#day-2027-01-30" style="--dc:#ec4899"><b>J5</b>30 janv.</a>
+      <a href="#day-2027-01-31" style="--dc:#10b981"><b>J6</b>31 janv.</a>
+      <a href="#day-2027-02-01" style="--dc:#f43f5e"><b>J7</b>1 fév.</a>
+    </nav>
+
+    <div class="wrap">
+      <div class="days" id="places-container"></div>
+    </div>
+  </section>

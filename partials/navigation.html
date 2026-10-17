@@ -1,0 +1,38 @@
+  <!-- EN-TÊTE : transparent sur le héros, verre dépoli ensuite -->
+  <header id="topbar">
+    <div class="topbar-in">
+      <a href="#hero" class="brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <defs><linearGradient id="bm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7cc4ff"/><stop offset="1" stop-color="#c4ecff"/></linearGradient></defs>
+          <path d="M2 27 L12 9 L17 18 L21 12 L30 27Z" fill="none" stroke="url(#bm)" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M5 8 Q16 -1 27 8" fill="none" stroke="url(#bm)" stroke-width="1.6" stroke-linecap="round" opacity=".7"/>
+          <circle cx="24" cy="5" r="1.3" fill="#fff"/>
+        </svg>
+        <span class="brand-name">Islande 2027<small>Carnet de route</small></span>
+      </a>
+      <nav class="top-links" aria-label="Chapitres">
+        <a href="#weather-section">Ciel</a>
+        <a href="#map-section">Carte</a>
+        <a href="#places-manager">Jours</a>
+        <a href="#lodging-section">Nuits</a>
+        <a href="#flights-section">Vols</a>
+        <a href="#tools-section">Sac</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <button id="pwaInstallBtn" onclick="installPWA()" class="hidden btn-install">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i> Installer
+        </button>
+        <span id="syncBadge">Local</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- DOCK DE NAVIGATION FLOTTANT -->
+  <nav id="mobileBottomNav" aria-label="Navigation principale">
+    <a href="#weather-section" data-tab="weather-section"><i data-lucide="cloud-sun"></i>Ciel</a>
+    <a href="#map-section" data-tab="map-section"><i data-lucide="map"></i>Carte</a>
+    <a href="#places-manager" data-tab="places-manager"><i data-lucide="signpost"></i>Jours</a>
+    <a href="#lodging-section" data-tab="lodging-section"><i data-lucide="moon-star"></i>Nuits</a>
+    <a href="#flights-section" data-tab="flights-section"><i data-lucide="plane"></i>Vols</a>
+    <a href="#tools-section" data-tab="tools-section"><i data-lucide="backpack"></i>Sac</a>
+  </nav>

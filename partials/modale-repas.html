@@ -1,0 +1,42 @@
+  <!-- MODAL D'ÉDITION DES REPAS -->
+  <div id="mealModal" class="hidden modal-back" onclick="if(event.target===this)closeMealModal()">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalMealTitle">
+      <div class="modal-grip" aria-hidden="true"></div>
+      <h3 class="modal-title">
+        <span><small>À table</small><em id="modalMealTitle">Repas du Jour</em></span>
+        <button onclick="closeMealModal()" class="x-btn" aria-label="Fermer">✕</button>
+      </h3>
+      <input type="hidden" id="editMealDateKey" />
+
+      <div class="form-stack">
+        <div class="meal-box">
+          <div class="meal-head lunch"><span>🥪</span> Repas du Midi (Déjeuner / Pique-nique)</div>
+          <div class="fld">
+            <label for="editLunchTitle">Nom du plat / Repas</label>
+            <input type="text" id="editLunchTitle" placeholder="Ex: Wraps thon maïs" />
+          </div>
+          <div class="fld">
+            <label for="editLunchNotes">Ingrédients / Courses à prévoir / Adresse</label>
+            <input type="text" id="editLunchNotes" placeholder="Ex: Galettes, boîte de thon, maïs" />
+          </div>
+        </div>
+
+        <div class="meal-box">
+          <div class="meal-head dinner"><span>🍲</span> Repas du Soir (Dîner)</div>
+          <div class="fld">
+            <label for="editDinnerTitle">Nom du plat / Restaurant</label>
+            <input type="text" id="editDinnerTitle" placeholder="Ex: Pavé de saumon & riz" />
+          </div>
+          <div class="fld">
+            <label for="editDinnerNotes">Ingrédients / Courses / Réservation</label>
+            <input type="text" id="editDinnerNotes" placeholder="Ex: Saumon Bónus, sachet de riz" />
+          </div>
+        </div>
+      </div>
+
+      <div class="sheet-actions">
+        <button onclick="closeMealModal()" class="btn-quiet">Annuler</button>
+        <button onclick="saveMealData()" class="btn-aurora">Enregistrer le menu</button>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,47 @@
+  <!-- MODAL D'ÉDITION D'HÉBERGEMENT -->
+  <div id="lodgingModal" class="hidden modal-back" onclick="if(event.target===this)closeLodgingModal()">
+    <div class="modal glass" role="dialog" aria-modal="true" aria-labelledby="modalLodgingTitle">
+      <div class="modal-grip" aria-hidden="true"></div>
+      <h3 class="modal-title">
+        <span><small>Nuit à renseigner</small><em id="modalLodgingTitle">Renseigner l'Hébergement</em></span>
+        <button onclick="closeLodgingModal()" class="x-btn" aria-label="Fermer">✕</button>
+      </h3>
+      <input type="hidden" id="editLodgingIndex" />
+      <div class="form-stack">
+        <div class="fld">
+          <label for="editLodgingName">Nom du logement / Hôtel</label>
+          <input type="text" id="editLodgingName" placeholder="Ex: Aurora Hotel Keflavík Airport" />
+        </div>
+        <div class="form-grid">
+          <div class="fld">
+            <label for="editLodgingLocation">Ville / Secteur</label>
+            <input type="text" id="editLodgingLocation" placeholder="Ex: Aéroport Keflavík" />
+          </div>
+          <div class="fld">
+            <label for="editLodgingCheckin">Heure de Check-in</label>
+            <input type="text" id="editLodgingCheckin" placeholder="Ex: 15h00 - 22h00" />
+          </div>
+        </div>
+        <div class="fld">
+          <label for="editLodgingAddress">Adresse exacte ou Coordonnées GPS</label>
+          <input type="text" id="editLodgingAddress" placeholder="Ex: Blikavellir 2, 235 Keflavík" />
+        </div>
+        <div class="fld">
+          <label for="editLodgingPhone">Numéro de téléphone / Contact hôte</label>
+          <input type="text" id="editLodgingPhone" placeholder="Ex: +354 487 0000" />
+        </div>
+        <div class="fld">
+          <label for="editLodgingUrl">Lien de la réservation (Booking, Airbnb…)</label>
+          <input type="url" id="editLodgingUrl" placeholder="https://www.booking.com/..." />
+        </div>
+        <div class="fld">
+          <label for="editLodgingNotes">Code Boîte à Clés / Instructions d'arrivée</label>
+          <textarea id="editLodgingNotes" rows="2" placeholder="Ex: Restitution du 4x4 effectuée, accès direct à pied terminal"></textarea>
+        </div>
+      </div>
+      <div class="sheet-actions">
+        <button onclick="closeLodgingModal()" class="btn-quiet">Annuler</button>
+        <button onclick="saveLodgingData()" class="btn-aurora">Enregistrer</button>
+      </div>
+    </div>
+  </div>

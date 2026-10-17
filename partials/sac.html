@@ -1,0 +1,125 @@
+  <!-- CHAPITRE VI — LE SAC -->
+  <section id="tools-section" class="chapter" data-mood="sac">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">VI</span>
+        <p class="chap-kicker">Chapitre VI · Le sac</p>
+        <h2 class="chap-title">Ce qu’on emporte,<br/><em>ce qu’on n’oublie pas</em></h2>
+        <p class="chap-sub">Deux valises pesées à la volée, les bons réflexes sécurité et les papiers du voyage. Tout se synchronise, même sans réseau.</p>
+      </div>
+
+      <div class="tools-grid">
+        <!-- Valises -->
+        <div class="panel reveal lg-span2">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico"><i data-lucide="luggage"></i></span>
+              <div>
+                <h3>Valise & pesée automatique</h3>
+                <small>EasyJet soute : <strong>23,0 kg</strong> par bagage</small>
+              </div>
+            </div>
+            <div class="seg seg-sm" role="group" aria-label="Choisir la valise">
+              <button id="btnTabBag1" onclick="switchBagTab('bag1')" class="seg-btn on">Valise 1</button>
+              <button id="btnTabBag2" onclick="switchBagTab('bag2')" class="seg-btn">Valise 2</button>
+            </div>
+          </div>
+
+          <div class="gauge">
+            <div class="gauge-row">
+              <span id="currentBagLabel" class="gauge-label">Valise 1</span>
+              <span id="currentBagWeightDisplay" class="gauge-weight">0.0 / 23.0 kg</span>
+            </div>
+            <div class="gtrack"><div id="currentBagProgressBar" class="gbar" style="width: 0%;"></div></div>
+            <div class="gauge-row sm">
+              <span id="currentBagRemaining">Reste disponible : 23.0 kg</span>
+              <span id="currentBagCheckRatio" class="mono">0/0 coché</span>
+            </div>
+          </div>
+
+          <div class="checklist" id="bag-items-list"></div>
+
+          <div class="add-row">
+            <input type="text" id="newItemName" placeholder="Nouvelle affaire (ex: Doudoune, Gants...)" />
+            <div class="kg-field">
+              <input type="number" step="0.1" min="0" id="newItemWeight" placeholder="Poids" />
+              <span>kg</span>
+            </div>
+            <button onclick="addBagItem()" class="btn-aurora sm"><span>+</span> Ajouter</button>
+          </div>
+
+          <div class="panel-foot">
+            <span>Synchro temps réel Supabase Cloud & hors-ligne</span>
+            <button onclick="clearCurrentBag()" class="btn-quiet danger">Vider cette valise</button>
+          </div>
+        </div>
+
+        <!-- Sécurité -->
+        <div class="panel reveal d1">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico warn"><i data-lucide="shield-alert"></i></span>
+              <div>
+                <h3>Sécurité & alertes live</h3>
+                <small>À consulter chaque matin avant de démarrer</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="signs">
+            <a href="https://www.road.is/" target="_blank" rel="noopener" class="sign">
+              <span class="sign-ico">🛣️</span>
+              <div><b>Road.is</b><small>Verglas & fermetures Route 1</small></div>
+              <i data-lucide="external-link"></i>
+            </a>
+            <a href="https://en.vedur.is/" target="_blank" rel="noopener" class="sign">
+              <span class="sign-ico">🌬️</span>
+              <div><b>Vedur.is</b><small>Rafales de vent & prévisions aurores</small></div>
+              <i data-lucide="external-link"></i>
+            </a>
+            <a href="https://safetravel.is/" target="_blank" rel="noopener" class="sign">
+              <span class="sign-ico">🛡</span>
+              <div><b>SafeTravel.is</b><small>Enregistrer son plan de route</small></div>
+              <i data-lucide="external-link"></i>
+            </a>
+          </div>
+
+          <div class="sos">
+            <div class="sos-beacon" aria-hidden="true"></div>
+            <div>
+              <b>Urgences Islande : 112</b>
+              <small>Toujours tenir fermement la portière contre les rafales.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents & sauvegarde -->
+        <div class="panel reveal lg-span3">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico"><i data-lucide="file-check-2"></i></span>
+              <div>
+                <h3>Documents à ne pas oublier</h3>
+                <small>Passeports, assurances, permis, réservations…</small>
+              </div>
+            </div>
+            <span id="docsCheckRatio" class="ratio">0/0</span>
+          </div>
+
+          <div class="checklist two-col" id="docs-checklist-list"></div>
+
+          <div class="add-row">
+            <input type="text" id="newDocName" placeholder="Ajouter un document (ex: Visa, ordonnance...)" />
+            <button onclick="addDocItem()" class="btn-aurora sm"><span>+</span> Ajouter</button>
+          </div>
+
+          <div class="panel-foot no-print">
+            <div class="foot-btns">
+              <button onclick="exportAllData()" class="btn-ghost"><i data-lucide="download-cloud"></i> Exporter mes données</button>
+              <button onclick="printPlan()" class="btn-ghost"><i data-lucide="printer"></i> Imprimer le planning</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
