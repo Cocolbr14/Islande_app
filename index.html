@@ -65,7 +65,6 @@
   <div data-include="partials/hero.html"></div>  <!-- Héros -->
   <div data-include="partials/compte-a-rebours.html"></div>  <!-- Compte à rebours -->
   <div data-include="partials/aujourdhui.html"></div>  <!-- Widget « Aujourd'hui » -->
-  <div data-include="partials/change.html"></div>  <!-- Change express -->
   <div data-include="partials/meteo.html"></div>  <!-- Chapitre I — Ciel (météo) -->
   <div data-include="partials/carte.html"></div>  <!-- Chapitre II — Route (carte) -->
   <div data-include="partials/jours.html"></div>  <!-- Chapitre III — Jours (étapes + menus) -->
@@ -85,7 +84,7 @@
   <!-- DÉMARRAGE : 1) injecte les fragments HTML  2) fx.js  3) modules JS (dans l'ordre)  4) init -->
   <script>
     // Un module = un fichier js/<nom>.js. L'ordre compte (ils partagent les mêmes variables globales).
-    const MODULES = ['socle', 'lightbox', 'sync', 'vols', 'compte-a-rebours', 'change', 'sac', 'menus', 'etapes', 'nuits', 'jours', 'carte', 'meteo', 'aujourdhui'];
+    const MODULES = ['socle', 'lightbox', 'sync', 'vols', 'compte-a-rebours', 'sac', 'menus', 'etapes', 'nuits', 'jours', 'carte', 'meteo', 'aujourdhui'];
 
     const loadScript = (src) => new Promise((ok, ko) => {
       const s = document.createElement('script');

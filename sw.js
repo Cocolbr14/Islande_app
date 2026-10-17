@@ -2,7 +2,7 @@
 // même sans réseau (fréquent en Islande hors des villes).
 // shortcut: cache "best effort" uniquement (pas de vraie synchro hors-ligne
 // des écritures) ; si un jour l'appli grossit beaucoup, passer par Workbox.
-const CACHE_NAME = "islande-app-v8";
+const CACHE_NAME = "islande-app-v9";
 
 const APP_SHELL = [
   "./",
@@ -14,7 +14,6 @@ const APP_SHELL = [
   "./partials/hero.html",
   "./partials/compte-a-rebours.html",
   "./partials/aujourdhui.html",
-  "./partials/change.html",
   "./partials/meteo.html",
   "./partials/carte.html",
   "./partials/jours.html",
@@ -31,7 +30,6 @@ const APP_SHELL = [
   "./js/sync.js",
   "./js/vols.js",
   "./js/compte-a-rebours.js",
-  "./js/change.js",
   "./js/sac.js",
   "./js/menus.js",
   "./js/etapes.js",
