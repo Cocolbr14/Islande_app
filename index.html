@@ -54,6 +54,7 @@
     }
   </script>
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./css/budget.css" />
 
 </head>
 <body class="antialiased" data-mood="prologue">
@@ -71,6 +72,7 @@
   <div data-include="partials/nuits.html"></div>  <!-- Chapitre IV — Nuits (hébergements) -->
   <div data-include="partials/vols.html"></div>  <!-- Chapitre V — Vols (+ transport aéroport) -->
   <div data-include="partials/sac.html"></div>  <!-- Chapitre VI — Sac (valises, documents, export) -->
+  <div data-include="partials/budget.html"></div>  <!-- Chapitre VII — Comptes (budget) -->
   <div data-include="partials/epilogue.html"></div>  <!-- Épilogue -->
   </main>
 
@@ -84,7 +86,7 @@
   <!-- DÉMARRAGE : 1) injecte les fragments HTML  2) fx.js  3) modules JS (dans l'ordre)  4) init -->
   <script>
     // Un module = un fichier js/<nom>.js. L'ordre compte (ils partagent les mêmes variables globales).
-    const MODULES = ['socle', 'lightbox', 'sync', 'vols', 'compte-a-rebours', 'sac', 'menus', 'etapes', 'nuits', 'jours', 'carte', 'meteo', 'aujourdhui'];
+    const MODULES = ['socle', 'lightbox', 'sync', 'vols', 'compte-a-rebours', 'sac', 'budget', 'menus', 'etapes', 'nuits', 'jours', 'carte', 'meteo', 'aujourdhui'];
 
     const loadScript = (src) => new Promise((ok, ko) => {
       const s = document.createElement('script');
