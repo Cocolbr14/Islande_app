@@ -1,0 +1,108 @@
+  <!-- CHAPITRE VII — LES COMPTES (budget du voyage : avant + sur place) -->
+  <section id="budget-section" class="chapter" data-mood="budget">
+    <div class="wrap">
+      <div class="chap-head reveal">
+        <span class="chap-num" aria-hidden="true">VII</span>
+        <p class="chap-kicker">Chapitre VII</p>
+        <h2 class="chap-title">Les comptes</h2>
+      </div>
+
+      <div class="bd-grid">
+        <!-- Vue d'ensemble : total, par personne, avancement -->
+        <div class="panel reveal">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico"><i data-lucide="wallet"></i></span>
+              <div>
+                <h3>Budget du voyage</h3>
+                <small>Réparti entre <strong>2 voyageurs</strong></small>
+              </div>
+            </div>
+          </div>
+
+          <div class="bd-total">
+            <span class="bd-total-label">Total</span>
+            <strong id="bdTotal" class="bd-total-num">0 €</strong>
+            <span class="bd-pp"><b id="bdPerPerson">0 €</b> par personne</span>
+          </div>
+
+          <div class="bd-stack" role="img" aria-label="Répartition payé, réservé, restant">
+            <span id="bdStackPaid" class="s-paid"></span>
+            <span id="bdStackBooked" class="s-booked"></span>
+            <span id="bdStackTodo" class="s-todo"></span>
+          </div>
+
+          <div class="bd-tiles">
+            <div class="bd-tile"><i class="dot paid"></i><small>Payé</small><b id="bdPaid">0 €</b><em id="bdPaidPP">0 € / pers.</em></div>
+            <div class="bd-tile"><i class="dot booked"></i><small>Réservé, à régler</small><b id="bdBooked">0 €</b><em id="bdBookedPP">0 € / pers.</em></div>
+            <div class="bd-tile"><i class="dot todo"></i><small>Reste à réserver</small><b id="bdTodo">0 €</b><em id="bdTodoPP">0 € / pers.</em></div>
+          </div>
+          <p id="bdMissing" class="bd-note hidden"></p>
+        </div>
+
+        <!-- Répartition par catégorie -->
+        <div class="panel reveal d1">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico warn"><i data-lucide="pie-chart"></i></span>
+              <div>
+                <h3>Où part l'argent</h3>
+                <small>Par catégorie · avant / sur place</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="bd-donut-wrap">
+            <div id="bdDonut" class="bd-donut">
+              <div class="bd-donut-in"><small>Total</small><b id="bdDonutTotal">0 €</b></div>
+            </div>
+            <div id="bdCatLegend" class="bd-legend"></div>
+          </div>
+
+          <div class="bd-phases">
+            <span class="chip">🧳 Avant le voyage <b id="bdPhaseAvant">0 €</b></span>
+            <span class="chip">📍 Sur place <b id="bdPhasePlace">0 €</b></span>
+          </div>
+        </div>
+
+        <!-- Le tableau -->
+        <div class="panel reveal lg-span2">
+          <div class="panel-head">
+            <div class="panel-title">
+              <span class="ico"><i data-lucide="list-checks"></i></span>
+              <div>
+                <h3>Dépenses & réservations</h3>
+                <small>Touche une pastille pour changer son statut</small>
+              </div>
+            </div>
+            <div class="seg seg-sm" role="group" aria-label="Filtrer les dépenses">
+              <button id="bdFilterAll" onclick="budgetSetFilter('all')" class="seg-btn on">Tout</button>
+              <button id="bdFilterAvant" onclick="budgetSetFilter('avant')" class="seg-btn">Avant</button>
+              <button id="bdFilterPlace" onclick="budgetSetFilter('place')" class="seg-btn">Sur place</button>
+            </div>
+          </div>
+
+          <div id="bdList" class="bd-list"></div>
+
+          <div class="add-row bd-add">
+            <input type="text" id="bdNewName" placeholder="Nouvelle dépense (ex: Péage, Café…)" />
+            <div class="kg-field bd-newprice">
+              <input type="number" step="0.01" min="0" inputmode="decimal" id="bdNewAmount" placeholder="Prix" />
+              <span>€</span>
+            </div>
+            <select id="bdNewCat" aria-label="Catégorie"></select>
+            <select id="bdNewPhase" aria-label="Quand">
+              <option value="avant">Avant le voyage</option>
+              <option value="place">Sur place</option>
+            </select>
+            <button onclick="budgetAdd()" class="btn-aurora sm"><span>+</span> Ajouter</button>
+          </div>
+
+          <div class="panel-foot">
+            <span>Enregistré sur cet appareil</span>
+            <button onclick="budgetReset()" class="btn-quiet danger">Remettre le tableau d'origine</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
