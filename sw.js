@@ -2,7 +2,7 @@
 // même sans réseau (fréquent en Islande hors des villes).
 // shortcut: cache "best effort" uniquement (pas de vraie synchro hors-ligne
 // des écritures) ; si un jour l'appli grossit beaucoup, passer par Workbox.
-const CACHE_NAME = "islande-app-v7";
+const CACHE_NAME = "islande-app-v8";
 
 const APP_SHELL = [
   "./",
